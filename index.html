@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grow With AI | A New AI Helper Every Month for Business Owners</title>
+<meta name="description" content="New to AI? Grow With AI gets you started, then gives you a new, tested AI helper every month with plain-English setup. Refer 3 members and yours is free.">
+<link rel="canonical" href="https://zclear2327.github.io/grow-with-ai/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zclear2327.github.io/grow-with-ai/">
+<meta property="og:title" content="More freedom for business owners, with AI doing the busywork">
+<meta property="og:description" content="Curious about AI but don't know where to start? We set you up, then every month you get a new AI agent that does part of your work for you.">
+<meta property="og:image" content="https://zclear2327.github.io/grow-with-ai/media/chris-ward-bio-poster.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@graph": [{"@type": "ProfessionalService", "@id": "https://zclear2327.github.io/grow-with-ai/#org", "name": "Grow With AI", "url": "https://zclear2327.github.io/grow-with-ai/", "email": "hello@wardconsulting.ai", "description": "Monthly AI packages for business owners: a new, tested AI helper every month with plain-English setup.", "areaServed": "US", "address": {"@type": "PostalAddress", "addressLocality": "Ogden", "addressRegion": "UT", "addressCountry": "US"}, "founder": {"@type": "Person", "name": "Chris Ward"}}]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F2F3F0; --panel:#FFFFFF; --ink:#16201D; --muted:#56615C; --rule:#D5DAD5;
+  --accent:#2F6B5A; --accent-ink:#FFFFFF; --brass:#9A6F22; --log:#10231D; --av-bg:#E3ECE7; --c25:#B8863A; --c26:#1F8663; --av-bg-hover:#D5E4DC; --log-ink:#CFE3D9; --log-dim:#7FA394;
+  --display:"Lexend", "Segoe UI", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Verdana", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F1614; --panel:#16201D; --ink:#E7ECE8; --muted:#9AA8A1; --rule:#2A3632;
+    --accent:#6FB79E; --accent-ink:#0F1614; --brass:#D4A452; --log:#0A1210; --av-bg:#1E2D28; --c25:#A9772E; --c26:#35A97C; --av-bg-hover:#253832; --log-ink:#CFE3D9; --log-dim:#6E8F82;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F1614; --panel:#16201D; --ink:#E7ECE8; --muted:#9AA8A1; --rule:#2A3632;
+  --accent:#6FB79E; --accent-ink:#0F1614; --brass:#D4A452; --log:#0A1210; --av-bg:#1E2D28; --c25:#A9772E; --c26:#35A97C; --av-bg-hover:#253832; --log-ink:#CFE3D9; --log-dim:#6E8F82;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.65 var(--body)}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:24px}
+@media (max-width:480px){.wrap{padding-inline:16px}}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spacing:-.01em;text-wrap:balance;margin:0}
+.eyebrow{font:700 13px/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--brass);margin:0}
+section{padding-block:72px;border-top:1px solid var(--rule)}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:22px}
+.mark{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.01em}
+.mark span{color:var(--accent)}
+.top a.cta-sm{font:500 14px/1 var(--body);color:var(--ink);text-decoration:none;border:1px solid var(--ink);padding:10px 14px;border-radius:2px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start;padding-block:40px 72px}
+.hero h1{font-size:clamp(38px,5.4vw,64px);margin-top:18px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.lede{font-size:19px;color:var(--muted);max-width:34em;margin:22px 0 30px}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-block;font:600 15px/1 var(--body);padding:15px 20px;border-radius:2px;text-decoration:none}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{color:var(--ink);border:1px solid var(--rule)}
+
+/* the run log: the signature element */
+.bio{margin:8px 0 0}
+.bio .vw{position:relative}
+.bio video{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:4px;background:var(--log)}
+.bio .vw.tall{display:none;width:min(100%,calc(80svh * 9 / 16));margin-inline:auto}
+.bio .vw.tall video{aspect-ratio:9/16}
+@media (max-width:600px){.bio .vw.wide{display:none}.bio .vw.tall{display:block}}
+.bio .snd{position:absolute;top:12px;right:12px;font:600 14px/1 var(--body);color:#fff;background:rgba(16,35,29,.88);border:1px solid rgba(255,255,255,.4);padding:11px 14px;border-radius:2px;cursor:pointer}
+.bio .snd:hover{background:rgba(16,35,29,1)}
+.bio figcaption{font-size:14px;color:var(--muted);margin-top:10px}
+.bio.film{margin:0 0 48px}
+.log{background:var(--log);color:var(--log-ink);font:400 13.5px/1.8 var(--mono);border-radius:4px;padding:18px 18px 16px;overflow-x:auto}
+.log .hd{display:flex;justify-content:space-between;color:var(--log-dim);border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:10px;margin-bottom:10px;gap:12px}
+.log .row{white-space:nowrap}
+.log .t{color:var(--log-dim)}
+.log .ok{color:#8FD6B5}
+.log .who{color:#E6C27A}
+.log .cap{color:var(--log-dim);margin-top:10px;white-space:normal;font-size:11.5px}
+
+/* tiers */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:40px;border:1px solid var(--rule);background:var(--panel)}
+.tier{padding:28px 26px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:14px}
+.tier:last-child{border-right:0}
+.tier h3{font-size:30px}
+.tier .who-for{font:700 14px/1.4 var(--body);color:var(--muted);letter-spacing:.03em}
+.tier ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px}
+.tier .fleet{margin-top:auto;padding-top:14px;border-top:1px dashed var(--rule);font:700 15px/1.4 var(--body);color:var(--accent)}
+.sec-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end}
+.sec-head h2{font-size:clamp(32px,4.4vw,52px);margin-top:14px}
+.sec-head p{color:var(--muted);margin:0;max-width:34em}
+
+/* proof */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:40px;border-top:2px solid var(--ink)}
+.stat{padding:22px 20px 22px 0;border-bottom:1px solid var(--rule)}
+.stat .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,4vw,48px);line-height:1;font-variant-numeric:tabular-nums}
+.stat .l{font-size:16px;color:var(--muted);margin-top:10px;max-width:22em}
+.stat .src{font:700 12.5px/1.4 var(--body);color:var(--brass);margin-top:8px;letter-spacing:.04em}
+.row-label{font:700 13px/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:40px 0 -24px}
+.stats.three{grid-template-columns:repeat(3,1fr)}
+.chart{margin:28px 0 0;padding:24px;background:var(--panel);border:1px solid var(--rule)}
+.chart figcaption{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px 20px;margin-bottom:12px}
+.chart .ct{font-family:var(--display);font-weight:600;font-size:20px}
+.chart .legend{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--muted)}
+.chart .key{display:inline-block;width:12px;height:12px;border-radius:3px;margin-left:6px}
+.chart .k25{background:var(--c25)}.chart .k26{background:var(--c26)}
+.chart-scroll{overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:480px;height:auto}
+.chart .b25{fill:var(--c25)}.chart .b26{fill:var(--c26)}
+.chart path:hover{opacity:.82}
+.chart .grid{stroke:var(--rule);stroke-width:1}
+.chart .axis{stroke:var(--muted);stroke-width:1}
+.chart .tick{fill:var(--muted);font:400 13px var(--body)}
+.chart .vlab{fill:var(--ink);font:700 13px var(--body);font-variant-numeric:tabular-nums}
+.chart-note{margin:10px 0 0;font-size:14px;color:var(--muted)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.note{font:400 14px/1.5 var(--body);color:var(--muted);margin-top:18px}
+
+/* savings feature */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+.feature{background:var(--accent);color:var(--accent-ink);padding:32px;display:flex;flex-direction:column;gap:16px}
+.feature.ink{background:var(--ink);color:var(--paper)}
+.feature .big{white-space:nowrap;font-family:var(--display);font-weight:700;font-size:clamp(40px,5.4vw,76px);line-height:.95;font-variant-numeric:tabular-nums}
+.feature .big small{font-size:.38em;font-weight:500;margin-left:6px}
+.feature p{margin:0;font-size:18px;max-width:30em}
+.feature .src{font:700 13px/1.4 var(--body);letter-spacing:.06em;text-transform:uppercase;opacity:.8;margin-top:10px}
+
+/* receipts */
+.receipts{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin-top:36px;border-top:2px solid var(--ink)}
+.receipt{display:grid;grid-template-columns:7.5em 1fr;gap:16px;padding:22px 24px 22px 0;border-bottom:1px solid var(--rule)}
+.receipt .amt{font-family:var(--display);font-weight:700;font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--accent)}
+.receipt p{margin:0;font-size:17px}
+.receipt .by{display:block;font:700 12.5px/1.4 var(--body);color:var(--brass);letter-spacing:.05em;text-transform:uppercase;margin-top:8px}
+
+/* nav */
+.nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.nav a{font:500 15px/1 var(--body);color:var(--ink);text-decoration:none;padding:15px 0}
+.nav a:hover{color:var(--accent)}
+.nav a.cta-sm{padding:15px 14px}
+@media (max-width:640px){.nav a:not(.cta-sm){display:none}}
+/* training */
+.courses{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
+.course{padding:24px 20px;border:1px solid var(--rule);background:var(--panel);display:flex;flex-direction:column;gap:12px}
+.course h3{font-size:24px}
+.course .price{font-family:var(--display);font-weight:700;font-size:40px;line-height:1;margin:4px 0 0;font-variant-numeric:tabular-nums;color:var(--accent)}
+.course .price small{display:block;font:700 13px/1.4 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.course .next{margin:0;font:700 14px/1.4 var(--body);color:var(--ink);background:var(--av-bg);padding:8px 10px;border-radius:2px}
+.course .course-who{margin:0;font-size:16px;color:var(--muted)}
+.course ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:16px}
+.course-cta{margin-top:auto;text-align:center;line-height:1.2}
+.btn.ghost.course-cta{border-color:var(--ink)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:1000px){.courses{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.courses{grid-template-columns:1fr}}
+/* about */
+.photos{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;margin-top:40px;align-items:start}
+.ph{margin:0}
+.biz{list-style:none;margin:32px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--ink)}
+.biz a{display:block;padding:16px 18px 16px 0;border-bottom:1px solid var(--rule);text-decoration:none;color:var(--ink);min-height:44px}
+.biz b{display:block;font-family:var(--display);font-size:20px;font-weight:600;color:var(--accent)}
+.biz span{display:block;font-size:15.5px;color:var(--muted);margin-top:4px}
+.biz a:hover b{text-decoration:underline}
+@media (max-width:640px){.biz{grid-template-columns:1fr}}
+.ph img{display:block;width:100%;height:auto;border-radius:4px;background:var(--av-bg)}
+.ph figcaption{font-size:15px;color:var(--muted);margin-top:10px}
+@media (max-width:900px){.photos{grid-template-columns:1fr 1fr 1fr}.ph-wide{grid-column:1/-1}}
+@media (max-width:480px){.photos{grid-template-columns:1fr}}
+/* roster */
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0;margin-top:36px;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.agent{padding:14px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--panel)}
+.agent{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:center}
+.av{width:56px;height:56px;border-radius:50%;background:var(--av-bg);color:var(--accent);display:grid;place-items:center}
+.av svg{width:44px;height:44px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.av svg *{transform-box:view-box}
+.av .hl{stroke:var(--brass)}
+.av .fb{fill:var(--brass);stroke:none}
+.av .bg{fill:var(--av-bg)}
+.agent:hover .av{background:var(--av-bg-hover)}
+@media (prefers-reduced-motion:no-preference){
+  .a-sway{transform-origin:20px 20px;animation:sway 3.2s ease-in-out infinite}
+  .a-ring{transform-origin:20px 10px;animation:ring 2.6s ease-in-out infinite}
+  .a-draw{stroke-dasharray:1;animation:draw 3s ease-in-out infinite}
+  .a-bar{transform-origin:0 31px;animation:bar 2.4s ease-in-out infinite}
+  .a-bar.d2{animation-delay:.3s}.a-bar.d3{animation-delay:.6s}
+  .a-bob{animation:bob 2.8s ease-in-out infinite}
+  .a-swing{transform-origin:15px 15px;animation:swing 3s ease-in-out infinite}
+  .a-blink{animation:blink 1.1s steps(1,end) infinite}
+  .a-write{animation:write 3s ease-in-out infinite}
+  .a-scan{animation:scan 4s ease-in-out infinite}
+  .a-drop{animation:drop 3s ease-in-out infinite}
+  .a-flip{transform-origin:20px 20px;animation:flip 3.4s ease-in-out infinite}
+  .a-spin{transform-origin:20px 20px;animation:spin 3s linear infinite}
+  .a-spin-slow{transform-origin:20px 20px;animation:spin 36s linear infinite}
+  .a-right{animation:right 2s ease-in-out infinite alternate}
+  .a-left{animation:right 2s ease-in-out infinite alternate-reverse}
+  .a-flash{animation:flash 2.2s ease-out infinite}
+  .a-twinkle{transform-origin:20px 20px;animation:twinkle 2.6s ease-in-out infinite}
+  .a-flame{transform-origin:20px 29px;animation:flame .35s ease-in-out infinite alternate}
+  .a-rise{animation:rise 4s ease-in-out infinite alternate}
+  .a-bump{animation:bump .6s ease-in-out infinite alternate}
+  .a-road{stroke-dasharray:4 4;animation:road .5s linear infinite}
+  .a-hop{animation:hop 3s steps(1,end) infinite}
+}
+@keyframes sway{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
+@keyframes ring{0%,55%,100%{transform:rotate(0)}10%{transform:rotate(16deg)}20%{transform:rotate(-14deg)}30%{transform:rotate(9deg)}40%{transform:rotate(-5deg)}}
+@keyframes draw{0%{stroke-dashoffset:1}45%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}
+@keyframes bar{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1)}}
+@keyframes bob{0%,100%{transform:translateY(1.5px)}50%{transform:translateY(-1.5px)}}
+@keyframes swing{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(10deg)}}
+@keyframes blink{0%{opacity:1}50%{opacity:0}}
+@keyframes write{0%{transform:translate(-12px,4px)}50%{transform:translate(0,0)}100%{transform:translate(-12px,4px)}}
+@keyframes scan{0%,100%{transform:translate(0,0)}25%{transform:translate(5px,1px)}50%{transform:translate(4px,5px)}75%{transform:translate(-1px,4px)}}
+@keyframes drop{0%{transform:translateY(-7px);opacity:0}25%{opacity:1}55%,100%{transform:translateY(6px);opacity:1}}
+@keyframes flip{0%,40%,100%{transform:scaleX(1)}70%{transform:scaleX(-1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes right{from{transform:translateX(-2px)}to{transform:translateX(3px)}}
+@keyframes flash{0%,70%{opacity:.25}75%{opacity:1}100%{opacity:.25}}
+@keyframes twinkle{0%,100%{transform:scale(.86) rotate(0)}50%{transform:scale(1.08) rotate(12deg)}}
+@keyframes flame{from{transform:scaleY(.6)}to{transform:scaleY(1.25)}}
+@keyframes rise{from{transform:translateY(7px)}to{transform:translateY(0)}}
+@keyframes bump{from{transform:translateY(0)}to{transform:translateY(-1px)}}
+@keyframes road{to{stroke-dashoffset:-8}}
+@keyframes hop{0%{transform:translate(0,-5px)}33%{transform:translate(6.5px,-5px)}66%{transform:translate(13px,-5px)}}
+.agent b{font-family:var(--display);font-size:19px;font-weight:600}
+.agent span{display:block;font-size:15.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+
+/* loop */
+.loop{list-style:none;margin:36px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:0;counter-reset:s}
+.loop li{counter-increment:s;padding:18px 18px 18px 0;border-top:2px solid var(--ink)}
+.loop li::before{content:"Step " counter(s);display:block;font:700 13px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--brass);margin-bottom:10px}
+.loop b{display:block;font-family:var(--display);font-size:22px;margin-bottom:6px}
+.loop span{font-size:16.5px;color:var(--muted)}
+
+/* contact */
+.contact{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+.contact h2{font-size:clamp(34px,5vw,60px)}
+.mail{background:var(--panel);border:1px solid var(--rule);padding:24px;display:flex;flex-direction:column;gap:12px}
+.mail code{font:500 18px/1.3 var(--mono);user-select:all;word-break:break-all}
+.mail button{align-self:flex-start;font:600 14px/1 var(--body);background:var(--ink);color:var(--paper);border:0;padding:15px 16px;border-radius:2px;cursor:pointer}
+footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+@media (max-width:900px){
+  .receipts{grid-template-columns:1fr}
+  .features{grid-template-columns:1fr}
+  .hero,.sec-head,.contact{grid-template-columns:1fr}
+  .tiers{grid-template-columns:1fr}
+  .tier{border-right:0;border-bottom:1px solid var(--rule)}
+  .tier:last-child{border-bottom:0}
+  .stats,.stats.three{grid-template-columns:repeat(2,1fr)}
+  .chart{padding:16px}
+  .loop{grid-template-columns:1fr 1fr}
+}
+@media (max-width:480px){
+  .stats,.stats.three,.loop{grid-template-columns:1fr}
+  .receipt{grid-template-columns:1fr;gap:6px}
+  .feature{padding:24px}
+  section{padding-block:56px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .log .row{animation:in .5s ease both}
+  .log .row:nth-child(3){animation-delay:.1s}.log .row:nth-child(4){animation-delay:.2s}
+  .log .row:nth-child(5){animation-delay:.3s}.log .row:nth-child(6){animation-delay:.4s}
+  .log .row:nth-child(7){animation-delay:.5s}
+  @keyframes in{from{opacity:.25;transform:translateY(3px)}to{opacity:1;transform:none}}
+}
+/* 2026-10-15 simplified page */
+.hero.solo{grid-template-columns:1fr}
+.hero.solo .lede{max-width:40em}
+.courses.three{grid-template-columns:repeat(3,1fr)}
+.loop.three{grid-template-columns:repeat(3,1fr)}
+.bio.film{margin-top:40px}
+@media (max-width:900px){.courses.three{grid-template-columns:1fr}}
+@media (max-width:640px){.loop.three{grid-template-columns:1fr}}
+.nav a.cta-sm.quiz{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.btn.big{font-size:19px;padding:20px 30px}
+.aff-band{border:2px solid var(--accent);padding:28px;margin-top:8px}
+.price-then{margin:6px 0 0;font:600 15px/1.35 var(--body);color:var(--ink)}
+.jr-ph{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;text-align:center;border:2px dashed var(--rule);color:var(--muted);font:600 15px/1.4 var(--body);padding:16px}
+.owners{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px}
+@media (max-width:720px){.owners{grid-template-columns:1fr}}
+.courses.two{grid-template-columns:repeat(2,1fr)}
+@media (max-width:720px){.courses.two{grid-template-columns:1fr}}
+@media (max-width:640px){.nav a.home{display:inline-block}}
+.jr-ph{max-width:260px}
+.nav a.home{display:inline-block !important}
+.mark{font-size:clamp(28px,3.6vw,40px) !important;line-height:1.05}
+.brandline{font-family:var(--display);font-weight:700;font-size:clamp(52px,10vw,120px);line-height:.95;letter-spacing:-.01em;margin:8px 0 22px;color:var(--ink)}
+.brandline span{color:var(--accent)}
+.brandline small{display:block;font:600 clamp(16px,2vw,22px)/1.3 var(--body);letter-spacing:0;color:var(--muted);margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a class="mark" href="./" style="text-decoration:none;color:inherit">Grow With <span>AI</span></a>
+    <nav class="nav" aria-label="Sections">
+      <a class="home" href="./">Home</a>
+      <a href="#packages">Packages</a>
+      <a href="#about">About</a>
+      <a class="cta-sm quiz" href="start/">Find where to start</a>
+      <a class="cta-sm" href="affiliates/">Get paid to share</a>
+    </nav>
+  </header>
+
+  <p class="brandline">Grow With <span>AI</span><small>We set you up with AI. Then every month you get a new AI agent that does part of your work for you.</small></p>
+
+  <figure class="bio">
+    <div class="vw wide">
+      <video controls muted playsinline preload="metadata" poster="media/chris-ward-bio-poster.jpg" width="1920" height="1080" aria-label="Chris Ward, founder of Grow With AI, in a 19-second introduction">
+        <source src="media/chris-ward-bio.mp4" type="video/mp4">
+        <source src="media/chris-ward-bio.webm" type="video/webm">
+        <track kind="captions" src="media/chris-ward-bio.vtt" srclang="en" label="English">
+        <a href="media/chris-ward-bio.mp4">Watch Chris Ward's 19-second introduction</a>.
+      </video>
+      <button class="snd" type="button" hidden>Play with sound</button>
+    </div>
+    <div class="vw tall">
+      <video controls muted playsinline preload="none" poster="media/chris-ward-bio-phone-poster.jpg" width="1080" height="1920" aria-label="Chris Ward, founder of Grow With AI, in a 19-second introduction">
+        <source src="media/chris-ward-bio-phone.mp4" type="video/mp4">
+        <source src="media/chris-ward-bio-phone.webm" type="video/webm">
+        <track kind="captions" src="media/chris-ward-bio.vtt" srclang="en" label="English">
+        <a href="media/chris-ward-bio-phone.mp4">Watch Chris Ward's 19-second introduction</a>.
+      </video>
+      <button class="snd" type="button" hidden>Play with sound</button>
+    </div>
+    <figcaption>AI-generated video of Chris Ward. The script is his own, and he approved the video.</figcaption>
+  </figure>
+
+  <div class="hero solo">
+    <div>
+      <p class="eyebrow">AI for business owners</p>
+      <h1><em>More freedom</em> for business owners, with AI doing the busywork.</h1>
+      <p class="lede">If you've been curious about AI but don't know where to start, that's where we come in. We set you up, then every month you get a new, tested AI agent with plain-English setup that does part of your work for you, so the repetitive work comes off your plate and your time goes to the work you actually want to do.</p>
+      <div class="btns">
+        <a class="btn primary big" href="start/">Not sure where to start? Answer a few questions</a>
+        <a class="btn ghost big" href="packages/">See the packages</a>
+      </div>
+    </div>
+  </div>
+
+  <section id="packages">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Grow With AI Packages &middot; opening soon</p>
+        <h2>We set you up. Then a new AI agent does more of your work each month.</h2>
+      </div>
+      <p>Your first month is your start-up month. After that you pay a lower monthly rate to keep access to our agents and get a new one every month. Cancel anytime.</p>
+    </div>
+    <div class="courses two">
+      <article class="course">
+        <p class="who-for">Start with one</p>
+        <h3>Pro</h3>
+        <p class="price">$49.99<small>start-up month</small></p>
+        <p class="price-then">then $29.99 a month to keep access to our agents</p>
+        <p class="course-who">Start-up month with step-by-step setup, then 1 new bot every month, plus your own referral link.</p>
+        <a class="btn primary course-cta" href="packages/#join">Join the waitlist<span class="sr"> for Pro</span></a>
+      </article>
+      <article class="course">
+        <p class="who-for">Want more working for you</p>
+        <h3>Business</h3>
+        <p class="price">$99<small>start-up month</small></p>
+        <p class="price-then">then $49.99 a month</p>
+        <p class="course-who">Start-up month with step-by-step setup, then 2 new bots every month and early access to new bots, plus your own referral link.</p>
+        <a class="btn ghost course-cta" href="packages/#join">Join the waitlist<span class="sr"> for Business</span></a>
+      </article>
+    </div>
+    <p class="note"><a href="packages/">See the packages in full</a>. Nothing is charged while packages are on the waitlist. You need your own AI account, paid separately.</p>
+  </section>
+
+  <section id="earn">
+    <div class="aff-band">
+      <p class="eyebrow">Affiliates</p>
+      <h2>Refer 3 members and your membership is free.</h2>
+      <p class="lede">Share your own link. When 3 people you refer become members, you stop paying for yours. And you still earn 35% of every membership you refer. You get both.</p>
+      <div class="btns"><a class="btn primary big" href="affiliates/">See how affiliates get paid</a></div>
+    </div>
+  </section>
+
+  <section id="freedom">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">What it gives you back</p>
+        <h2>We run our own company on it first.</h2>
+      </div>
+      <p>Z-Clear, our anti-fog company in Ogden, Utah, runs on AI helpers every day. Here is what two of them give back.</p>
+    </div>
+
+    <div class="features">
+    <div class="feature">
+      <div class="big">$2,000<small>/ month</small></div>
+      <div>
+        <p>saved on hotel rooms and rental cars. One AI helper shops every event trip and re-checks bookings before free cancellation runs out.</p>
+        <div class="src">Z-Clear event travel · monthly average</div>
+      </div>
+    </div>
+    <div class="feature ink">
+      <div class="big">1 hr<small>→ minutes</small></div>
+      <div>
+        <p>for the owner's inbox every morning. An AI helper reads it first and flags what needs a person. That is about seven hours back every week.</p>
+        <div class="src">Owner's morning inbox · before vs after</div>
+      </div>
+    </div>
+    </div>
+
+    <figure class="bio film">
+      <div class="vw wide" data-caps>
+        <video controls muted playsinline preload="none" poster="media/agent-hq-poster.jpg" width="1280" height="720" aria-label="A one-minute tour of the Z-Clear agent fleet: 38 agents in seven divisions, plus 20+ more built by JR">
+          <source src="media/agent-hq.mp4" type="video/mp4">
+          <source src="media/agent-hq.webm" type="video/webm">
+          <track kind="captions" src="media/agent-hq.vtt" srclang="en" label="English">
+          <a href="media/agent-hq.mp4">Watch the one-minute tour of the Z-Clear agent fleet</a>.
+        </video>
+        <button class="snd" type="button" hidden>Play with sound</button>
+      </div>
+      <div class="vw tall" data-caps>
+        <video controls muted playsinline preload="none" poster="media/agent-hq-phone-poster.jpg" width="720" height="1280" aria-label="A one-minute tour of the Z-Clear agent fleet: 38 agents in seven divisions, plus 20+ more built by JR">
+          <source src="media/agent-hq-phone.mp4" type="video/mp4">
+          <source src="media/agent-hq-phone.webm" type="video/webm">
+          <track kind="captions" src="media/agent-hq.vtt" srclang="en" label="English">
+          <a href="media/agent-hq-phone.mp4">Watch the one-minute tour of the Z-Clear agent fleet</a>.
+        </video>
+        <button class="snd" type="button" hidden>Play with sound</button>
+      </div>
+      <figcaption>The fleet Chris built at Z-Clear: 38 agents in seven divisions, drawn from the fleet's own records on October 20, 2026. JR has built more than 20 others, not shown in the chart. The voice is AI-generated.</figcaption>
+    </figure>
+  </section>
+
+  <section id="how">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">How it works</p>
+        <h2>Simple, and you stay in charge.</h2>
+      </div>
+      <p>No jargon and no big project to start. We begin with the one job you most want off your plate.</p>
+    </div>
+    <ol class="loop three">
+      <li><b>Tell us</b><span>Answer a few quick questions about what takes up your week.</span></li>
+      <li><b>Set up</b><span>Follow plain-English steps to set up your AI helpers, a new one every month in your package.</span></li>
+      <li><b>You approve</b><span>Anything that spends money or can't be undone waits for your yes, and you can see everything they did.</span></li>
+    </ol>
+  </section>
+
+  <section id="about">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Who you work with</p>
+        <h2>Hi, we're Chris Ward and JR.</h2>
+      </div>
+      <p>Grow With AI is owned and run by Chris Ward and JR.</p>
+    </div>
+    <div class="owners">
+      <div>
+        <h3>Chris Ward, co-owner</h3>
+        <p>I'm a father of four and I've spent more than a decade building businesses. Today I own Z-Clear Anti-Fog in Ogden, Utah, the GoodLife Nailz salon, the GoodLife Gemz crystal shop and a snow removal business, and I work on AI full time, for my own companies and for clients. Everything we offer, we run first in my own businesses.</p>
+      </div>
+      <div>
+        <h3>JR, co-owner</h3>
+        <div class="jr-ph" role="img" aria-label="Photo of JR coming soon">Photo of JR coming soon</div>
+        <p class="note">JR's story is coming soon.</p>
+      </div>
+    </div>
+    <ul class="biz" aria-label="Chris Ward's businesses">
+      <li><a href="https://z-clear.com/" rel="noopener"><b>Z-Clear Anti-Fog</b><span>Anti-fog and lens care, made in Ogden</span></a></li>
+      <li><a href="https://goodlifenailz.com/" rel="noopener"><b>GoodLife Nailz</b><span>Nail salon in North Ogden</span></a></li>
+      <li><a href="https://goodlifegemz.com/" rel="noopener"><b>GoodLife Gemz</b><span>Crystal shop in North Ogden</span></a></li>
+    </ul>
+    <div class="photos">
+      <figure class="ph ph-wide">
+        <img src="images/chris-harbor-sunset.jpg" width="1400" height="1050" loading="lazy" alt="Chris Ward and family in sun hats on a harbor wall at sunset.">
+      </figure>
+      <figure class="ph">
+        <img src="images/ward-family-snow.jpg" width="731" height="1024" loading="lazy" alt="Chris Ward with his family, standing in the snow among pine trees.">
+      </figure>
+      <figure class="ph">
+        <img src="images/chris-walmart-open-call.jpg" width="1050" height="1400" loading="lazy" alt="Chris Ward holding an &quot;I got a deal&quot; card in front of the Walmart Open Call backdrop.">
+        <figcaption>At Walmart Open Call, holding the &ldquo;I got a deal&rdquo; card.</figcaption>
+      </figure>
+      <figure class="ph">
+        <img src="images/chris-garden.jpg" width="1050" height="1400" loading="lazy" alt="Chris Ward and family standing together in a garden under green trees.">
+      </figure>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="contact">
+      <div>
+        <p class="eyebrow">Get started</p>
+        <h2>What would you do with more time?</h2>
+        <p class="lede">Answer a few quick questions and we'll point you to the right package.</p>
+        <div class="btns" style="margin-top:20px"><a class="btn primary big" href="start/">Find where to start</a><a class="btn ghost big" href="affiliates/">Get paid to share</a></div>
+      </div>
+      <div class="mail">
+        <span class="eyebrow">Email us</span>
+        <code id="addr">hello@wardconsulting.ai</code>
+        <button id="copy" type="button">Copy address</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Grow With AI</span>
+    <span><a href="./">Home</a> &middot; <a href="packages/">Packages</a> &middot; <a href="start/">Find where to start</a> &middot; <a href="security/">Security &amp; your data</a> &middot; <a href="affiliates/">Become an affiliate</a></span>
+    <span>Ogden, Utah</span>
+  </footer>
+</div>
+<script>
+document.getElementById('copy').addEventListener('click', function () {
+  var b = this, a = document.getElementById('addr');
+  var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy address'; }, 1600); };
+  var select = function () { var r = document.createRange(); r.selectNodeContents(a); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected, press Ctrl+C'; };
+  if (navigator.clipboard) { navigator.clipboard.writeText(a.textContent).then(done, select); } else { select(); }
+});
+// Videos start muted when half of one is on screen: browsers only allow autoplay without sound.
+// "Play with sound" restarts it from the beginning with sound. Nothing autoplays for visitors who
+// ask their system for reduced motion, and a video someone paused stays paused.
+(function () {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.bio .vw').forEach(function (w) {
+    var v = w.querySelector('video'), b = w.querySelector('.snd'), caps = w.hasAttribute('data-caps');
+    var stopped = false, ours = false;
+    var showCaps = function (on) { for (var i = 0; i < v.textTracks.length; i++) v.textTracks[i].mode = on ? 'showing' : 'hidden'; };
+    v.muted = true; b.hidden = false;
+    if (caps) showCaps(true);
+    b.addEventListener('click', function () { v.muted = false; v.currentTime = 0; v.play(); });
+    v.addEventListener('volumechange', function () { if (!v.muted) { b.hidden = true; if (caps) showCaps(false); } });
+    v.addEventListener('pause', function () { if (!ours && !v.ended) stopped = true; ours = false; });
+    if (reduce || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.intersectionRatio >= 0.5) { if (v.paused && !v.ended && !stopped && v.offsetParent) v.play().catch(function () {}); }
+        else if (!v.paused && v.muted) { ours = true; v.pause(); }
+      });
+    }, { threshold: [0, 0.5] }).observe(v);
+  });
+})();
+</script>
+<script src="affiliates/ref.js" defer></script>
+</body>
+</html>

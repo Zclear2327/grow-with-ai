@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Start With AI</title>
+<meta name="description" content="A few quick questions, then we show you where to start with AI, whatever you want it to do for you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Tokens lifted from wardconsulting.ai/index.html so this page is the same object as the site. */
+:root{
+  --paper:#F2F3F0; --panel:#FFFFFF; --ink:#16201D; --muted:#56615C; --rule:#D5DAD5;
+  --accent:#2F6B5A; --accent-ink:#FFFFFF; --brass:#9A6F22;
+  --inset:#E3ECE7; --inset-rule:#C3D7CD; --warn-bg:#FBF4E4;
+  --display:"Lexend",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --wrap:44rem;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1614; --panel:#16201D; --ink:#E8EDE9; --muted:#9BAAA2; --rule:#2B3A34;
+    --accent:#6FC0A5; --accent-ink:#0F1614; --brass:#D9AE5A;
+    --inset:#15241F; --inset-rule:#2F4A40; --warn-bg:#221C0E;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1614; --panel:#16201D; --ink:#E8EDE9; --muted:#9BAAA2; --rule:#2B3A34;
+  --accent:#6FC0A5; --accent-ink:#0F1614; --brass:#D9AE5A;
+  --inset:#15241F; --inset-rule:#2F4A40; --warn-bg:#221C0E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 16px}
+header.bar{border-bottom:1px solid var(--rule);background:var(--panel)}
+header.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding-top:14px;padding-bottom:14px}
+.brand{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:.01em}
+.brand span{color:var(--accent) !important;font-weight:700 !important}
+.brand span{color:var(--muted);font-weight:400}
+button{font:inherit;cursor:pointer}
+.ghost{background:none;border:1px solid var(--rule);color:var(--muted);border-radius:999px;
+  padding:6px 12px;font-size:.8rem;font-family:var(--display)}
+.ghost:hover{border-color:var(--accent);color:var(--accent)}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+main{padding:28px 0 80px}
+.steps{display:flex;gap:6px;align-items:center;margin:0 0 6px;padding:0;list-style:none}
+.steps li{height:4px;flex:1;background:var(--rule);border-radius:2px}
+.steps li[data-on="1"]{background:var(--accent)}
+.stepname{font-family:var(--display);font-size:.78rem;color:var(--muted);
+  letter-spacing:.04em;text-transform:uppercase;margin:0 0 26px}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,4.2vw,2rem);
+  line-height:1.2;margin:0 0 10px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:34px 0 10px;text-wrap:balance}
+h3{font-family:var(--display);font-weight:600;font-size:.95rem;margin:0 0 4px}
+p{margin:0 0 14px;max-width:62ch}
+.help{color:var(--muted);font-size:.95rem;margin:-2px 0 18px}
+.opts{display:flex;flex-direction:column;gap:10px;margin:22px 0 0;padding:0;list-style:none}
+.opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;
+  background:var(--panel);border:1px solid var(--rule);border-radius:10px;
+  padding:14px 16px;color:var(--ink);transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--accent)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--inset);
+  box-shadow:inset 3px 0 0 var(--accent)}
+.opt .tick{flex:0 0 1.15rem;height:1.15rem;margin-top:.15rem;border:1px solid var(--rule);
+  border-radius:4px;display:grid;place-items:center;font-size:.8rem;color:var(--accent-ink)}
+.opt[aria-pressed="true"] .tick{background:var(--accent);border-color:var(--accent)}
+.opt .lab{flex:1}
+input[type=text],input[type=email],input[type=url],textarea{
+  width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--rule);
+  border-radius:10px;padding:12px 14px;font-family:var(--body);font-size:1rem}
+textarea{min-height:5.5rem;resize:vertical}
+label.fl{display:block;font-family:var(--display);font-size:.85rem;color:var(--muted);margin:0 0 6px}
+.nav{display:flex;gap:10px;align-items:center;margin:28px 0 0;flex-wrap:wrap}
+.go{background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent);
+  border-radius:999px;padding:11px 22px;font-family:var(--display);font-weight:600;font-size:.95rem}
+.go[disabled]{opacity:.42;cursor:not-allowed}
+.back{background:none;border:none;color:var(--muted);text-decoration:underline;padding:11px 2px;font-size:.9rem}
+.backtop{display:inline-flex;align-items:center;gap:6px;background:var(--panel);color:var(--ink);border:1px solid var(--ink);border-radius:999px;padding:9px 18px;margin:0 0 18px;font-family:var(--display);font-weight:600;font-size:.9rem;cursor:pointer}
+.backtop:hover{border-color:var(--accent);color:var(--accent)}
+.mirror{border-left:3px solid var(--accent);background:var(--inset);
+  padding:16px 18px;border-radius:0 10px 10px 0;margin:0 0 22px}
+.mirror p{margin:0;font-size:1.06rem}
+.mirror .tag{display:block;font-family:var(--display);font-size:.7rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:18px 20px;margin:0 0 14px}
+.tierline{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.price{font-family:var(--mono);font-size:1.5rem;font-weight:500;color:var(--accent)}
+.rows{list-style:none;margin:10px 0 0;padding:0}
+.rows li{display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--rule)}
+.rows li:first-child{border-top:none}
+.num{font-family:var(--mono);color:var(--muted);flex:0 0 1.6rem;font-size:.9rem}
+.because{color:var(--muted);font-size:.9rem;margin:3px 0 0}
+.chip{display:inline-block;font-family:var(--display);font-size:.68rem;letter-spacing:.05em;
+  text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--inset-rule);
+  background:var(--inset);color:var(--accent);margin-left:6px;vertical-align:1px}
+.chip.est{background:var(--warn-bg);border-color:var(--brass);color:var(--brass)}
+.money{font-family:var(--mono);font-size:.95rem}
+table.q{width:100%;border-collapse:collapse;font-size:.95rem;margin:8px 0 0}
+table.q th,table.q td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--rule)}
+table.q th{font-family:var(--display);font-size:.78rem;letter-spacing:.03em;
+  text-transform:uppercase;color:var(--muted);font-weight:500}
+table.q td.n{font-family:var(--mono);text-align:right;white-space:nowrap}
+.scroller{overflow-x:auto}
+.note{border:1px solid var(--rule);border-left:3px solid var(--brass);background:var(--warn-bg);
+  border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;font-size:.95rem}
+.note strong{font-family:var(--display)}
+.gaps{list-style:none;margin:8px 0 0;padding:0;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.gaps li{padding:4px 0}
+footer{border-top:1px solid var(--rule);color:var(--muted);font-size:.84rem;padding:22px 0 40px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:no-preference){
+  .screen{animation:in .18s ease-out}
+  @keyframes in{from{opacity:.35;transform:translateY(4px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+<a class="sr" href="#q">Skip to the questions</a>
+<header class="bar"><div class="wrap">
+  <div class="brand"><a href="../" style="color:inherit;text-decoration:none">Grow With <span>AI</span></a> <a href="../" style="font-size:15px;margin-left:12px">Home</a></div>
+  <button class="ghost" id="theme" type="button" aria-live="polite">Dark</button>
+</div></header>
+<main><div class="wrap">
+  <ul class="steps" id="steps" aria-hidden="true"></ul>
+  <p class="stepname" id="stepname">&nbsp;</p>
+  <div id="q" class="screen"></div>
+</div></main>
+<footer><div class="wrap">
+  <p id="foot">Nothing here promises a result. Your answers stay in this browser until you choose to send them.</p>
+</div></footer>
+<script id="DATA" type="application/json">{"sections":["About you","Your AI today","What you'd hand over","Getting started","Your result"],"questions":[{"id":"about_curious","sec":0,"type":"yno","text":"I'm curious and want to see what AI can do for me."},{"id":"about_start","sec":0,"type":"yno","text":"I want to start something and don't know where to begin."},{"id":"about_curve","sec":0,"type":"yno","text":"I know AI is coming and I want to stay ahead of the curve."},{"id":"about_job","sec":0,"type":"yno","text":"I want to use AI properly in the job I already have."},{"id":"about_business","sec":0,"type":"yno","text":"I run a business and I want to see what AI can do for it."},{"id":"ai_pays","sec":1,"type":"single","text":"Do you pay for any AI subscriptions today?","options":[{"v":"yes","label":"Yes, at least one"},{"v":"no","label":"No, nothing paid"}]},{"id":"ai_tools","sec":1,"type":"multi","only_if":{"ai_pays":"yes"},"text":"Which ones? Pick all that apply.","options":[{"v":"chatgpt","label":"ChatGPT"},{"v":"claude","label":"Claude"},{"v":"gemini","label":"Gemini"},{"v":"copilot","label":"Microsoft Copilot"},{"v":"grok","label":"Grok"},{"v":"other","label":"Other","other":true}]},{"id":"ai_use","sec":1,"type":"single","text":"How often do you use AI now?","options":[{"v":"never","label":"Never yet"},{"v":"sometimes","label":"Sometimes"},{"v":"most_days","label":"Most days"}]},{"id":"handover","sec":2,"type":"multi","max_pick":3,"text":"What would you love AI to handle first? Pick up to 3.","options":[{"v":"email","label":"My email"},{"v":"quotes","label":"Quotes and invoices"},{"v":"scheduling","label":"Scheduling and bookings"},{"v":"travel","label":"Travel planning"},{"v":"tracking","label":"Tracking things (stocks, prices)"},{"v":"health","label":"Health and fitness (like calories)"},{"v":"other","label":"Other","other":true}]},{"id":"screen_time","sec":2,"type":"single","text":"How much of your day is repetitive screen time?","options":[{"v":"little","label":"A little"},{"v":"lot","label":"A lot"},{"v":"most","label":"Most of it"}]},{"id":"start_when","sec":3,"type":"single","text":"When would you like to start?","options":[{"v":"this_week","label":"This week"},{"v":"this_month","label":"This month"},{"v":"looking","label":"Just looking"}]},{"id":"affiliate","sec":3,"type":"single","text":"Want to earn your membership back? Become an affiliate.","help":"Refer 3 members and your membership is free, plus 35% of every membership you refer.","options":[{"v":"yes","label":"Yes, sign me up"},{"v":"no","label":"Not right now"}]}]}</script>
+<script src="../affiliates/ref.js"></script>
+<script>
+(function(){
+"use strict";
+var D=JSON.parse(document.getElementById("DATA").textContent);
+var CFG={"form_endpoint":"https://formsubmit.co/ajax/7fbd7e6f9b9178360b909504bd877f07","min_seconds_before_send":10};
+var Q={}; D.questions.forEach(function(q){Q[q.id]=q;});
+var KEY="wc-intake-v2";
+var A={}, step=0;
+var START=Date.now();
+
+try{var t=localStorage.getItem("wc-intake-v1-theme"); if(t)document.documentElement.dataset.theme=t;}catch(e){}
+function isDark(){ var d=document.documentElement.dataset.theme;
+  return d==="dark" || (!d && matchMedia("(prefers-color-scheme:dark)").matches); }
+function paintTheme(){ document.getElementById("theme").textContent = isDark()?"Light":"Dark"; }
+document.getElementById("theme").onclick=function(){
+  document.documentElement.dataset.theme = isDark()?"light":"dark";
+  try{localStorage.setItem("wc-intake-v1-theme",document.documentElement.dataset.theme);}catch(e){}
+  paintTheme();
+};
+paintTheme();
+
+function save(){ try{localStorage.setItem(KEY,JSON.stringify({A:A,step:step}));}catch(e){} }
+function restore(){ try{var r=JSON.parse(localStorage.getItem(KEY)||"null");
+  if(r&&r.A&&Object.keys(r.A).length){A=r.A;step=r.step||0;} }catch(e){} }
+
+function shown(q){
+  if(!q.only_if) return true;
+  for(var k in q.only_if) if(A[k]!==q.only_if[k]) return false;
+  return true;
+}
+function plan(){
+  var s=[{k:"intro"}];
+  D.questions.forEach(function(q){ if(shown(q)) s.push({k:"ask",id:q.id}); });
+  s.push({k:"result"});
+  return s;
+}
+function sectionOf(st){
+  if(st.k==="intro") return 0;
+  if(st.k==="result") return D.sections.length-1;
+  return Q[st.id].sec;
+}
+function el(tag,attrs,txt){ var n=document.createElement(tag);
+  if(attrs) for(var k in attrs) n.setAttribute(k,attrs[k]);
+  if(txt!=null) n.textContent=txt; return n; }
+function labelOf(qid,v){ var o=(Q[qid].options||[]).filter(function(x){return x.v===v;})[0]; return o?o.label:v; }
+
+function render(){
+  var P=plan(); if(step>=P.length) step=P.length-1; if(step<0) step=0;
+  var st=P[step], host=document.getElementById("q");
+  host.innerHTML=""; host.className="screen";
+  var sIdx=sectionOf(st), ul=document.getElementById("steps"); ul.innerHTML="";
+  D.sections.forEach(function(_,i){ ul.appendChild(el("li",{"data-on":i<=sIdx?"1":"0"})); });
+  document.getElementById("stepname").textContent=
+    "Section "+(sIdx+1)+" of "+D.sections.length+" · "+D.sections[sIdx];
+  if(step>0){ var bt=el("button",{class:"backtop",type:"button","aria-label":"Go back to the previous question"},"\u2190 Back"); bt.onclick=back; host.appendChild(bt); }
+  if(st.k==="intro") return intro(host);
+  if(st.k==="result") return result(host);
+  return ask(host,Q[st.id]);
+}
+function next(){ step++; save(); render(); window.scrollTo(0,0); }
+function back(){ step--; save(); render(); window.scrollTo(0,0); }
+function navRow(host,onNext,enabled,label){
+  var nav=el("div",{class:"nav"}), b=null;
+  if(onNext){ b=el("button",{class:"go",type:"button"},label||"Continue");
+    if(!enabled) b.disabled=true; b.onclick=onNext; nav.appendChild(b); }
+  host.appendChild(nav); return b;
+}
+function optButton(label,on){
+  var b=el("button",{class:"opt",type:"button","aria-pressed":on?"true":"false"});
+  b.appendChild(el("span",{class:"tick","aria-hidden":"true"},on?"✓":""));
+  b.appendChild(el("span",{class:"lab"},label));
+  return b;
+}
+function setPressed(b,on){ b.setAttribute("aria-pressed",on?"true":"false"); b.firstChild.textContent=on?"✓":""; }
+function otherBox(host,id,val){
+  var lab=el("label",{class:"fl",for:"f",style:"margin-top:16px"},"Tell us in a few words");
+  var inp=el("input",{id:"f",type:"text",maxlength:"120"}); inp.value=val||"";
+  host.appendChild(lab); host.appendChild(inp);
+  setTimeout(function(){ inp.focus(); },40);
+  return inp;
+}
+
+function intro(host){
+  host.appendChild(el("h1",null,"Let's see where AI fits for you"));
+  host.appendChild(el("p",null,"A few quick taps. About two minutes. Then we show you where to start."));
+  host.appendChild(el("p",null,"It doesn't matter what you want AI to do for you: your email, your travel, watching stocks, counting calories, or your whole business. Everyone starts in the same place."));
+  var n=el("div",{class:"note"});
+  n.appendChild(el("strong",null,"What this is not. "));
+  n.appendChild(document.createTextNode("We do not promise results, revenue, savings or hours. Your answers stay in this browser until you decide to send them."));
+  host.appendChild(n);
+  var resumed=Object.keys(A).length>0;
+  navRow(host,next,true,resumed?"Pick up where you left off":"Start");
+}
+
+function ask(host,q){
+  if(!q){ next(); return; }
+  host.appendChild(el("h1",null,q.text));
+  if(q.help) host.appendChild(el("p",{class:"help"},q.help));
+  var ul=el("ul",{class:"opts"});
+  host.appendChild(ul);
+
+  if(q.type==="yno"){
+    var inp=null, go=null;
+    [["yes","Yes"],["no","No"],["other","Other"]].forEach(function(p){
+      var li=el("li"), b=optButton(p[1],A[q.id]===p[0]);
+      b.onclick=function(){
+        if(p[0]!=="other"){ A[q.id]=p[0]; delete A[q.id+"_other"]; save(); next(); return; }
+        A[q.id]="other"; save();
+        Array.prototype.forEach.call(ul.querySelectorAll(".opt"),function(x){ setPressed(x,x===b); });
+        if(!inp){ inp=otherBox(holder,q.id,A[q.id+"_other"]);
+          inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); go.click(); } }); }
+        go.disabled=false;
+      };
+      li.appendChild(b); ul.appendChild(li);
+    });
+    var holder=el("div"); host.appendChild(holder);
+    if(A[q.id]==="other"){ inp=otherBox(holder,q.id,A[q.id+"_other"]); }
+    go=navRow(host,function(){
+      var v=inp?inp.value.trim():""; if(v) A[q.id+"_other"]=v; else delete A[q.id+"_other"]; save(); next();
+    },A[q.id]==="other","Continue");
+    go.style.display=A[q.id]==="other"?"":"none";
+    var show=function(){ go.style.display=""; };
+    Array.prototype.forEach.call(ul.querySelectorAll(".opt"),function(x,i){ if(i===2) x.addEventListener("click",show); });
+    return;
+  }
+
+  if(q.type==="single"){
+    q.options.forEach(function(o){
+      var li=el("li"), b=optButton(o.label,A[q.id]===o.v);
+      b.onclick=function(){
+        A[q.id]=o.v;
+        if(q.id==="ai_pays"&&o.v!=="yes"){ delete A.ai_tools; delete A.ai_tools_other; }
+        save(); next();
+      };
+      li.appendChild(b); ul.appendChild(li);
+    });
+    navRow(host,null);
+    return;
+  }
+
+  if(q.type==="multi"){
+    var picked=(A[q.id]||[]).slice(), otherInp=null, box=el("div"), go2;
+    var ready=function(){
+      if(!picked.length) return false;
+      if(picked.indexOf("other")>=0 && picked.length===1 && !(otherInp&&otherInp.value.trim())) return false;
+      return true;
+    };
+    q.options.forEach(function(o){
+      var li=el("li"), b=optButton(o.label,picked.indexOf(o.v)>=0);
+      b.onclick=function(){
+        var i=picked.indexOf(o.v);
+        if(i>=0) picked.splice(i,1);
+        else { if(q.max_pick&&picked.length>=q.max_pick) return; picked.push(o.v); }
+        setPressed(b,picked.indexOf(o.v)>=0);
+        if(o.other){
+          if(picked.indexOf(o.v)>=0){ if(!otherInp){ otherInp=otherBox(box,q.id,A[q.id+"_other"]);
+              otherInp.addEventListener("input",function(){ go2.disabled=!ready(); }); } }
+          else { box.innerHTML=""; otherInp=null; }
+        }
+        go2.disabled=!ready();
+      };
+      li.appendChild(b); ul.appendChild(li);
+    });
+    host.appendChild(box);
+    if(picked.indexOf("other")>=0){ otherInp=otherBox(box,q.id,A[q.id+"_other"]);
+      otherInp.addEventListener("input",function(){ go2.disabled=!ready(); }); }
+    if(q.max_pick) host.insertBefore(el("p",{class:"help"},"Pick up to "+q.max_pick+"."),ul);
+    go2=navRow(host,function(){
+      A[q.id]=picked;
+      var v=otherInp?otherInp.value.trim():"";
+      if(picked.indexOf("other")>=0&&v) A[q.id+"_other"]=v; else delete A[q.id+"_other"];
+      save(); next();
+    },ready());
+    return;
+  }
+  next();
+}
+
+function aboutYes(){
+  return D.questions.filter(function(q){return q.type==="yno"&&A[q.id]==="yes";}).map(function(q){return q.text;});
+}
+function aboutOther(){
+  return D.questions.filter(function(q){return q.type==="yno"&&A[q.id]==="other"&&A[q.id+"_other"];})
+    .map(function(q){return A[q.id+"_other"];});
+}
+function listOf(qid){
+  var L=(A[qid]||[]).filter(function(v){return v!=="other";}).map(function(v){return labelOf(qid,v);});
+  if(A[qid+"_other"]) L.push(A[qid+"_other"]);
+  return L;
+}
+function aiSubs(){
+  if(A.ai_pays==="no") return "None paid";
+  if(A.ai_pays!=="yes") return "";
+  var L=listOf("ai_tools"); return L.length?L.join(", "):"Pays for AI, tools not listed";
+}
+function refCode(){ return (window.wcRef&&window.wcRef.code)||""; }
+function summaryText(){
+  var L=["GROW WITH AI - QUESTIONNAIRE ANSWERS",""];
+  var y=aboutYes(), o=aboutOther();
+  L.push("Said yes to:"); (y.length?y:["(none)"]).forEach(function(s){L.push("- "+s);});
+  if(o.length){ L.push("In their own words:"); o.forEach(function(s){L.push("- "+s);}); }
+  L.push("");
+  L.push("AI subscriptions: "+(aiSubs()||"not answered"));
+  L.push("Uses AI: "+(A.ai_use?labelOf("ai_use",A.ai_use):"not answered"));
+  L.push("Wants AI to handle first: "+(listOf("handover").join(", ")||"not answered"));
+  L.push("Repetitive screen time: "+(A.screen_time?labelOf("screen_time",A.screen_time):"not answered"));
+  L.push("Wants to start: "+(A.start_when?labelOf("start_when",A.start_when):"not answered"));
+  L.push("Affiliate interest: "+(A.affiliate?labelOf("affiliate",A.affiliate):"not answered"));
+  if(refCode()) L.push("Referred by: "+refCode());
+  return L.join("\n");
+}
+function mailto(subject,body){
+  return "mailto:"+["hello","wardconsulting.ai"].join("@")+"?subject="+encodeURIComponent(subject)+
+    "&body="+encodeURIComponent(body.slice(0,1500));
+}
+
+function result(host){
+  host.appendChild(el("h1",null,"Here's where you start"));
+  var hand=listOf("handover"), subs=A.ai_pays==="yes"?listOf("ai_tools"):[];
+  var m=el("div",{class:"mirror"});
+  m.appendChild(el("span",{class:"tag"},"what you told us"));
+  var said=hand.length?("You'd love AI to handle "+hand.map(function(s){return s.replace(/^My /,"your ").replace(/^[A-Z][a-z]/,function(m){return m.toLowerCase();});}).join(", ")+" first."):"You want to see what AI can do for you.";
+  m.appendChild(el("p",null,said));
+  host.appendChild(m);
+
+  var c=el("div",{class:"card"});
+  c.appendChild(el("h3",null,"Our recommendation"));
+  var tl=el("div",{class:"tierline"});
+  tl.appendChild(el("strong",{class:"price"},"$49.99"));
+  tl.appendChild(el("span",{style:"font-family:var(--display);font-weight:600"},"Pro: start-up month, then $29.99 a month"));
+  c.appendChild(tl);
+  c.appendChild(el("p",{class:"because"}, subs.length
+    ? "We get you started with the AI you already pay for ("+subs.join(", ")+"), so you build on what you have instead of buying something new."
+    : "We help you pick one AI and get it working for you, step by step."));
+  var buy=el("a",{class:"go",style:"display:inline-block;text-decoration:none;margin-top:10px",
+    href:"../packages/#join"},"See the packages");
+  c.appendChild(buy);
+  host.appendChild(c);
+
+  if(A.affiliate==="yes"){
+    var a=el("div",{class:"card"});
+    a.appendChild(el("h3",null,"Affiliate program"));
+    a.appendChild(el("p",{class:"because"},"Refer 3 members and your membership is free, plus 35% of every membership you refer. Read how it works, then apply."));
+    a.appendChild(el("a",{class:"back",href:"../affiliates/",style:"padding-left:0"},"See the affiliate program"));
+    host.appendChild(a);
+  }
+
+  host.appendChild(el("h2",null,"Send us your answers"));
+  host.appendChild(el("p",null,"Put your email in and we'll send you the next steps. Nothing has left your browser yet."));
+  var f=el("form",{novalidate:"novalidate"});
+  var lab=el("label",{class:"fl",for:"em"},"Your email");
+  var em=el("input",{id:"em",type:"email",autocomplete:"email",required:"required"}); em.value=A.email||"";
+  var hp=el("input",{type:"text",name:"_honey",tabindex:"-1","aria-hidden":"true",autocomplete:"off",
+    style:"position:absolute;left:-9999px;width:1px;height:1px;opacity:0"});
+  var cons=el("label",{class:"opt",style:"margin-top:12px"});
+  var cb=el("input",{type:"checkbox",id:"cons"});
+  cons.appendChild(cb);
+  cons.appendChild(el("span",{class:"lab"},"Email me my next steps. You may also contact me about them."));
+  var msg=el("p",{class:"help",role:"status","aria-live":"polite"},"");
+  var send=el("button",{class:"go",type:"submit",style:"margin-top:18px"},"Send my answers");
+  [lab,em,hp,cons,send,msg].forEach(function(n){f.appendChild(n);});
+  host.appendChild(f);
+  host.appendChild(el("p",{class:"help"},"We do not sell or share your address. Ask us to delete it any time and we will."));
+
+  f.onsubmit=function(ev){
+    ev.preventDefault();
+    var v=(em.value||"").trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){ msg.textContent="That email does not look right — check it and try again."; em.focus(); return; }
+    if(!cb.checked){ msg.textContent="Tick the box so we are allowed to email you."; cb.focus(); return; }
+    if(hp.value){ msg.textContent="Sent."; return; }
+    if((Date.now()-START)/1000<CFG.min_seconds_before_send){ msg.textContent="Sent."; return; }
+    A.email=v; save();
+    send.disabled=true; msg.textContent="Sending…";
+    var body=new FormData();
+    body.append("email",v);
+    body.append("_subject","Questionnaire answers ("+v+")");
+    body.append("_template","table");
+    body.append("_honey","");
+    body.append("said_yes_to",aboutYes().join("; "));
+    body.append("in_their_words",aboutOther().join("; "));
+    body.append("ai_subscriptions",aiSubs());
+    body.append("ai_use",A.ai_use?labelOf("ai_use",A.ai_use):"");
+    body.append("handover",listOf("handover").join(", "));
+    body.append("screen_time",A.screen_time?labelOf("screen_time",A.screen_time):"");
+    body.append("start_when",A.start_when?labelOf("start_when",A.start_when):"");
+    body.append("affiliate_interest",A.affiliate?labelOf("affiliate",A.affiliate):"");
+    body.append("referred_by",refCode());
+    body.append("summary",summaryText());
+    body.append("payload_json",JSON.stringify({answers:A,ref:refCode()},null,1));
+    fetch(CFG.form_endpoint,{method:"POST",body:body,headers:{Accept:"application/json"}})
+      .then(function(res){ if(!res.ok) throw new Error("status "+res.status); return res.json().catch(function(){return {};}); })
+      .then(function(j){
+        if(j&&(j.success===false||j.success==="false")) throw new Error(j.message||"not accepted");
+        msg.textContent="Sent. We have your answers and will email you your next steps.";
+      })
+      .catch(function(e){
+        send.disabled=false;
+        msg.textContent="That did not go through ("+e.message+"). Nothing is lost — use the email link below instead.";
+        if(!host.querySelector("[data-fallback]")){
+          var fb=el("a",{class:"back","data-fallback":"1",href:mailto("Questionnaire answers",summaryText())},"Open an email with my answers");
+          host.appendChild(fb);
+        }
+      });
+  };
+
+  var nav=el("div",{class:"nav"});
+  var rs=el("button",{class:"back",type:"button"},"Start over");
+  rs.onclick=function(){ if(!confirm("Clear your answers and start again?")) return;
+    try{localStorage.removeItem(KEY);}catch(e){} A={}; step=0; render(); };
+  nav.appendChild(rs);
+  host.appendChild(nav);
+}
+
+restore();
+render();
+})();
+</script>
+</body>
+</html>

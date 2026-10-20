@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /downloads/
+Allow: /
+
+Sitemap: https://zclear2327.github.io/grow-with-ai/sitemap.xml
