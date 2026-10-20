@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Start with Claude, one step at a time | Grow With AI</title>
+<meta name="description" content="Get Claude working for you, one simple step at a time.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://zclear2327.github.io/grow-with-ai/train/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../affiliates/aff.css">
+<style>
+.train{max-width:640px;margin:0 auto;padding-bottom:64px}
+.bar{display:flex;align-items:center;gap:12px;margin:8px 0 20px;font-size:15px;color:var(--muted)}
+.bar .track{flex:1;height:8px;background:var(--rule);border-radius:4px;overflow:hidden}
+.bar .fill{height:100%;background:var(--accent);width:0;transition:width .25s}
+@media (prefers-reduced-motion:reduce){.bar .fill{transition:none}}
+.part{font:700 13px/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--brass);margin:0 0 6px}
+.train h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,38px);line-height:1.15;margin:0 0 14px}
+.train h1:focus{outline:none}
+.train h1:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.do{font-size:21px;line-height:1.45;margin:0 0 16px}
+.how{font-size:18px;line-height:1.5;margin:0 0 16px;padding-left:22px}
+.how li{margin-bottom:6px}
+.video{border:2px dashed var(--rule);border-radius:6px;padding:18px;margin:0 0 18px;color:var(--muted);font-size:16px;text-align:center}
+.video video{width:100%;border-radius:4px;display:block}
+.done-when{background:var(--panel);border-left:4px solid var(--good);padding:12px 16px;margin:0 0 18px;font-size:17px}
+.tip{font-size:16px;color:var(--muted);margin:0 0 18px}
+.say{background:var(--panel);border:1px solid var(--rule);padding:16px;margin:0 0 18px}
+.say p{margin:0 0 10px;font-size:17px;white-space:pre-wrap}
+.say button{font:600 16px/1 var(--body);padding:12px 16px;min-height:44px;border:1px solid var(--accent);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer}
+.go-link{display:block;margin:0 0 18px;font:700 18px/1.2 var(--body);color:var(--ink);text-decoration:none;text-align:center;border:2px solid var(--accent);padding:16px;border-radius:2px;min-height:56px}
+.actions{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.actions .btn{width:100%;text-align:center;min-height:56px;font-size:19px}
+.actions .row{display:flex;gap:12px}
+.actions .row .btn{flex:1;font-size:16px;min-height:48px}
+.help{margin-top:28px;border-top:1px solid var(--rule);padding-top:18px}
+.help p{margin:0 0 10px;font-size:16px}
+.help .btns .btn{min-height:48px}
+.btn:focus-visible,.say button:focus-visible,.go-link:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+[hidden]{display:none !important}
+.check{list-style:none;padding:0;margin:0 0 18px}
+.check li{font-size:18px;padding:8px 0;border-bottom:1px solid var(--rule)}
+.check li::before{content:"\2713  ";color:var(--good);font-weight:700}
+.preview{background:var(--panel);border:1px solid var(--brass);padding:10px 14px;font-size:15px;margin:0 0 18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="../">Grow With <span>AI</span></a>
+    <nav class="nav" aria-label="Pages">
+      <a class="home" href="../">Home</a>
+    </nav>
+  </header>
+
+  <main class="train" id="main">
+    <p class="preview">Preview for Chris and JR. Not linked from the site yet.</p>
+    <div class="bar" aria-hidden="true"><div class="track"><div class="fill" id="fill"></div></div><span id="count"></span></div>
+    <p class="part" id="part"></p>
+    <h1 id="title" tabindex="-1"></h1>
+    <p class="do" id="do"></p>
+    <ul class="how" id="how"></ul>
+    <div class="say" id="say" hidden>
+      <p id="sayText"></p>
+      <button type="button" id="copyBtn">Copy this</button>
+      <span id="copyMsg" role="status" aria-live="polite"></span>
+    </div>
+    <a class="go-link" id="link" target="_blank" rel="noopener" hidden></a>
+    <div class="video" id="video"></div>
+    <p class="done-when" id="doneWhen"></p>
+    <p class="tip" id="tip" hidden></p>
+
+    <div class="actions">
+      <button class="btn primary" type="button" id="next">I did it. Next step</button>
+      <div class="row">
+        <button class="btn ghost" type="button" id="back">Back</button>
+        <button class="btn ghost" type="button" id="skip">Skip this one</button>
+      </div>
+    </div>
+
+    <section class="help" aria-labelledby="helpH">
+      <p id="helpH"><b>Stuck?</b> A real person will help you.</p>
+      <div class="btns" id="helpBtns"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  // Human help. TODO: Chris to supply the number for the Text me / Call me buttons.
+  // While HELP_PHONE is empty, the help button opens an email instead, so it always works.
+  var HELP_PHONE = "";
+  var HELP_EMAIL = "hello@wardconsulting.ai";
+
+  // Each step is ONE thing to do. Wording follows wardconsulting-ai/training/start-with-claude.html
+  // (product facts there were checked on Anthropic's pages on 9 October 2026).
+  // video: path to a one-minute video for the step, or "" until it exists.
+  var STEPS = [
+    { part: "Get started", title: "Talk instead of type",
+      do: "You never have to type here. On your phone keyboard, tap the microphone button and just say what you want. That works in every step below.",
+      done: "You've found the microphone button on your phone keyboard.", video: "" },
+
+    { part: "Make your account", title: "Open Claude",
+      do: "Tap the button below. It opens Claude's website in a new tab.",
+      link: { href: "https://claude.ai", label: "Open claude.ai" },
+      done: "You can see Claude's sign-in page.", video: "" },
+    { part: "Make your account", title: "Sign in",
+      do: "Tap Continue with Google if you use Google. If not, type your email address and tap Continue with email.",
+      done: "Claude says it is sending you an email, or you are already signed in.", video: "",
+      tip: "There is no Claude password. If anyone ever asks you for a Claude password, don't give them anything." },
+    { part: "Make your account", title: "Open the email from Claude",
+      do: "Skip this if you used Google. Otherwise open your email and tap the sign-in link Claude sent you.",
+      done: "Claude opens and shows you the next sign-up screen.", video: "" },
+    { part: "Make your account", title: "Finish signing up",
+      do: "Answer the last few sign-up screens. If it asks to check your phone number, do it.",
+      done: "You see an empty message box, ready for you.", video: "" },
+
+    { part: "Get the phone app", title: "Install the Claude app",
+      do: "On your phone, open the App Store (iPhone) or Google Play (Android). Search for Claude by Anthropic and install it.",
+      how: ["Check that the maker shown is Anthropic before you install."],
+      done: "The Claude app is on your phone.", video: "" },
+    { part: "Get the phone app", title: "Sign in on the app",
+      do: "Open the Claude app and sign in the same way you just did.",
+      done: "You see the same empty message box in the app.", video: "" },
+
+    { part: "Your first conversation", title: "Say hello to Claude",
+      do: "Tap the message box, then tap the microphone and say this, or copy it and paste it in. Then send it.",
+      say: "I own a small business and I've never used an AI assistant before. Ask me five questions about my business, one at a time, and then suggest three tasks from my week that you could help with.",
+      done: "Claude asks you its first question.", video: "" },
+    { part: "Your first conversation", title: "Answer its questions",
+      do: "Answer each question the way you would answer a text message. Short is fine.",
+      done: "Claude gives you three tasks it could help with.", video: "" },
+    { part: "Your first conversation", title: "Ask for a change",
+      do: "Pick one of its answers and ask it to change, for example:",
+      say: "Make that shorter.",
+      done: "Claude rewrites its answer the way you asked.", video: "",
+      tip: "When you switch to a different topic, start a new chat. A long chat about many things gets muddled." },
+
+    { part: "Ask well", title: "Give it the details",
+      do: "Claude can't see your business, so tell it. The best requests say four things:",
+      how: ["Who you are and who this is for.", "What a good answer looks like, and how long.", "An example, if you have one.", "\"Before you start, ask me anything you need to know.\""],
+      done: "You've read the four things. Next you'll try them.", video: "" },
+    { part: "Ask well", title: "Try it on a real job",
+      do: "Copy this, change the words in [brackets] to your own, and send it.",
+      say: "I run [what your business does]. A customer owes us for last month and has paid late before. Write a friendly but clear email, under 120 words, asking for payment by [day]. Before you write it, ask me anything you need to know.",
+      done: "You have an email draft you could actually use.", video: "" },
+
+    { part: "Photos and files", title: "Ask about a photo",
+      do: "In the Claude app, tap the + next to the message box and take a photo of a receipt or a note. Then send this:",
+      say: "Type out what's on this as a simple list.",
+      done: "Claude lists what's in your photo.", video: "",
+      tip: "Button names can look a little different between app versions." },
+
+    { part: "Make it remember you", title: "Tell Claude about you, once",
+      do: "Tap your initials, then Settings. Find Instructions for Claude, paste this in, fill in the [brackets], and save.",
+      say: "I own a small business: [one sentence on what you sell and who buys it]. Write in plain, warm language. Keep answers short unless I ask for detail. When you don't know a fact, say so instead of guessing.",
+      done: "Your instructions are saved.", video: "",
+      tip: "This applies to every chat from now on, so you don't have to repeat yourself." },
+
+    { part: "Use it this week", title: "Answer a customer email",
+      do: "Copy this, fill in the [brackets], paste in a real customer email at the end, and send.",
+      say: "I run a small business: [what you do]. Below is an email from a customer. Write a friendly reply under 150 words that answers every question they asked. If you need a fact you don't have, like a date or price, leave a blank like [DATE] instead of guessing.\n\nThe customer's email:\n[paste it here]",
+      done: "You have a reply you'd be happy to send after reading it once.", video: "" },
+    { part: "Use it this week", title: "Plan your week",
+      do: "Copy this, fill in the [brackets], and send.",
+      say: "Help me plan next week. Things I need to get done: [list]. Fixed appointments: [list with day and time]. My working hours: [hours]. My most important goal this week: [one sentence]. Make a simple day-by-day table and list anything that won't fit.",
+      done: "You have a plan for next week.", video: "" },
+
+    { part: "Stay safe", title: "Check its work",
+      do: "Claude is useful but sometimes wrong. After any important answer, ask:",
+      say: "Which parts of that answer are you least sure about?",
+      done: "Claude tells you what to double-check.", video: "",
+      tip: "Before anything goes to a customer, a bank or the government, read it yourself in full." },
+    { part: "Stay safe", title: "Never paste these",
+      do: "Never put these into Claude, or any chat tool:",
+      how: ["Passwords, PINs or codes from text messages.", "Card numbers, bank account numbers or Social Security numbers.", "Anything someone told you in confidence."],
+      done: "You know what never goes into a chat.", video: "",
+      tip: "Replace names and numbers with \"Customer A\" or \"[ACCOUNT]\". Claude can still help." },
+
+    { part: "You're set up", title: "Stay on the free plan for now",
+      do: "Everything you just did works on Claude's free plan. Only upgrade when you keep hitting a limit that costs you time.",
+      link: { href: "https://claude.com/pricing", label: "See Claude's plans" },
+      done: "You're on the free plan, and you know where to look if you need more.", video: "" }
+  ];
+
+  var KEY = "gwa_train_step";
+  function load() { try { var v = parseInt(localStorage.getItem(KEY), 10); return isNaN(v) ? 0 : v; } catch (e) { return 0; } }
+  function save(i) { try { localStorage.setItem(KEY, String(i)); } catch (e) {} }
+
+  var i = Math.min(Math.max(load(), 0), STEPS.length);
+  var $ = function (id) { return document.getElementById(id); };
+
+  function helpButtons(label) {
+    var box = $("helpBtns"); box.innerHTML = "";
+    var subject = "Help with Grow With AI training: " + label;
+    function add(text, href, primary) {
+      var a = document.createElement("a"); a.className = "btn " + (primary ? "primary" : "ghost"); a.href = href; a.textContent = text; box.appendChild(a);
+    }
+    if (HELP_PHONE) {
+      add("Text me", "sms:" + HELP_PHONE + "?&body=" + encodeURIComponent("I'm stuck on: " + label), true);
+      add("Call me", "tel:" + HELP_PHONE, false);
+    } else {
+      add("Email for help", "mailto:" + HELP_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent("I'm stuck on: " + label + "\n\nWhat I see on my screen:\n"), true);
+    }
+  }
+
+  function render(focus) {
+    var total = STEPS.length;
+    $("fill").style.width = (Math.min(i, total) / total * 100) + "%";
+    var finished = i >= total;
+    ["part", "do", "video", "doneWhen", "back", "skip"].forEach(function (id) { $(id).hidden = false; });
+    $("how").innerHTML = ""; $("how").hidden = true; $("say").hidden = true; $("link").hidden = true; $("tip").hidden = true; $("copyMsg").textContent = "";
+
+    if (finished) {
+      $("count").textContent = "All done";
+      $("part").textContent = "Finished";
+      $("title").textContent = "You did it.";
+      $("do").textContent = "Claude is set up on your phone, it knows about your business, and you've used it on real work. Here's what you can do now:";
+      var list = ["Talk to Claude by voice instead of typing", "Ask for changes until it's right", "Ask about a photo or a file", "Answer a customer email", "Plan your week", "Check its work, and keep private details out"];
+      var ul = $("how"); ul.className = "check"; ul.hidden = false;
+      list.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      $("video").hidden = true; $("doneWhen").hidden = true; $("skip").hidden = true;
+      $("next").textContent = "Start again from step 1";
+      helpButtons("finished the training");
+    } else {
+      var s = STEPS[i];
+      $("how").className = "how";
+      $("count").textContent = "Step " + (i + 1) + " of " + total;
+      $("part").textContent = s.part;
+      $("title").textContent = s.title;
+      $("do").textContent = s.do;
+      if (s.how) { s.how.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; $("how").appendChild(li); }); $("how").hidden = false; }
+      if (s.say) { $("sayText").textContent = s.say; $("say").hidden = false; }
+      if (s.link) { $("link").href = s.link.href; $("link").textContent = s.link.label + " (opens a new tab)"; $("link").hidden = false; }
+      if (s.tip) { $("tip").textContent = s.tip; $("tip").hidden = false; }
+      var v = $("video"); v.innerHTML = "";
+      if (s.video) {
+        var el = document.createElement("video"); el.controls = true; el.preload = "metadata"; el.src = s.video; el.setAttribute("playsinline", ""); v.appendChild(el);
+      } else {
+        v.textContent = "One-minute video for this step: coming soon.";
+      }
+      $("doneWhen").textContent = "You're done when: " + s.done;
+      $("next").textContent = i === total - 1 ? "I did it. Finish" : "I did it. Next step";
+      $("back").hidden = i === 0;
+      helpButtons("step " + (i + 1) + ", " + s.title);
+    }
+    if (focus) { $("title").focus(); window.scrollTo(0, 0); }
+  }
+
+  $("next").addEventListener("click", function () { i = i >= STEPS.length ? 0 : i + 1; save(i); render(true); });
+  $("skip").addEventListener("click", function () { i = Math.min(i + 1, STEPS.length); save(i); render(true); });
+  $("back").addEventListener("click", function () { i = Math.max(i - 1, 0); save(i); render(true); });
+  $("copyBtn").addEventListener("click", function () {
+    var t = $("sayText").textContent, msg = $("copyMsg");
+    function ok() { msg.textContent = " Copied. Now paste it into Claude."; }
+    function fail() { msg.textContent = " Press and hold the text above to copy it."; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, fail); else fail();
+  });
+  render(false);
+})();
+</script>
+</body>
+</html>
