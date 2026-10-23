@@ -19,7 +19,10 @@
  * CHECKOUT: paste each package's ThriveCart checkout link here. While BOTH are empty the packages
  * page shows the waitlist and nothing can be bought. Once both are filled in, every element marked
  * class="wl-only" hides, every element marked class="live-only" shows, and each [data-checkout]
- * button points at its checkout link with the visitor's remembered ?ref= code added, so ThriveCart
+ * button points at its checkout link with the visitor's remembered code put where ThriveCart reads it.
+ * ThriveCart does NOT read ?ref=: an affiliate link is https://AFFILIATEID--wardconsultingai.thrivecart.com/...
+ * (checked in the account 2026-10-23), so the code becomes that prefix. Codes that are not plain letters and
+ * digits are left off rather than risk a broken address, so ThriveCart
  * credits the affiliate.
  */
 (function () {
@@ -92,7 +95,7 @@
     for (var j = 0; j < btns.length; j++) {
       var url = CHECKOUT[btns[j].getAttribute("data-checkout")];
       if (!url) continue;
-      if (code) url += (url.indexOf("?") === -1 ? "?" : "&") + "ref=" + encodeURIComponent(code);
+      if (code && /^[A-Za-z0-9]+$/.test(code)) url = url.replace(/^https:\/\/([a-z0-9-]+\.thrivecart\.com\/)/i, "https://" + code.toLowerCase() + "--$1");
       btns[j].setAttribute("href", url);
     }
   }
