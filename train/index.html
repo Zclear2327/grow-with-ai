@@ -99,6 +99,11 @@
   // (product facts there were checked on Anthropic's pages on 9 October 2026).
   // video: path to a one-minute video for the step, or "" until it exists.
   var STEPS = [
+    { part: "Get started", title: "Put Claude on your computer",
+      do: "Watch this short video, then do the same on your computer. Only using your phone? Tap Skip this one.",
+      link: { href: "https://claude.com/download", label: "Open claude.com/download" },
+      done: "Claude is open on your computer and you're signed in.",
+      video: { mp4: "../media/train/claude-download.mp4", webm: "../media/train/claude-download.webm", poster: "../media/train/claude-download-poster.jpg", vtt: "../media/train/claude-download.vtt" } },
     { part: "Get started", title: "Talk instead of type",
       do: "You never have to type here. On your phone keyboard, tap the microphone button and just say what you want. That works in every step below.",
       done: "You've found the microphone button on your phone keyboard.", video: "" },
@@ -238,7 +243,14 @@
       if (s.tip) { $("tip").textContent = s.tip; $("tip").hidden = false; }
       var v = $("video"); v.innerHTML = "";
       if (s.video) {
-        var el = document.createElement("video"); el.controls = true; el.preload = "metadata"; el.src = s.video; el.setAttribute("playsinline", ""); v.appendChild(el);
+        var el = document.createElement("video"); el.controls = true; el.preload = "metadata"; el.setAttribute("playsinline", "");
+        el.setAttribute("aria-label", "Video: " + s.title);
+        if (typeof s.video === "string") { el.src = s.video; } else {
+          if (s.video.poster) el.poster = s.video.poster;
+          [["webm", "video/webm"], ["mp4", "video/mp4"]].forEach(function (f) { if (s.video[f[0]]) { var so = document.createElement("source"); so.src = s.video[f[0]]; so.type = f[1]; el.appendChild(so); } });
+          if (s.video.vtt) { var tr = document.createElement("track"); tr.kind = "captions"; tr.srclang = "en"; tr.label = "English"; tr.src = s.video.vtt; el.appendChild(tr); }
+        }
+        v.appendChild(el);
       } else {
         v.textContent = "One-minute video for this step: coming soon.";
       }
