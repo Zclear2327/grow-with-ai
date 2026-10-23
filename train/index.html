@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Start with Claude, one step at a time | Grow With AI</title>
-<meta name="description" content="Get Claude working for you, one simple step at a time.">
+<title>Free step-by-step training: start with Claude | Grow With AI</title>
+<meta name="description" content="Free step-by-step training: get Claude working for you, one simple step at a time, with a short video for every step.">
 <link rel="canonical" href="https://zclear2327.github.io/grow-with-ai/train/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,6 +16,7 @@
 .bar .track{flex:1;height:8px;background:var(--rule);border-radius:4px;overflow:hidden}
 .bar .fill{height:100%;background:var(--accent);width:0;transition:width .25s}
 @media (prefers-reduced-motion:reduce){.bar .fill{transition:none}}
+.free-head{font-family:var(--display);font-weight:700;font-size:clamp(20px,4.5vw,24px);color:var(--accent);margin:4px 0 6px}
 .part{font:700 13px/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--brass);margin:0 0 6px}
 .train h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,38px);line-height:1.15;margin:0 0 14px}
 .train h1:focus{outline:none}
@@ -57,6 +58,7 @@
   </header>
 
   <main class="train" id="main">
+    <p class="free-head">Free step-by-step training</p>
     <div class="bar" aria-hidden="true"><div class="track"><div class="fill" id="fill"></div></div><span id="count"></span></div>
     <p class="part" id="part"></p>
     <h1 id="title" tabindex="-1"></h1>
