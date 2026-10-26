@@ -1,0 +1,330 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#F2F3F0}canvas{display:block}</style>
+</head><body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+// Grow With AI start-flow videos (V2-V7, V10): ILLUSTRATED screens beside Chris's HeyGen video.
+// render-start.js sets window.JOB = {v, dur, sents:[{start,end}]} first. Chris's video is laid over the box at
+// PIP by ffmpeg afterwards; this page leaves that box empty. Same rules as the 20 training videos: generic UI,
+// only words the approved script says (or the setup page itself shows), unknown content is grey bars, no logos.
+const W = 1920, H = 1080, cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const C = { paper: '#F2F3F0', panel: '#FFFFFF', ink: '#16201D', muted: '#56615C', rule: '#D5DAD5', accent: '#2F6B5A',
+  brass: '#8A6219', good: '#1F7A4D', bezel: '#1E2622', soft: '#E8F2EE', bar: '#D9DEDA', barDark: '#BFC7C2', hl: '#F3E3BF', chrome: '#EEF1EF' };
+const PIP = { x: 1380, y: 104, w: 500, h: 450 };
+const LEAD = 0.3;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+function font(w, px) { ctx.font = `${w} ${px}px Inter, "DejaVu Sans", sans-serif`; }
+function rr(x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function fillRR(x, y, w, h, r, col) { rr(x, y, w, h, r); ctx.fillStyle = col; ctx.fill(); }
+function strokeRR(x, y, w, h, r, col, lw) { rr(x, y, w, h, r); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.stroke(); }
+function text(s, x, y, w, px, col, al = 'left') { font(w, px); ctx.fillStyle = col; ctx.textAlign = al; ctx.textBaseline = 'middle'; ctx.fillText(s, x, y); }
+function tw(s, w, px) { font(w, px); return ctx.measureText(s).width; }
+function wrap(s, maxW, px, w) { const out = []; let cur = ''; font(w, px);
+  for (const word of String(s).split(' ')) { const t = cur ? cur + ' ' + word : word; if (cur && ctx.measureText(t).width > maxW) { out.push(cur); cur = word; } else cur = t; }
+  if (cur) out.push(cur); return out; }
+function para(s, x, y, maxW, px, w, col, lh, al = 'left') { const L = wrap(s, maxW, px, w); L.forEach((l, i) => text(l, x, y + i * lh, w, px, col, al)); return L.length * lh; }
+function bars(x, y, ws, lh, h = 14, col = C.bar) { ws.forEach((w, k) => fillRR(x, y + k * lh, w, h, h / 2, col)); return ws.length * lh; }
+function typed(s, p) { return s.slice(0, Math.round(s.length * clamp(p))); }
+
+// ---------- glyphs (generic, no brand logos) ----------
+function bubbleGlyph(x, y, s, col = C.accent) { fillRR(x, y, s, s * 0.78, s * 0.26, col); ctx.beginPath(); ctx.moveTo(x + s * 0.22, y + s * 0.7); ctx.lineTo(x + s * 0.18, y + s * 0.98); ctx.lineTo(x + s * 0.5, y + s * 0.74); ctx.fillStyle = col; ctx.fill();
+  for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(x + s * (0.3 + k * 0.2), y + s * 0.39, s * 0.06, 0, 7); ctx.fillStyle = '#fff'; ctx.fill(); } }
+function envelopeGlyph(x, y, w, h, col) { strokeRR(x, y, w, h, 6, col, 4); ctx.beginPath(); ctx.moveTo(x + 4, y + 6); ctx.lineTo(x + w / 2, y + h * 0.58); ctx.lineTo(x + w - 4, y + 6); ctx.strokeStyle = col; ctx.lineWidth = 4; ctx.stroke(); }
+function checkGlyph(x, y, r, col = C.good, a = 1) { ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fillStyle = col; ctx.fill(); ctx.beginPath(); ctx.moveTo(x - r * 0.45, y + r * 0.02); ctx.lineTo(x - r * 0.1, y + r * 0.36); ctx.lineTo(x + r * 0.5, y - r * 0.34); ctx.strokeStyle = '#fff'; ctx.lineWidth = r * 0.22; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(); ctx.lineCap = 'butt'; ctx.globalAlpha = 1; }
+function lockGlyph(x, y, s, col) { ctx.beginPath(); ctx.arc(x + s / 2, y + s * 0.38, s * 0.26, Math.PI, 0); ctx.strokeStyle = col; ctx.lineWidth = s * 0.1; ctx.stroke(); fillRR(x + s * 0.12, y + s * 0.38, s * 0.76, s * 0.56, s * 0.1, col); }
+function storeGlyph(x, y, s, col) { fillRR(x + s * 0.12, y + s * 0.3, s * 0.76, s * 0.64, s * 0.1, col); ctx.beginPath(); ctx.arc(x + s / 2, y + s * 0.32, s * 0.2, Math.PI, 0); ctx.strokeStyle = col; ctx.lineWidth = s * 0.08; ctx.stroke(); }
+function folderGlyph(x, y, s, col) { fillRR(x, y + s * 0.08, s * 0.42, s * 0.2, s * 0.06, col); fillRR(x, y + s * 0.18, s, s * 0.7, s * 0.08, col); }
+function cameraGlyph(x, y, s, col) { fillRR(x, y + s * 0.2, s, s * 0.66, s * 0.12, col); fillRR(x + s * 0.3, y + s * 0.08, s * 0.4, s * 0.2, s * 0.06, col); ctx.beginPath(); ctx.arc(x + s / 2, y + s * 0.53, s * 0.2, 0, 7); ctx.fillStyle = '#fff'; ctx.fill(); }
+function sendGlyph(x, y, r, on) { ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fillStyle = on ? C.accent : C.barDark; ctx.fill(); ctx.beginPath(); ctx.moveTo(x, y - r * 0.5); ctx.lineTo(x, y + r * 0.5); ctx.moveTo(x - r * 0.4, y - r * 0.1); ctx.lineTo(x, y - r * 0.5); ctx.lineTo(x + r * 0.4, y - r * 0.1); ctx.strokeStyle = '#fff'; ctx.lineWidth = r * 0.16; ctx.lineCap = 'round'; ctx.stroke(); ctx.lineCap = 'butt'; }
+function tap(x, y, p) { if (p <= 0) return; const r = 22 + 30 * eo(p); ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.strokeStyle = `rgba(138,98,25,${0.9 * (1 - p)})`; ctx.lineWidth = 6; ctx.stroke(); ctx.beginPath(); ctx.arc(x, y, 14, 0, 7); ctx.fillStyle = `rgba(138,98,25,${0.55 * (1 - p * 0.6)})`; ctx.fill(); }
+function cursor(x, y) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 34); ctx.lineTo(x + 9, y + 26); ctx.lineTo(x + 16, y + 40); ctx.lineTo(x + 22, y + 37); ctx.lineTo(x + 15, y + 23); ctx.lineTo(x + 26, y + 23); ctx.closePath(); ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5; ctx.stroke(); }
+function ring(x, y, w, h, r, a = 1) { ctx.globalAlpha = a; strokeRR(x - 6, y - 6, w + 12, h + 12, r + 6, C.brass, 5); ctx.globalAlpha = 1; }
+function button(label, x, y, w, h, o = {}) { fillRR(x, y, w, h, h / 2, o.ghost ? '#fff' : C.accent); if (o.ghost) strokeRR(x, y, w, h, h / 2, C.rule, 2.5);
+  text(label, x + w / 2, y + h / 2 + 1, 700, o.px || 26, o.ghost ? C.ink : '#fff', 'center'); if (o.ring) ring(x, y, w, h, h / 2, o.ring); return { x: x + w / 2, y: y + h / 2 }; }
+function field(label, x, y, w, o = {}) { if (label) text(label, x, y, 600, o.lpx || 22, C.muted); const fy = y + (label ? 22 : 0); fillRR(x, fy, w, 62, 12, '#fff'); strokeRR(x, fy, w, 62, 12, o.focus ? C.accent : C.rule, o.focus ? 3.5 : 2.5);
+  if (o.dots) { for (let k = 0; k < o.dots; k++) { ctx.beginPath(); ctx.arc(x + 30 + k * 26, fy + 31, 7, 0, 7); ctx.fillStyle = C.ink; ctx.fill(); } }
+  else if (o.bar) fillRR(x + 22, fy + 24, o.bar, 14, 7, C.barDark);
+  else if (o.value != null) text(o.value, x + 22, fy + 32, 500, o.px || 26, C.ink);
+  return fy + 62; }
+function keycap(label, x, y, o = {}) { const w = Math.max(70, tw(label, 700, 30) + 40); fillRR(x, y + 6, w, 70, 12, '#C9D0CC'); fillRR(x, y, w, 70, 12, o.down ? C.soft : '#fff'); strokeRR(x, y, w, 70, 12, o.down ? C.accent : C.barDark, 3); text(label, x + w / 2, y + 36, 700, 30, C.ink, 'center'); return w; }
+
+// ---------- devices ----------
+// PHONE: drawFn(w,h) runs in screen coordinates (0,0 at the screen's top-left)
+const PH = { x: 470, y: 112, w: 440, h: 880 };
+function phone(drawFn) {
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.22)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 12; fillRR(PH.x, PH.y, PH.w, PH.h, 62, C.bezel); ctx.restore();
+  const sx = PH.x + 16, sy = PH.y + 16, sw = PH.w - 32, sh = PH.h - 32;
+  ctx.save(); rr(sx, sy, sw, sh, 48); ctx.clip(); ctx.fillStyle = '#fff'; ctx.fillRect(sx, sy, sw, sh); ctx.translate(sx, sy);
+  drawFn(sw, sh);
+  for (let k = 0; k < 4; k++) fillRR(sw - 96 + k * 8, 30 - k * 3, 5, 8 + k * 3, 1.5, C.ink);
+  strokeRR(sw - 56, 20, 28, 14, 4, C.ink, 2); fillRR(sw - 53, 23, 19, 8, 2, C.ink);
+  ctx.restore(); fillRR(PH.x + PH.w / 2 - 55, PH.y + 26, 110, 26, 13, C.bezel);
+  return { sx, sy };
+}
+// LAPTOP: drawFn(w,h) in screen coordinates
+const LP = { x: 70, y: 120, w: 1240, h: 760 };
+function laptop(drawFn, o = {}) {
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.18)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 10; fillRR(LP.x, LP.y, LP.w, LP.h, 26, C.bezel); ctx.restore();
+  const sx = LP.x + 22, sy = LP.y + 22, sw = LP.w - 44, sh = LP.h - 44;
+  ctx.beginPath(); ctx.moveTo(LP.x - 50, LP.y + LP.h + 34); ctx.lineTo(LP.x + LP.w + 50, LP.y + LP.h + 34); ctx.lineTo(LP.x + LP.w + 10, LP.y + LP.h); ctx.lineTo(LP.x - 10, LP.y + LP.h); ctx.closePath(); ctx.fillStyle = '#AEB6B1'; ctx.fill();
+  fillRR(LP.x + LP.w / 2 - 90, LP.y + LP.h + 4, 180, 12, 6, '#98A19B');
+  ctx.save(); rr(sx, sy, sw, sh, 8); ctx.clip(); ctx.fillStyle = o.bg || '#fff'; ctx.fillRect(sx, sy, sw, sh); ctx.translate(sx, sy);
+  drawFn(sw, sh); ctx.restore();
+  return { sx, sy };
+}
+// a browser window filling the laptop screen. tabs: [label,...], active index. returns content top
+function browser(w, h, url, o = {}) {
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = C.chrome; ctx.fillRect(0, 0, w, 120);
+  for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(28 + k * 26, 28, 8, 0, 7); ctx.fillStyle = '#C9D0CC'; ctx.fill(); }
+  const tabs = o.tabs || [url]; let tx = 110;
+  tabs.forEach((label, k) => { const tw_ = 300, on = k === (o.active == null ? tabs.length - 1 : o.active);
+    fillRR(tx, 10, tw_, 48, 12, on ? '#fff' : '#E2E7E4'); if (o.newTab === k) ring(tx, 10, tw_, 40, 12, o.newTabA == null ? 1 : o.newTabA);
+    text(label, tx + 22, 35, 600, 20, on ? C.ink : C.muted); tx += tw_ + 8; });
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 58, w, 62);
+  fillRR(24, 66, w - 48, 46, 23, C.chrome); lockGlyph(44, 76, 24, C.muted);
+  text(o.typedUrl != null ? o.typedUrl : url, 84, 90, 600, 24, C.ink);
+  ctx.fillStyle = C.rule; ctx.fillRect(0, 120, w, 2);
+  return 122;
+}
+// ---------- shared pieces ----------
+// our own setup page (zclear2327.github.io/grow-with-ai/start/), drawn generically
+function ourPageBody(x, y, w, o = {}) {
+  text('Grow With AI', x, y + 30, 800, o.px ? o.px + 4 : 30, C.ink);
+  text(o.head || 'Your free email helper', x, y + 86, 700, o.px || 28, C.ink);
+  bars(x, y + 120, o.barW || [w * 0.8, w * 0.62], 30, 14);
+  const by = y + 200, bw = Math.min(w, o.bw || 560);
+  const b = button(o.button || 'Copy prompt and open Grok', x, by, bw, 76, { px: o.bpx || 26, ring: o.ring });
+  if (o.or) text(o.or, x + bw / 2, by + 112, 600, 24, C.muted, 'center');
+  return b;
+}
+function greeting() { return "Hi, I'm here. How are you doing?"; }
+// a chat thread inside a box: items [{who:'me'|'ai', text|bars|photo|sorted}]
+function thread(x, y, w, items, px = 24) {
+  let cy = y;
+  items.forEach(m => { const a = m.a == null ? 1 : m.a; if (a <= 0) return; ctx.globalAlpha = a; const me = m.who === 'me', mw = w * (me ? 0.62 : 0.86);
+    let h = 28, L = []; if (m.text) { L = wrap(m.text, mw - 44, px, 500); h += L.length * px * 1.35; } if (m.bars) h += m.bars.length * 30; if (m.photo) h += 150; if (m.sorted) h += 330;
+    const bw = me ? Math.min(mw, Math.max(...L.map(l => tw(l, 500, px)), m.photo ? 220 : 0, ...(m.bars || [0])) + 44) : mw, bx = me ? x + w - bw : x;
+    fillRR(bx, cy, bw, h, 22, me ? C.accent : '#F1F4F2');
+    let yy = cy + 14 + px * 0.6;
+    if (m.photo) { fillRR(bx + 20, cy + 16, 180, 126, 10, '#fff'); bars(bx + 38, cy + 34, [130, 100, 120, 80, 110], 20, 9, C.barDark); yy += 150; }
+    L.forEach((l, i) => text(l, bx + 22, yy + i * px * 1.35, 500, px, me ? '#fff' : C.ink)); yy += L.length * px * 1.35;
+    if (m.bars) { bars(bx + 22, yy - 8, m.bars, 30, 13, me ? 'rgba(255,255,255,.6)' : C.barDark); yy += m.bars.length * 30; }
+    if (m.sorted) { const g = [['Needs you today', 3], ['Can wait', 2], ['Skip', 2]]; let gy = yy - 6;
+      g.forEach(([lab, n], gi) => { const ga = m.sortA ? clamp(m.sortA * 4 - gi) : 1; ctx.globalAlpha = a * ga; text(lab, bx + 22, gy + 4, 700, px, C.ink); bars(bx + 22, gy + 24, Array(n).fill(0).map((_, i) => 300 - i * 50), 22, 11, C.barDark); gy += 30 + n * 22 + 14; });
+      const ga = m.sortA ? clamp(m.sortA * 4 - 3) : 1; ctx.globalAlpha = a * ga; text('Drafts for your top 2 replies', bx + 22, gy + 4, 700, px, C.accent); }
+    ctx.globalAlpha = 1; m.box = { x: bx, y: cy, w: bw, h }; cy += h + 18; });
+  return cy;
+}
+// a message box. content: null | 'bars' ; returns send button position
+function msgBox(x, y, w, o = {}) { const h = o.content ? 150 : 76; fillRR(x, y, w, h, 24, '#fff'); strokeRR(x, y, w, h, 24, o.glow ? C.accent : C.rule, o.glow ? 4 : 2.5);
+  if (o.content === 'bars') bars(x + 26, y + 26, o.barW || [w * 0.7, w * 0.55, w * 0.3], 28, 12, C.barDark);
+  else if (o.placeholder) text(o.placeholder, x + 26, y + h / 2, 500, 22, C.muted);
+  const s = { x: x + w - 42, y: y + h - 38 }; sendGlyph(s.x, s.y, 24, !!o.content); return { send: s, top: y, h }; }
+function appTitle(name, w, y = 70) { bubbleGlyph(w / 2 - tw(name, 700, 30) / 2 - 30, y - 16, 40); text(name, w / 2 + 26, y + 2, 700, 30, C.ink, 'center'); ctx.fillStyle = C.rule; ctx.fillRect(0, y + 44, w, 2); }
+function bigDone(cx, cy, label, a) { if (a <= 0) return; ctx.globalAlpha = a; checkGlyph(cx, cy, 70 * (0.7 + 0.3 * eo(a))); text(label, cx, cy + 124, 800, 46, C.ink, 'center'); ctx.globalAlpha = 1; }
+function note(s, x, y, w, a = 1, rot = -0.03) { if (a <= 0) return; ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(rot); const L = wrap(s, w - 48, 30, 600), h = 46 + L.length * 42;
+  ctx.shadowColor = 'rgba(0,0,0,.15)'; ctx.shadowBlur = 16; fillRR(0, 0, w, h, 6, '#FBF3DC'); ctx.shadowBlur = 0; L.forEach((l, i) => text(l, 24, 44 + i * 42, 600, 30, C.ink)); ctx.restore(); }
+
+// ---------- phone screens ----------
+function pHome(w, h, o = {}) { ctx.fillStyle = C.soft; ctx.fillRect(0, 0, w, h);
+  for (let r = 0; r < 5; r++) for (let c = 0; c < 4; c++) { const x = 30 + c * 92, y = 110 + r * 120; const k = r * 4 + c;
+    if (o.store && k === 5) { fillRR(x, y, 72, 72, 18, C.accent); storeGlyph(x + 16, y + 14, 40, '#fff'); if (o.storeRing) ring(x, y, 72, 72, 18, o.storeRing); }
+    else fillRR(x, y, 72, 72, 18, '#fff'); } }
+function pStore(w, h, o) { // App Store / Google Play, drawn generically
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); storeGlyph(28, 64, 38, C.accent); text('App Store or Google Play', 78, 86, 700, 22, C.ink);
+  fillRR(24, 130, w - 48, 60, 30, C.chrome); text(typed(o.q, o.typeP == null ? 1 : o.typeP), 60, 161, 600, 26, C.ink);
+  if (o.result === 0) return {};
+  const ra = o.result == null ? 1 : o.result; ctx.globalAlpha = ra;
+  const y = 230; fillRR(24, y, 96, 96, 22, C.soft); bubbleGlyph(46, y + 24, 52);
+  text(o.name, 140, y + 30, 800, 32, C.ink); text(o.maker, 140, y + 72, 600, 26, C.muted);
+  if (o.makerRing) ring(134, y + 52, tw(o.maker, 600, 26) + 14, 40, 10, o.makerRing);
+  bars(24, y + 140, [w - 60, w - 120, w - 90], 30, 12);
+  const b = button(o.installed ? 'Open' : 'Install', 24, y + 250, w - 48, 72, { px: 28, ring: o.btnRing });
+  ctx.globalAlpha = 1; return { b };
+}
+function pSignIn(w, h, name, o = {}) {
+  appTitle(name, w); text(o.title || 'Sign in', w / 2, 200, 800, 34, C.ink, 'center');
+  let b1 = button('Sign in', 30, 260, w - 60, 72, { px: 26, ring: o.r1 }), b2 = button('Make a free account', 30, 352, w - 60, 72, { px: 24, ghost: true, ring: o.r2 });
+  if (o.pw) { ctx.globalAlpha = o.pw; const fy = field('Password', 30, 470, w - 60, { dots: Math.round(8 * clamp(o.dots == null ? 1 : o.dots)), focus: true }); lockGlyph(30, fy + 30, 30, C.accent); para('You type your own password.', 74, fy + 46, w - 110, 24, 600, C.ink, 32); ctx.globalAlpha = 1; }
+  return { b1, b2 };
+}
+function pChat(w, h, name, items, o = {}) { appTitle(name, w); thread(24, 140, w - 48, items, 22); const m = msgBox(18, h - (o.content ? 182 : 108), w - 36, o); return m; }
+function pOurPage(w, h, o = {}) { ctx.fillStyle = C.chrome; ctx.fillRect(0, 0, w, 108); fillRR(18, 52, w - 36, 44, 22, '#fff'); text('grow-with-ai/start', w / 2, 75, 600, 20, C.ink, 'center');
+  return ourPageBody(26, 150, w - 52, { px: 24, bpx: 21, bw: w - 52, ring: o.ring, button: o.button, head: o.head }); }
+
+// ---------- laptop screens ----------
+function lSignIn(w, h, url, name, o = {}) { const top = browser(w, h, url, o.b || {}); appTitle(name, w, top + 70);
+  text(o.title || 'Sign in', w / 2, top + 190, 800, 38, C.ink, 'center');
+  const b1 = button(o.b1 || 'Sign in', w / 2 - 260, top + 250, 520, 72, { px: 26, ring: o.r1 });
+  const b2 = button('Make a free account', w / 2 - 260, top + 340, 520, 72, { px: 26, ghost: true, ring: o.r2 });
+  return { b1, b2 }; }
+function lCode(w, h, url, name, o) { const top = browser(w, h, url); appTitle(name, w, top + 70);
+  let y = field('Email', w / 2 - 300, top + 170, 600, { bar: 260 });
+  const a = o.codeA == null ? 1 : o.codeA; ctx.globalAlpha = a;
+  y = field('Code', w / 2 - 300, y + 30, 600, { dots: Math.round(6 * clamp(o.dots == null ? 1 : o.dots)), focus: true });
+  envelopeGlyph(w / 2 - 300, y + 36, 54, 38, C.accent); text('The code comes by email.', w / 2 - 226, y + 56, 600, 28, C.ink);
+  ctx.globalAlpha = 1; }
+function lDownload(w, h, o) { const top = browser(w, h, 'claude.com/download', { typedUrl: o.typed });
+  appTitle('Claude', w, top + 80); text('Download', w / 2, top + 200, 800, 44, C.ink, 'center');
+  const bm = button('Mac', w / 2 - 330, top + 270, 300, 84, { px: 32, ghost: o.pick !== 'Mac', ring: o.pick === 'Mac' ? o.ring : 0 });
+  const bw = button('Windows', w / 2 + 30, top + 270, 300, 84, { px: 32, ghost: o.pick !== 'Windows', ring: o.pick === 'Windows' ? o.ring : 0 });
+  return { Mac: bm, Windows: bw }; }
+// the Claude desktop app window: a sidebar with Projects, and a main area
+function claudeApp(w, h, o = {}) { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = C.chrome; ctx.fillRect(0, 0, 300, h); ctx.fillStyle = C.rule; ctx.fillRect(300, 0, 2, h);
+  bubbleGlyph(28, 30, 38); text('Claude', 80, 50, 700, 28, C.ink);
+  bars(28, 120, [200, 160], 44, 14);
+  fillRR(16, 200, 268, 56, 12, o.projectsOn ? C.soft : C.chrome); folderGlyph(32, 212, 32, o.projectsOn ? C.accent : C.muted); text('Projects', 80, 229, 700, 26, C.ink);
+  if (o.projRing) ring(16, 200, 268, 56, 12, o.projRing);
+  bars(28, 300, [210, 170, 190], 44, 12); return { projects: { x: 150, y: 228 } }; }
+
+// ---------- per-video scenes. Each scene: {label|null, dev, draw(p, t)}; p = progress through the sentence ----------
+const SCENES = {
+V2: { title: 'No email? Make a free Gmail', scenes: [
+  { label: null, draw: p => laptop((w, h) => { browser(w, h, ' '); envelopeGlyph(w / 2 - 110, 260, 220, 150, C.barDark); text('?', w / 2, 500, 800, 90, C.muted, 'center'); }) },
+  { label: null, draw: p => laptop((w, h) => { browser(w, h, ' '); envelopeGlyph(w / 2 - 110, 260, 220, 150, C.accent); checkGlyph(w / 2 + 110, 260, 44, C.good, eo(lin(p, 0, 0.5))); }) },
+  { label: 'A free Gmail, together', draw: p => laptop((w, h) => { browser(w, h, ' '); envelopeGlyph(w / 2 - 110, 220, 220, 150, C.accent); text('Free Gmail', w / 2, 460, 800, 52, C.ink, 'center'); }) },
+  { label: "Open Google's sign-up page", draw: p => laptop((w, h) => { const top = browser(w, h, 'accounts.google.com/signup', { typedUrl: typed('accounts.google.com/signup', lin(p, 0.05, 0.55)) });
+      if (p > 0.6) { ctx.globalAlpha = eo(lin(p, 0.6, 0.8)); text('Sign up', w / 2, top + 120, 800, 44, C.ink, 'center'); bars(w / 2 - 300, top + 190, [600, 520, 560], 34, 14); ctx.globalAlpha = 1; } }) },
+  { label: 'Name, then birthday', draw: p => laptop((w, h) => { const top = browser(w, h, 'accounts.google.com/signup'); text('Sign up', w / 2, top + 70, 800, 40, C.ink, 'center');
+      let y = field('First name', w / 2 - 320, top + 130, 300, { bar: 170 * lin(p, 0.05, 0.3), focus: p < 0.3 }); field('Last name', w / 2 + 20, top + 130, 300, { bar: 190 * lin(p, 0.3, 0.55), focus: p >= 0.3 && p < 0.55 });
+      field('Birthday', w / 2 - 320, y + 34, 640, { bar: 300 * lin(p, 0.6, 0.9), focus: p >= 0.6 }); }) },
+  { label: 'Pick your own Gmail address', draw: p => laptop((w, h) => { const top = browser(w, h, 'accounts.google.com/signup');
+      const opts = [null, null, 'Create your own Gmail address']; opts.forEach((o, k) => { const y = top + 70 + k * 80, on = k === 2 && p > 0.25;
+        ctx.beginPath(); ctx.arc(w / 2 - 300, y + 20, 18, 0, 7); ctx.strokeStyle = on ? C.accent : C.barDark; ctx.lineWidth = 4; ctx.stroke(); if (on) { ctx.beginPath(); ctx.arc(w / 2 - 300, y + 20, 9, 0, 7); ctx.fillStyle = C.accent; ctx.fill(); }
+        if (o) text(o, w / 2 - 264, y + 21, 700, 30, C.ink); else fillRR(w / 2 - 264, y + 13, 300, 16, 8, C.bar); });
+      if (p > 0.2 && p < 0.5) ring(w / 2 - 330, top + 224, 560, 52, 12, 1 - lin(p, 0.4, 0.5));
+      if (p > 0.45) { ctx.globalAlpha = eo(lin(p, 0.45, 0.6)); field(null, w / 2 - 320, top + 330, 640, { value: typed('yourbusinessname', lin(p, 0.5, 0.85)) + '@gmail.com', focus: true }); text('like your business name', w / 2, top + 440, 600, 26, C.muted, 'center'); ctx.globalAlpha = 1; } }) },
+  { label: 'A password you remember', draw: p => { laptop((w, h) => { const top = browser(w, h, 'accounts.google.com/signup'); text('Password', w / 2, top + 80, 800, 40, C.ink, 'center');
+      field(null, w / 2 - 320, top + 140, 640, { dots: Math.round(10 * lin(p, 0.05, 0.4)), focus: true }); lockGlyph(w / 2 - 320, top + 240, 34, C.accent);
+      para('Never on our page.', w / 2 - 270, top + 260, 600, 28, 700, C.ink, 36); });
+      note('Write it down somewhere safe.', 930, 640, 380, eo(lin(p, 0.4, 0.6))); } },
+  { label: "Type the code on Google's page", draw: p => laptop((w, h) => { const top = browser(w, h, 'accounts.google.com/signup'); text('Code', w / 2, top + 80, 800, 40, C.ink, 'center');
+      field(null, w / 2 - 320, top + 140, 640, { dots: Math.round(6 * lin(p, 0.45, 0.8)), focus: true });
+      ctx.globalAlpha = eo(lin(p, 0, 0.3)); fillRR(w / 2 - 320, top + 260, 640, 90, 18, C.soft); bubbleGlyph(w / 2 - 296, top + 282, 44); text('Google may text you a code.', w / 2 - 236, top + 304, 600, 28, C.ink); ctx.globalAlpha = 1;
+      text("Type it on Google's page only.", w / 2, top + 410, 700, 30, C.accent, 'center'); }) },
+  { label: "Click 'I agree'", draw: p => laptop((w, h) => { const top = browser(w, h, p < 0.6 ? 'accounts.google.com/signup' : 'mail.google.com');
+      if (p < 0.6) { bars(w / 2 - 320, top + 60, [640, 600, 640, 520, 600], 34, 14); const b = button('I agree', w / 2 + 60, top + 300, 260, 76, { px: 30 }); tap(b.x, b.y, lin(p, 0.35, 0.6)); }
+      else { ctx.globalAlpha = eo(lin(p, 0.6, 0.75)); envelopeGlyph(w / 2 - 90, top + 90, 180, 124, C.accent); text("You've got email.", w / 2, top + 300, 800, 44, C.ink, 'center'); checkGlyph(w / 2 + 110, top + 90, 36); ctx.globalAlpha = 1; } }) },
+  { label: null, draw: p => laptop((w, h) => { browser(w, h, 'mail.google.com'); bigDone(w / 2, 300, 'Step one done', eo(lin(p, 0, 0.4))); }) },
+]},
+V3: { phone: true, title: 'Grok on your phone', scenes: [
+  { label: null, draw: p => phone((w, h) => pHome(w, h, { store: true })) },
+  { label: 'Search for Grok', draw: p => phone((w, h) => { if (p < 0.3) { pHome(w, h, { store: true, storeRing: 1 }); tap(30 + 92 + 36, 110 + 120 + 36, lin(p, 0.05, 0.3)); } else pStore(w, h, { q: 'Grok', typeP: lin(p, 0.35, 0.65), result: eo(lin(p, 0.7, 0.9)), name: 'Grok', maker: 'xAI' }); }) },
+  { label: "Check it's from xAI, Install", draw: p => phone((w, h) => { const s = pStore(w, h, { q: 'Grok', name: 'Grok', maker: 'xAI', makerRing: p < 0.6 ? 1 : 0, btnRing: p >= 0.6 ? 1 : 0, installed: p > 0.9 }); tap(s.b.x, s.b.y, lin(p, 0.65, 0.9)); }) },
+  { label: 'Sign in or make an account', draw: p => phone((w, h) => pSignIn(w, h, 'Grok', { r1: 1 - lin(p, 0.4, 0.5), r2: lin(p, 0.5, 0.6) })) },
+  { label: 'You type your own password', draw: p => phone((w, h) => pSignIn(w, h, 'Grok', { pw: eo(lin(p, 0, 0.2)), dots: lin(p, 0.15, 0.8) })) },
+  { label: "Tap 'Copy prompt and open Grok'", draw: p => phone((w, h) => { if (p < 0.3) { pChat(w, h, 'Grok', [], { placeholder: ' ' }); ring(18, h - 108, w - 36, 76, 24, 1); }
+      else { const b = pOurPage(w, h, { ring: lin(p, 0.5, 0.6) }); tap(b.x, b.y, lin(p, 0.65, 0.92)); } }) },
+  { label: 'Paste it in and send', draw: p => phone((w, h) => { const sent = p > 0.7; const m = pChat(w, h, 'Grok', sent ? [{ who: 'me', bars: [140, 170, 110], a: eo(lin(p, 0.7, 0.85)) }] : [], { content: sent ? null : (p > 0.2 ? 'bars' : null), placeholder: ' ', glow: !sent, barW: [300, 260, 180] }); if (!sent) tap(m.send.x, m.send.y, lin(p, 0.45, 0.7)); }) },
+  { label: 'Your trainer takes it from there', draw: p => phone((w, h) => pChat(w, h, 'Grok', [{ who: 'me', bars: [140, 170, 110] }, { who: 'ai', text: greeting(), a: eo(lin(p, 0.05, 0.3)) }], { placeholder: ' ' })) },
+]},
+V4: { title: 'Grok on your computer', scenes: [
+  { label: 'Grok works in your browser', draw: p => laptop((w, h) => { const top = browser(w, h, 'grok.com'); appTitle('Grok', w, top + 80); msgBox(w / 2 - 360, top + 300, 720, { placeholder: ' ' });
+      ctx.globalAlpha = eo(lin(p, 0.5, 0.7)); text('Nothing to install', w / 2, top + 500, 800, 40, C.accent, 'center'); ctx.globalAlpha = 1; }) },
+  { label: "Tap 'Copy prompt and open Grok'", draw: p => laptop((w, h) => { const top = browser(w, h, 'grow-with-ai/start'); const b = ourPageBody(w / 2 - 330, top + 50, 660, { bw: 660, ring: lin(p, 0.1, 0.3) }); tap(b.x, b.y, lin(p, 0.4, 0.8)); }) },
+  { label: 'Grok opens in a new tab', draw: p => laptop((w, h) => { const top = browser(w, h, 'grok.com', { tabs: ['grow-with-ai/start', 'grok.com'], active: 1, newTab: 1, newTabA: 1 - lin(p, 0.7, 1) }); appTitle('Grok', w, top + 80); msgBox(w / 2 - 360, top + 300, 720, { placeholder: ' ' }); }) },
+  { label: 'Sign in or make an account', draw: p => laptop((w, h) => lSignIn(w, h, 'grok.com', 'Grok', { b: { tabs: ['grow-with-ai/start', 'grok.com'], active: 1 }, r1: 1 - lin(p, 0.4, 0.5), r2: lin(p, 0.5, 0.6) })) },
+  { label: 'Paste: Ctrl V, then Enter', draw: p => { laptop((w, h) => { const top = browser(w, h, 'grok.com', { tabs: ['grow-with-ai/start', 'grok.com'], active: 1 }); appTitle('Grok', w, top + 80);
+      const pasted = p > 0.55; msgBox(w / 2 - 360, top + 260, 720, { content: pasted ? 'bars' : null, placeholder: ' ', glow: true, barW: [560, 480, 300] });
+      if (p < 0.2) { cursor(w / 2 + 50, top + 290); tap(w / 2, top + 298, lin(p, 0, 0.2)); } });
+      const ky = 950; let x = 250; ctx.globalAlpha = eo(lin(p, 0.15, 0.3));
+      x += keycap('Ctrl', x, ky, { down: p > 0.3 && p < 0.55 }) + 14; text('+', x + 8, ky + 36, 700, 34, C.ink); x += 40; x += keycap('V', x, ky, { down: p > 0.35 && p < 0.55 }) + 40;
+      text('or on a Mac', x, ky + 36, 600, 28, C.muted); x += tw('or on a Mac', 600, 28) + 24; x += keycap('Command', x, ky, { down: false }) + 14; text('+', x + 8, ky + 36, 700, 34, C.ink); x += 40; x += keycap('V', x, ky, {}) + 60;
+      ctx.globalAlpha = eo(lin(p, 0.7, 0.8)); text('then', x, ky + 36, 600, 28, C.muted); x += 74; keycap('Enter', x, ky, { down: p > 0.85 }); ctx.globalAlpha = 1; } },
+  { label: 'Your trainer says hi', draw: p => laptop((w, h) => { const top = browser(w, h, 'grok.com', { tabs: ['grow-with-ai/start', 'grok.com'], active: 1 }); appTitle('Grok', w, top + 70);
+      thread(w / 2 - 400, top + 150, 800, [{ who: 'me', bars: [300, 360, 220] }, { who: 'ai', text: greeting(), a: eo(lin(p, 0.05, 0.3)) }], 28); }) },
+]},
+V5: { title: 'Claude on a Mac', scenes: [
+  { label: null, draw: p => laptop((w, h) => { ctx.fillStyle = C.soft; ctx.fillRect(0, 0, w, h); ctx.fillStyle = 'rgba(255,255,255,.8)'; ctx.fillRect(0, 0, w, 34); fillRR(w / 2 - 300, h - 90, 600, 74, 20, 'rgba(255,255,255,.75)'); for (let k = 0; k < 7; k++) fillRR(w / 2 - 280 + k * 82, h - 80, 56, 56, 14, k === 3 ? C.accent : '#fff'); }, { bg: C.soft }) },
+  { label: 'claude.com/download, click Mac', draw: p => laptop((w, h) => { const b = lDownload(w, h, { typed: typed('claude.com/download', lin(p, 0, 0.35)), pick: 'Mac', ring: lin(p, 0.45, 0.6) }); tap(b.Mac.x, b.Mac.y, lin(p, 0.6, 0.9)); }) },
+  { label: 'Drag Claude into Applications', draw: p => laptop((w, h) => { ctx.fillStyle = C.soft; ctx.fillRect(0, 0, w, h); fillRR(170, 120, w - 340, 460, 18, '#fff'); strokeRR(170, 120, w - 340, 460, 18, C.rule, 2);
+      fillRR(170, 120, w - 340, 50, 18, C.chrome); ctx.fillRect(170, 150, w - 340, 20); const k = eo(lin(p, 0.3, 0.8)), ax = 330 + (w - 660 - 160 - 230) * k;
+      folderGlyph(w - 330 - 160, 270, 160, C.accent); text('Applications', w - 330 - 80, 470, 700, 28, C.ink, 'center');
+      ctx.strokeStyle = C.barDark; ctx.lineWidth = 6; ctx.setLineDash([16, 14]); ctx.beginPath(); ctx.moveTo(500, 340); ctx.lineTo(w - 560, 340); ctx.stroke(); ctx.setLineDash([]);
+      fillRR(ax, 260, 160, 160, 36, C.soft); bubbleGlyph(ax + 34, 296, 92); text('Claude', ax + 80, 470, 700, 28, C.ink, 'center'); if (k > 0.98) checkGlyph(w - 330 - 80, 250, 30); if (p > 0.3 && p < 0.85) cursor(ax + 110, 380); }, { bg: C.soft }) },
+  { label: 'Open Claude', draw: p => laptop((w, h) => { ctx.fillStyle = C.soft; ctx.fillRect(0, 0, w, h); fillRR(w / 2 - 300, h - 120, 600, 100, 24, 'rgba(255,255,255,.8)');
+      for (let k = 0; k < 6; k++) fillRR(w / 2 - 270 + k * 92, h - 106, 72, 72, 16, '#fff'); const x = w / 2 - 270 + 5 * 92; fillRR(x, h - 106, 72, 72, 16, C.soft); bubbleGlyph(x + 14, h - 90, 44);
+      text('Claude', x + 36, h - 150, 700, 26, C.ink, 'center'); tap(x + 36, h - 70, lin(p, 0.3, 0.8)); }, { bg: C.soft }) },
+  { label: 'If your Mac asks, click Open', draw: p => laptop((w, h) => { ctx.fillStyle = C.soft; ctx.fillRect(0, 0, w, h); ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.2)'; ctx.shadowBlur = 30; fillRR(w / 2 - 300, 150, 600, 380, 22, '#fff'); ctx.restore();
+      bubbleGlyph(w / 2 - 40, 190, 80); bars(w / 2 - 230, 310, [460, 400, 300], 34, 14); button(' ', w / 2 - 260, 440, 240, 64, { ghost: true }); const b = button('Open', w / 2 + 20, 440, 240, 64, { px: 28, ring: lin(p, 0.2, 0.4) }); tap(b.x, b.y, lin(p, 0.45, 0.85)); }, { bg: C.soft }) },
+  { label: 'Sign in, code by email', draw: p => laptop((w, h) => lCode(w, h, 'claude.ai', 'Claude', { codeA: eo(lin(p, 0.4, 0.55)), dots: lin(p, 0.55, 0.9) })) },
+  { label: 'Projects, New project: Inbox', draw: p => laptop((w, h) => { const a = claudeApp(w, h, { projectsOn: p > 0.2, projRing: 1 - lin(p, 0.25, 0.35) }); if (p < 0.3) tap(a.projects.x, a.projects.y, lin(p, 0.05, 0.3));
+      if (p >= 0.3) { text('Projects', 360, 70, 800, 40, C.ink); const b = button('New project', w - 330, 40, 280, 64, { px: 26, ring: p < 0.55 ? 1 : 0 }); if (p < 0.55) tap(b.x, b.y, lin(p, 0.35, 0.55)); }
+      if (p >= 0.55) { ctx.globalAlpha = eo(lin(p, 0.55, 0.65)); field('Name', 360, 180, 560, { value: typed('Inbox', lin(p, 0.65, 0.85)), focus: true, px: 30 }); ctx.globalAlpha = 1; } }) },
+  { label: "Paste into 'Set project instructions'", draw: p => laptop((w, h) => { claudeApp(w, h, { projectsOn: true }); text('Inbox', 360, 70, 800, 40, C.ink);
+      fillRR(360, 130, w - 410, 300, 18, '#fff'); strokeRR(360, 130, w - 410, 300, 18, p < 0.6 ? C.accent : C.rule, p < 0.6 ? 4 : 2.5); text('Set project instructions', 390, 170, 700, 28, C.ink);
+      if (p > 0.2) bars(390, 210, [700, 640, 680, 420], 36, 14, C.barDark);
+      if (p >= 0.6) { ctx.globalAlpha = eo(lin(p, 0.6, 0.75)); const m = msgBox(360, 470, w - 410, { placeholder: ' ', glow: true }); tap(m.send.x, m.send.y, lin(p, 0.78, 0.98)); ctx.globalAlpha = 1; } }) },
+  { label: 'Your trainer takes it from there', draw: p => laptop((w, h) => { claudeApp(w, h, { projectsOn: true }); text('Inbox', 360, 70, 800, 40, C.ink); thread(360, 140, w - 410, [{ who: 'ai', text: greeting(), a: eo(lin(p, 0.05, 0.3)) }], 28); msgBox(360, h - 120, w - 410, { placeholder: ' ' }); }) },
+]},
+V6: { title: 'Claude on Windows', scenes: [
+  { label: null, draw: p => laptop((w, h) => { ctx.fillStyle = C.soft; ctx.fillRect(0, 0, w, h); ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillRect(0, h - 64, w, 64); for (let k = 0; k < 6; k++) fillRR(w / 2 - 240 + k * 76, h - 54, 44, 44, 10, k === 0 ? C.accent : '#fff'); }, { bg: C.soft }) },
+  { label: 'claude.com/download, click Windows', draw: p => laptop((w, h) => { const b = lDownload(w, h, { typed: typed('claude.com/download', lin(p, 0, 0.35)), pick: 'Windows', ring: lin(p, 0.45, 0.6) }); tap(b.Windows.x, b.Windows.y, lin(p, 0.6, 0.9)); }) },
+  { label: 'Open the installer', draw: p => laptop((w, h) => { const top = browser(w, h, 'claude.com/download'); bars(w / 2 - 300, top + 90, [600, 520], 36, 14);
+      fillRR(w / 2 - 330, top + 220, 660, 120, 18, C.soft); strokeRR(w / 2 - 330, top + 220, 660, 120, 18, C.accent, 3); bubbleGlyph(w / 2 - 300, top + 250, 60); text('Claude installer', w / 2 - 220, top + 268, 700, 30, C.ink);
+      fillRR(w / 2 - 220, top + 300, 500, 14, 7, C.bar); fillRR(w / 2 - 220, top + 300, 500 * lin(p, 0.35, 0.95), 14, 7, C.accent); tap(w / 2 + 180, top + 270, lin(p, 0.1, 0.35)); }) },
+  { label: 'Start menu, then sign in', draw: p => laptop((w, h) => { if (p < 0.5) { ctx.fillStyle = C.soft; ctx.fillRect(0, 0, w, h); ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillRect(0, h - 64, w, 64);
+        fillRR(w / 2 - 300, 110, 600, 520, 20, '#fff'); fillRR(w / 2 - 260, 150, 520, 50, 25, C.chrome); text('Start', w / 2 - 230, 176, 600, 24, C.muted);
+        fillRR(w / 2 - 260, 240, 520, 90, 14, C.soft); bubbleGlyph(w / 2 - 236, 262, 46); text('Claude', w / 2 - 170, 286, 700, 30, C.ink); ring(w / 2 - 260, 240, 520, 90, 14, lin(p, 0.15, 0.25)); tap(w / 2, 285, lin(p, 0.25, 0.48));
+        bars(w / 2 - 260, 370, [400, 340, 380], 50, 14); fillRR(w / 2 - 240, h - 54, 44, 44, 10, C.accent); }
+      else lCode(w, h, 'Claude', 'Claude', { codeA: eo(lin(p, 0.7, 0.8)), dots: lin(p, 0.8, 0.98) }); }, { bg: C.soft }) },
+  { label: 'Projects, New project: Inbox', draw: p => SCENES.V5.scenes[6].draw(p) },
+  { label: "Paste into 'Set project instructions'", draw: p => SCENES.V5.scenes[7].draw(p) },
+]},
+V7: { phone: true, title: 'Claude on your phone', scenes: [
+  { label: 'Search: Claude, by Anthropic', draw: p => phone((w, h) => { if (p < 0.25) { pHome(w, h, { store: true, storeRing: 1 }); tap(30 + 92 + 36, 110 + 120 + 36, lin(p, 0.02, 0.25)); }
+      else pStore(w, h, { q: 'Claude', typeP: lin(p, 0.28, 0.5), result: eo(lin(p, 0.5, 0.65)), name: 'Claude', maker: 'Anthropic', makerRing: lin(p, 0.7, 0.8) }); }) },
+  { label: 'Install, open, sign in yourself', draw: p => phone((w, h) => { if (p < 0.45) { const s = pStore(w, h, { q: 'Claude', name: 'Claude', maker: 'Anthropic', btnRing: 1, installed: p > 0.3 }); tap(s.b.x, s.b.y, lin(p, 0.05, 0.3)); }
+      else pSignIn(w, h, 'Claude', { r1: lin(p, 0.6, 0.7), pw: 0 }); }) },
+  { label: 'Paste into a new chat, send', draw: p => phone((w, h) => { const sent = p > 0.72; const m = pChat(w, h, 'Claude', sent ? [{ who: 'me', bars: [140, 170, 110], a: eo(lin(p, 0.72, 0.85)) }] : [], { content: sent ? null : (p > 0.25 ? 'bars' : null), placeholder: ' ', glow: !sent, barW: [300, 260, 180] }); if (!sent) tap(m.send.x, m.send.y, lin(p, 0.5, 0.72)); }) },
+  { label: 'Projects later, on a computer', draw: p => { phone((w, h) => pChat(w, h, 'Claude', [{ who: 'me', bars: [140, 170, 110] }, { who: 'ai', bars: [240, 260, 200] }], { placeholder: ' ' }));
+      ctx.save(); ctx.translate(0, 280); ctx.globalAlpha = eo(lin(p, 0.2, 0.45)); fillRR(960, 380, 360, 230, 16, C.bezel); fillRR(976, 396, 328, 198, 8, '#fff'); fillRR(930, 610, 420, 20, 8, '#AEB6B1');
+      folderGlyph(1000, 430, 60, C.accent); text('Projects', 1076, 462, 700, 30, C.ink); bars(1000, 520, [240, 200], 30, 12); text('Later, if you like', 1140, 680, 700, 30, C.muted, 'center'); ctx.restore(); } },
+]},
+V10: { title: 'Your first win', scenes: [
+  { label: null, draw: p => laptop((w, h) => { const top = browser(w, h, 'grow-with-ai/start'); ourPageBody(w / 2 - 330, top + 50, 660, { bw: 660, or: 'or Claude' }); }) },
+  { label: "Tap 'Copy prompt and open'", draw: p => laptop((w, h) => { const top = browser(w, h, 'grow-with-ai/start'); const b = ourPageBody(w / 2 - 330, top + 50, 660, { bw: 660, or: 'or Claude', ring: lin(p, 0.1, 0.3) }); tap(b.x, b.y, lin(p, 0.45, 0.85)); }) },
+  { label: 'Paste it in and send', draw: p => laptop((w, h) => { const top = browser(w, h, 'grok.com or claude.ai', { tabs: ['grow-with-ai/start', 'Grok or Claude'], active: 1 }); const sent = p > 0.7;
+      if (sent) thread(w / 2 - 400, top + 60, 800, [{ who: 'me', bars: [300, 360, 220], a: eo(lin(p, 0.7, 0.85)) }], 28);
+      const m = msgBox(w / 2 - 400, h - 210, 800, { content: !sent && p > 0.2 ? 'bars' : null, placeholder: ' ', glow: !sent, barW: [600, 520, 300] }); if (!sent) tap(m.send.x, m.send.y, lin(p, 0.45, 0.7)); }) },
+  { label: 'Send a screenshot of your inbox', draw: p => laptop((w, h) => { const top = browser(w, h, 'grok.com or claude.ai', { tabs: ['grow-with-ai/start', 'Grok or Claude'], active: 1 });
+      thread(w / 2 - 400, top + 30, 800, [{ who: 'ai', text: greeting(), a: eo(lin(p, 0, 0.2)) }, { who: 'ai', bars: [520, 600, 380], a: eo(lin(p, 0.45, 0.6)) }], 28);
+      ctx.globalAlpha = eo(lin(p, 0.55, 0.7)); cameraGlyph(w / 2 + 330, top + 210, 60, C.accent); ctx.globalAlpha = 1; msgBox(w / 2 - 400, h - 130, 800, { placeholder: ' ' }); }) },
+  { label: 'Your email, sorted', draw: p => laptop((w, h) => { const top = browser(w, h, 'grok.com or claude.ai', { tabs: ['grow-with-ai/start', 'Grok or Claude'], active: 1 });
+      thread(w / 2 - 420, top + 20, 840, [{ who: 'me', photo: true, a: eo(lin(p, 0, 0.12)) }, { who: 'ai', sorted: true, a: eo(lin(p, 0.12, 0.2)), sortA: lin(p, 0.15, 0.95) }], 26); }) },
+  { label: 'You read them, you send them', draw: p => laptop((w, h) => { const top = browser(w, h, 'grok.com or claude.ai', { tabs: ['grow-with-ai/start', 'Grok or Claude'], active: 1 });
+      fillRR(w / 2 - 380, top + 70, 760, 330, 20, '#fff'); strokeRR(w / 2 - 380, top + 70, 760, 330, 20, C.rule, 2.5); text('Draft', w / 2 - 340, top + 116, 800, 30, C.ink); bars(w / 2 - 340, top + 160, [660, 620, 680, 400], 40, 14, C.barDark);
+      ctx.globalAlpha = eo(lin(p, 0.45, 0.6)); checkGlyph(w / 2 - 300, top + 480, 34); text('You read them and you send them.', w / 2 - 250, top + 482, 700, 32, C.ink); ctx.globalAlpha = 1; }) },
+  { label: null, draw: p => laptop((w, h) => { browser(w, h, 'grok.com or claude.ai', { tabs: ['grow-with-ai/start', 'Grok or Claude'], active: 1 }); bigDone(w / 2, 300, 'Your first win', eo(lin(p, 0, 0.4))); }) },
+]},
+};
+
+const JOB = window.JOB, DEF = SCENES[JOB.v], SENTS = JOB.sents;
+function sceneAt(t) { let i = 0; SENTS.forEach((s, k) => { if (t >= s.start - LEAD) i = k; }); return i; }
+function header() { text('Grow With AI', 60, 56, 800, 34, C.ink); text('Free setup', 60 + tw('Grow With AI', 800, 34) + 18, 56, 600, 30, C.muted);
+  const tt = DEF.title, w = tw(tt, 700, 30) + 52; fillRR(1340 - w, 28, w, 56, 28, C.soft); text(tt, 1340 - w + 26, 57, 700, 30, C.accent); }
+function side(i) { // name under Chris's video, then the checklist
+  text('Chris Ward', PIP.x, PIP.y + PIP.h + 42, 800, 30, C.ink); text('Grow With AI', PIP.x + tw('Chris Ward', 800, 30) + 16, PIP.y + PIP.h + 42, 600, 26, C.muted);
+  const rows = DEF.scenes.map((s, k) => ({ k, label: s.label })).filter(r => r.label); let cur = -1; rows.forEach((r, j) => { if (r.k <= i) cur = j; });
+  const top = PIP.y + PIP.h + 92, gap = Math.min(54, (1010 - top) / Math.max(1, rows.length));
+  rows.forEach((r, j) => { const y = top + j * gap, on = j === cur, done = j < cur || (j === cur && i > r.k && DEF.scenes.slice(r.k + 1, i + 1).every(s => !s.label));
+    if (on && !done) fillRR(PIP.x - 10, y - gap / 2 + 4, PIP.w + 20, gap - 8, (gap - 8) / 2, C.soft);
+    if (done) checkGlyph(PIP.x + 18, y, 15); else { ctx.beginPath(); ctx.arc(PIP.x + 18, y, 15, 0, 7); ctx.strokeStyle = on ? C.accent : C.barDark; ctx.lineWidth = 3; ctx.stroke(); text(String(j + 1), PIP.x + 18, y + 1, 700, 16, on ? C.accent : C.muted, 'center'); }
+    font(on ? 700 : 500, 24); let s = r.label; while (ctx.measureText(s).width > PIP.w - 50 && s.length > 4) s = s.slice(0, -2); if (s !== r.label) s = s.trimEnd() + '...';
+    text(s, PIP.x + 48, y + 1, on ? 700 : 500, 24, done ? C.muted : C.ink); }); }
+window.draw = function (t) {
+  ctx.fillStyle = C.paper; ctx.fillRect(0, 0, W, H);
+  const i = sceneAt(t), s = SENTS[i], nx = i + 1 < SENTS.length ? SENTS[i + 1].start - LEAD : JOB.dur;
+  const p = clamp((t - (s.start - LEAD)) / Math.max(0.3, nx - (s.start - LEAD)));
+  header(); DEF.scenes[i].draw(p, t); side(i);
+  if (DEF.phone) { let lab = null; for (let k = i; k >= 0 && !lab; k--) lab = DEF.scenes[k].label; lab = lab || DEF.title;
+    const a = eo(lin(t, s.start - LEAD, s.start - LEAD + 0.3)); ctx.globalAlpha = a; para(lab, 970, 420, 360, 46, 800, C.ink, 58); ctx.globalAlpha = 1; }
+  fillRR(PIP.x, PIP.y, PIP.w, PIP.h, 22, '#C9D0CC');
+  text('Illustration. Your screen may look a little different.', 690, 1050, 500, 22, C.muted, 'center');
+};
+window.validate = function () { if (!DEF) throw new Error('no scenes for ' + JOB.v); if (DEF.scenes.length !== SENTS.length) throw new Error(`${JOB.v}: ${DEF.scenes.length} scenes but ${SENTS.length} sentences`); return true; };
+</script>
+</body></html>
