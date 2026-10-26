@@ -111,8 +111,33 @@ function vid(name, label, cls) {
 }
 var idleTimer = null;
 
+function waitlistScreen(h) { // CAPACITY.mode === "waitlist" (start/capacity.js)
+  var when = (window.CAPACITY && CAPACITY.nextCohort) ? " (" + CAPACITY.nextCohort + ")" : "";
+  h.appendChild(el("p", { class: "voice" }, "Setup"));
+  h.appendChild(el("h1", null, "This week's setup spots are full."));
+  h.appendChild(el("p", null, "Join the waitlist and we'll email you when the next group opens" + when + "."));
+  var f = el("form", { novalidate: "novalidate" });
+  var l = el("label", { class: "fl", for: "wem" }, "Your email"); var em = el("input", { id: "wem", type: "email", autocomplete: "email", required: "required" });
+  var cons = el("label", { class: "opt", style: "margin-top:12px" }); var cb = el("input", { type: "checkbox", id: "wcons" });
+  var cl = el("span", { class: "lab" }, (window.GWAILead ? GWAILead.consentText : "Email me when the next group opens.") + " "); cl.appendChild(el("a", { href: "../privacy/" }, "Privacy"));
+  cons.appendChild(cb); cons.appendChild(cl);
+  var send = el("button", { class: "go", type: "submit", style: "margin-top:18px" }, "Join the waitlist");
+  var msg = el("p", { class: "help", role: "status", "aria-live": "polite" }, "");
+  [l, em, cons, send, msg].forEach(function (n) { f.appendChild(n); }); h.appendChild(f);
+  f.onsubmit = function (ev) {
+    ev.preventDefault(); var v = (em.value || "").trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg.textContent = "That email doesn't look right. Check it and try again."; em.focus(); return; }
+    if (!cb.checked) { msg.textContent = "Tick the box so we're allowed to email you."; cb.focus(); return; }
+    send.disabled = true; msg.textContent = "Sending…";
+    window.GWAILead.send({ email: v, list: "start-waitlist", consent: true, subject: "Setup waitlist (" + v + ")" })
+      .then(function () { msg.textContent = "Thanks, you're on the list. We'll email you when the next group opens."; })
+      .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Try again in a minute."; });
+  };
+}
+
 function render() {
   clearTimeout(idleTimer);
+  if (window.CAPACITY && CAPACITY.mode === "waitlist") { var wh = host(); wh.innerHTML = ""; wh.className = "screen"; waitlistScreen(wh); return; }
   var P = plan(); if (step >= P.length) step = P.length - 1; if (step < 0) step = 0;
   var s = P[step], h = host();
   h.innerHTML = ""; h.className = "screen";
