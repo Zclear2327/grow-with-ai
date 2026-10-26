@@ -298,19 +298,13 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
 .vg-top{display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .vg-top h3{margin:0 0 6px}
 .vg-sub{margin:0;max-width:60ch}
-.vg-mic{display:inline-flex;align-items:center;gap:12px;min-height:56px;padding:14px 22px;border:2px solid var(--ink);background:var(--ink);color:var(--paper,#fff);font:700 18px/1.2 var(--body);cursor:pointer}
-.vg-mic:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.vg-dot{width:14px;height:14px;border-radius:50%;background:var(--accent);flex:none}
-.vg.on .vg-dot{animation:vgp 1s ease-in-out infinite}
-@keyframes vgp{50%{transform:scale(1.6);opacity:.5}}
-@media (prefers-reduced-motion:reduce){.vg.on .vg-dot{animation:none;outline:3px solid var(--accent)}}
 .vg-say{font:600 19px/1.45 var(--body);margin:18px 0 4px;color:var(--ink)}
 .vg-say:empty,.vg-heard:empty,.vg-note:empty{display:none}
 .vg-heard{color:var(--muted);margin:0 0 8px}
 .vg-choices:empty{display:none}
 .vg-alt{margin-top:14px}
 .vg.started .vg-alt{display:none}
-@media (max-width:560px){.vg{padding:16px}.vg-mic{width:100%;justify-content:center}}
+@media (max-width:560px){.vg{padding:16px}}
 </style>
 </head>
 <body>
@@ -336,7 +330,7 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
         <p class="eyebrow">Start here &middot; free</p>
         <h2>We run our own company on it first.</h2>
       </div>
-      <p>Z-Clear, our anti-fog company in Ogden, Utah, runs on AI helpers every day. Watch the fleet, then start your own free setup below.</p>
+      <p>Z-Clear, our anti-fog company in Ogden, Utah, runs on AI helpers every day. Watch the fleet, then get your own free AI email helper below.</p>
     </div>
 
     <figure class="bio film">
@@ -360,20 +354,10 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
       </div>
       <figcaption>The fleet Chris built at Z-Clear: 38 agents in seven divisions, drawn from the fleet's own records on October 20, 2026. JR has built more than 20 others, not shown in the chart. The voice is AI-generated.</figcaption>
     </figure>
-    <div class="vg" id="vg" aria-labelledby="vg-h">
-      <div class="vg-top">
-        <div>
-          <h3 id="vg-h">Start your free setup</h3>
-          <p class="vg-sub">Step one is putting Claude on your computer. Click the mic and talk to us, or tap the buttons. We'll walk you through it.</p>
-        </div>
-        <button class="vg-mic" type="button" aria-describedby="vg-priv"><span class="vg-dot" aria-hidden="true"></span><span class="vg-mic-label">Talk to us: tap the mic</span></button>
-      </div>
-      <p class="vg-say" aria-live="polite"></p>
-      <p class="vg-heard" aria-live="polite"></p>
-      <div class="vg-choices btns"></div>
-      <div class="btns vg-alt"><a class="btn primary big" href="train/">Start the free setup</a><a class="btn ghost big" href="https://claude.com/download" target="_blank" rel="noopener">Download Claude</a></div>
-      <p class="vg-note note"></p>
-      <p class="note" id="vg-priv">The mic uses your browser's own speech service (Google in Chrome, Apple in Safari). We don't record or keep what you say. This guide follows a set script; it isn't a live person.</p>
+    <div class="vg" id="free-setup">
+      <h3>Get your free AI email helper</h3>
+      <p class="vg-sub">Answer a few quick questions. Then your trainer, Sam or Travis, walks you through it one step at a time: Grok if you're new to this, Claude if you're comfortable. No email yet? We'll help you make one. The setup is free.</p>
+      <div class="btns vg-alt"><a class="btn primary big" href="start/">Get your free email helper</a><a class="btn ghost big" href="train/">Free step-by-step training</a></div>
     </div>
     <div class="features">
     <div class="feature">
@@ -422,7 +406,7 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
       <h1><em>More freedom</em> for business owners, with AI doing the busywork.</h1>
       <p class="lede">If you've been curious about AI but don't know where to start, that's where we come in. We set you up, then every month you get a new, tested AI agent with plain-English setup that does part of your work for you, so the repetitive work comes off your plate and your time goes to the work you actually want to do.</p>
       <div class="btns">
-        <a class="btn primary big" href="start/">Not sure where to start? Answer a few questions</a>
+        <a class="btn primary big" href="start/">Get your free email helper</a>
         <a class="btn ghost big" href="train/">Free step-by-step training</a>
         <a class="btn ghost big" href="packages/">See the packages</a>
       </div>
@@ -593,6 +577,5 @@ document.getElementById('copy').addEventListener('click', function () {
 })();
 </script>
 <script src="affiliates/ref.js" defer></script>
-<script src="voice/guide.js" defer></script>
 </body>
 </html>
