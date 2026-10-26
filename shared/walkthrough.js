@@ -25,7 +25,23 @@ function steps(tool, agent) {
     "Pick a daily time. Each day, open that chat and type: “" + DAILY[agent.id] + "”."
   ];
 }
+var BUILT_IN = { "Customer-Questions": 1, "Sales-Follow-Up": 1, "Daily-Assistant": 1, "Content-Social": 1 };
+// Trainer Agent's paid prompts carry their own 8 steps; mirror them in the checklist instead of adding ours.
+function builtInSteps(tool, agent) {
+  var app = tool === "grok" ? "Grok" : "Claude";
+  return [
+    "Sign in to " + app + " (or create a free account). You type your own password.",
+    "Paste the prompt as your first message, say hi, and tell your trainer Sam or Travis.",
+    "Share your business info (typing, paste or screenshot). No passwords or account numbers.",
+    "Your trainer builds the " + agent.name + " with you. Check it and say what to change.",
+    "Do a first real task together.",
+    "Save it for reuse: a Project named \u201c" + agent.name + "\u201d, or keep the prompt in a note.",
+    "Set your habit: a repeating reminder on your phone or calendar.",
+    "Wrap-up: your trainer recaps what you built and the time saved."
+  ];
+}
 function walkthrough(tool, agent) {
+  if (BUILT_IN[agent.id]) return "";
   var app = tool === "grok" ? "Grok" : "Claude";
   var s = steps(tool, agent);
   return "\n\nTRAINER WALKTHROUGH (do this right after START, before anything else)\n" +
@@ -55,14 +71,14 @@ function openBlock(opts) { // {tool, agent:{id,name}, text}
   b.textContent = "Copy prompt and open " + app;
   var msg = document.createElement("p"); msg.className = "help openmsg"; msg.setAttribute("role", "status"); msg.setAttribute("aria-live", "polite");
   var list = document.createElement("ol"); list.className = "checklist"; list.hidden = true;
-  steps(tool, opts.agent).forEach(function (t) { var li = document.createElement("li"); var lab = document.createElement("label"); var cb = document.createElement("input"); cb.type = "checkbox"; lab.appendChild(cb); lab.appendChild(document.createTextNode(" " + t)); li.appendChild(lab); list.appendChild(li); });
+  (BUILT_IN[opts.agent.id] ? builtInSteps(tool, opts.agent) : steps(tool, opts.agent)).forEach(function (t) { var li = document.createElement("li"); var lab = document.createElement("label"); var cb = document.createElement("input"); cb.type = "checkbox"; lab.appendChild(cb); lab.appendChild(document.createTextNode(" " + t)); li.appendChild(lab); list.appendChild(li); });
   var head = document.createElement("p"); head.className = "checkhead"; head.textContent = "Follow along in " + app + ":"; head.hidden = true;
   var key = (navigator.platform || "").indexOf("Mac") === 0 || /iPhone|iPad/.test(navigator.userAgent) ? "Cmd+V" : "Ctrl+V";
   b.addEventListener("click", function () {
     // The link itself opens the new tab (a real click, so pop-up blockers allow it); copying runs in the same click.
     var full = opts.text + walkthrough(tool, opts.agent);
     copyText(full).then(function () {
-      msg.textContent = "Prompt copied. In " + app + ", click the message box, press " + key + " (on a phone: tap and hold, then Paste), then Enter.";
+      msg.textContent = "Prompt copied. Paste it in and press Enter. (In " + app + ", click the message box and press " + key + "; on a phone, tap and hold, then Paste.)";
     }, function () {
       msg.textContent = "Couldn't copy automatically. Use the Copy button above, then paste it into " + app + ".";
     });

@@ -405,7 +405,9 @@ function result(h) {
   var five = el("ol", { class: "rows" });
   [["Email & Inbox Agent", "Free: yours now"], ["Customer Questions Agent", "Pro & Business"], ["Sales & Follow-Up Agent", "Pro & Business"], ["Daily Assistant", "Pro & Business"], ["Content & Social Agent", "Pro & Business"]].forEach(function (a, i) {
     var li = el("li"); li.appendChild(el("span", { class: "num" }, String(i + 1)));
-    var d = el("div"); d.appendChild(el("h3", null, a[0])); d.appendChild(el("p", { class: "because" }, a[1])); li.appendChild(d); five.appendChild(li);
+    var d = el("div"); d.appendChild(el("h3", null, a[0])); d.appendChild(el("p", { class: "because" }, a[1]));
+    if (i > 0) { var u = el("a", { href: "../members/", class: "unlocklink" }, "Members: unlock and copy it"); d.appendChild(u); }
+    li.appendChild(d); five.appendChild(li);
   });
   h.appendChild(five);
   var nx = el("p", null, "Want more agents working for you? ");
