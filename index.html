@@ -294,6 +294,23 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
 .brandline{font-family:var(--display);font-weight:700;font-size:clamp(52px,10vw,120px);line-height:.95;letter-spacing:-.01em;margin:8px 0 22px;color:var(--ink)}
 .brandline span{color:var(--accent)}
 .brandline small{display:block;font:600 clamp(16px,2vw,22px)/1.3 var(--body);letter-spacing:0;color:var(--muted);margin-top:10px}
+.vg{border:2px solid var(--accent);padding:24px;margin:28px 0 8px}
+.vg-top{display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.vg-top h3{margin:0 0 6px}
+.vg-sub{margin:0;max-width:60ch}
+.vg-mic{display:inline-flex;align-items:center;gap:12px;min-height:56px;padding:14px 22px;border:2px solid var(--ink);background:var(--ink);color:var(--paper,#fff);font:700 18px/1.2 var(--body);cursor:pointer}
+.vg-mic:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.vg-dot{width:14px;height:14px;border-radius:50%;background:var(--accent);flex:none}
+.vg.on .vg-dot{animation:vgp 1s ease-in-out infinite}
+@keyframes vgp{50%{transform:scale(1.6);opacity:.5}}
+@media (prefers-reduced-motion:reduce){.vg.on .vg-dot{animation:none;outline:3px solid var(--accent)}}
+.vg-say{font:600 19px/1.45 var(--body);margin:18px 0 4px;color:var(--ink)}
+.vg-say:empty,.vg-heard:empty,.vg-note:empty{display:none}
+.vg-heard{color:var(--muted);margin:0 0 8px}
+.vg-choices:empty{display:none}
+.vg-alt{margin-top:14px}
+.vg.started .vg-alt{display:none}
+@media (max-width:560px){.vg{padding:16px}.vg-mic{width:100%;justify-content:center}}
 </style>
 </head>
 <body>
@@ -312,6 +329,70 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
   </header>
 
   <p class="brandline">Grow With <span>AI</span><small>We set you up with AI. Then every month you get a new AI agent that does part of your work for you.</small></p>
+
+  <section id="freedom">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Start here &middot; free</p>
+        <h2>We run our own company on it first.</h2>
+      </div>
+      <p>Z-Clear, our anti-fog company in Ogden, Utah, runs on AI helpers every day. Watch the fleet, then start your own free setup below.</p>
+    </div>
+
+    <figure class="bio film">
+      <div class="vw wide" data-caps>
+        <video controls muted playsinline preload="none" poster="media/agent-hq-poster.jpg" width="1280" height="720" aria-label="A one-minute tour of the Z-Clear agent fleet: 38 agents in seven divisions, plus 20+ more built by JR">
+          <source src="media/agent-hq.mp4" type="video/mp4">
+          <source src="media/agent-hq.webm" type="video/webm">
+          <track kind="captions" src="media/agent-hq.vtt" srclang="en" label="English">
+          <a href="media/agent-hq.mp4">Watch the one-minute tour of the Z-Clear agent fleet</a>.
+        </video>
+        <button class="snd" type="button" hidden>Play with sound</button>
+      </div>
+      <div class="vw tall" data-caps>
+        <video controls muted playsinline preload="none" poster="media/agent-hq-phone-poster.jpg" width="720" height="1280" aria-label="A one-minute tour of the Z-Clear agent fleet: 38 agents in seven divisions, plus 20+ more built by JR">
+          <source src="media/agent-hq-phone.mp4" type="video/mp4">
+          <source src="media/agent-hq-phone.webm" type="video/webm">
+          <track kind="captions" src="media/agent-hq.vtt" srclang="en" label="English">
+          <a href="media/agent-hq-phone.mp4">Watch the one-minute tour of the Z-Clear agent fleet</a>.
+        </video>
+        <button class="snd" type="button" hidden>Play with sound</button>
+      </div>
+      <figcaption>The fleet Chris built at Z-Clear: 38 agents in seven divisions, drawn from the fleet's own records on October 20, 2026. JR has built more than 20 others, not shown in the chart. The voice is AI-generated.</figcaption>
+    </figure>
+    <div class="vg" id="vg" aria-labelledby="vg-h">
+      <div class="vg-top">
+        <div>
+          <h3 id="vg-h">Start your free setup</h3>
+          <p class="vg-sub">Step one is putting Claude on your computer. Click the mic and talk to us, or tap the buttons. We'll walk you through it.</p>
+        </div>
+        <button class="vg-mic" type="button" aria-describedby="vg-priv"><span class="vg-dot" aria-hidden="true"></span><span class="vg-mic-label">Talk to us: tap the mic</span></button>
+      </div>
+      <p class="vg-say" aria-live="polite"></p>
+      <p class="vg-heard" aria-live="polite"></p>
+      <div class="vg-choices btns"></div>
+      <div class="btns vg-alt"><a class="btn primary big" href="train/">Start the free setup</a><a class="btn ghost big" href="https://claude.com/download" target="_blank" rel="noopener">Download Claude</a></div>
+      <p class="vg-note note"></p>
+      <p class="note" id="vg-priv">The mic uses your browser's own speech service (Google in Chrome, Apple in Safari). We don't record or keep what you say. This guide follows a set script; it isn't a live person.</p>
+    </div>
+    <div class="features">
+    <div class="feature">
+      <div class="big">$2,000<small>/ month</small></div>
+      <div>
+        <p>saved on hotel rooms and rental cars. One AI helper shops every event trip and re-checks bookings before free cancellation runs out.</p>
+        <div class="src">Z-Clear event travel · monthly average</div>
+      </div>
+    </div>
+    <div class="feature ink">
+      <div class="big">1 hr<small>→ minutes</small></div>
+      <div>
+        <p>for the owner's inbox every morning. An AI helper reads it first and flags what needs a person. That is about seven hours back every week.</p>
+        <div class="src">Owner's morning inbox · before vs after</div>
+      </div>
+    </div>
+    </div>
+
+  </section>
 
   <figure class="bio">
     <div class="vw wide">
@@ -386,54 +467,6 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
     </div>
   </section>
 
-  <section id="freedom">
-    <div class="sec-head">
-      <div>
-        <p class="eyebrow">What it gives you back</p>
-        <h2>We run our own company on it first.</h2>
-      </div>
-      <p>Z-Clear, our anti-fog company in Ogden, Utah, runs on AI helpers every day. Here is what two of them give back.</p>
-    </div>
-
-    <div class="features">
-    <div class="feature">
-      <div class="big">$2,000<small>/ month</small></div>
-      <div>
-        <p>saved on hotel rooms and rental cars. One AI helper shops every event trip and re-checks bookings before free cancellation runs out.</p>
-        <div class="src">Z-Clear event travel · monthly average</div>
-      </div>
-    </div>
-    <div class="feature ink">
-      <div class="big">1 hr<small>→ minutes</small></div>
-      <div>
-        <p>for the owner's inbox every morning. An AI helper reads it first and flags what needs a person. That is about seven hours back every week.</p>
-        <div class="src">Owner's morning inbox · before vs after</div>
-      </div>
-    </div>
-    </div>
-
-    <figure class="bio film">
-      <div class="vw wide" data-caps>
-        <video controls muted playsinline preload="none" poster="media/agent-hq-poster.jpg" width="1280" height="720" aria-label="A one-minute tour of the Z-Clear agent fleet: 38 agents in seven divisions, plus 20+ more built by JR">
-          <source src="media/agent-hq.mp4" type="video/mp4">
-          <source src="media/agent-hq.webm" type="video/webm">
-          <track kind="captions" src="media/agent-hq.vtt" srclang="en" label="English">
-          <a href="media/agent-hq.mp4">Watch the one-minute tour of the Z-Clear agent fleet</a>.
-        </video>
-        <button class="snd" type="button" hidden>Play with sound</button>
-      </div>
-      <div class="vw tall" data-caps>
-        <video controls muted playsinline preload="none" poster="media/agent-hq-phone-poster.jpg" width="720" height="1280" aria-label="A one-minute tour of the Z-Clear agent fleet: 38 agents in seven divisions, plus 20+ more built by JR">
-          <source src="media/agent-hq-phone.mp4" type="video/mp4">
-          <source src="media/agent-hq-phone.webm" type="video/webm">
-          <track kind="captions" src="media/agent-hq.vtt" srclang="en" label="English">
-          <a href="media/agent-hq-phone.mp4">Watch the one-minute tour of the Z-Clear agent fleet</a>.
-        </video>
-        <button class="snd" type="button" hidden>Play with sound</button>
-      </div>
-      <figcaption>The fleet Chris built at Z-Clear: 38 agents in seven divisions, drawn from the fleet's own records on October 20, 2026. JR has built more than 20 others, not shown in the chart. The voice is AI-generated.</figcaption>
-    </figure>
-  </section>
 
   <section id="how">
     <div class="sec-head">
@@ -560,5 +593,6 @@ document.getElementById('copy').addEventListener('click', function () {
 })();
 </script>
 <script src="affiliates/ref.js" defer></script>
+<script src="voice/guide.js" defer></script>
 </body>
 </html>
