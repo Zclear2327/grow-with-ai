@@ -16,8 +16,9 @@
  * empty, every "Apply" button opens an email to hello@wardconsulting.ai instead, so the page works
  * on day one.
  *
- * CHECKOUT: paste each package's ThriveCart checkout link here. While BOTH are empty the packages
- * page shows the waitlist and nothing can be bought. Once both are filled in, every element marked
+ * CHECKOUT: paste each package's ThriveCart checkout link here (Starter $29.99/month, Pro $49/month,
+ * Elite $149/month; Free has no checkout). Until ALL THREE are filled in the packages page shows the
+ * waitlist and nothing can be bought. Once they are, every element marked
  * class="wl-only" hides, every element marked class="live-only" shows, and each [data-checkout]
  * button points at its checkout link with the visitor's remembered code put where ThriveCart reads it.
  * ThriveCart does NOT read ?ref=: an affiliate link is https://AFFILIATEID--wardconsultingai.thrivecart.com/...
@@ -27,7 +28,7 @@
  */
 (function () {
   var APPLY_URL = "";
-  var CHECKOUT = { pro: "", business: "" };
+  var CHECKOUT = { starter: "", pro: "", elite: "" };
   var KEY = "wc_ref", DAYS = 90;
 
   function clean(v) { return (v || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 40); }
@@ -85,7 +86,7 @@
     }
   }
   function checkout() {
-    var live = !!(CHECKOUT.pro && CHECKOUT.business);
+    var live = !!(CHECKOUT.starter && CHECKOUT.pro && CHECKOUT.elite);
     var els = document.querySelectorAll(".wl-only, .live-only");
     for (var i = 0; i < els.length; i++) {
       els[i].hidden = els[i].classList.contains("wl-only") ? live : !live;
