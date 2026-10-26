@@ -161,6 +161,7 @@ function welcome(h) {
   h.appendChild(el("h1", null, "Welcome to Ward Consulting AI."));
   h.appendChild(el("p", null, "We'd like to ask you a few basic questions before your trainer is set up. This helps us create an assistant that best fits your needs. Your first win takes about 10 minutes, and the full setup about 20. The setup is free."));
   h.appendChild(vid("welcome", "Video: Chris Ward welcomes you (20 seconds)"));
+  h.appendChild(el("p", { class: "help" }, "Available in English in the US and Canada, except Quebec for now (no French version yet)."));
   h.appendChild(el("p", { class: "help" }, "You stay in charge. We never ask for passwords. Your answers stay in this browser until you choose to send them."));
   navRow(h, next, true, "Begin");
 }
