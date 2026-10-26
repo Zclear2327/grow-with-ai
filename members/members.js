@@ -28,7 +28,7 @@ function decrypt(id, code) {
 
 function promptFor(a) {
   var t = a.free ? free[state.tool] : (opened[a.id] || {})[state.tool];
-  return (t || "").split("[NAME]").join(state.trainer);
+  return t ? t.split("[NAME]").join(state.trainer) : "";
 }
 
 function copy(text, pre, btn) {
@@ -46,14 +46,14 @@ function render() {
     var h = el("h2", { id: "h-" + a.id }, (i + 1) + ". " + a.name); h.appendChild(el("span", { class: "tag" }, isOpen ? (a.free ? "Free" : "Unlocked") : a.tag));
     card.appendChild(h); card.appendChild(el("p", null, a.job));
     if (isOpen) {
-      var text = promptFor(a);
+      var base = promptFor(a), text = base ? base + window.GWAIWalk.walkthrough(state.tool, a) : "";
       if (!text) { card.appendChild(el("p", { class: "msg" }, "Loading…")); host.appendChild(card); return; }
       card.appendChild(el("p", null, a.start));
       var pre = el("pre", { class: "prompt", tabindex: "0", "aria-label": a.name + " text" }, text); card.appendChild(pre);
       var row = el("div", { class: "btns" });
       var cb = el("button", { class: "btn primary", type: "button" }, "Copy this agent"); cb.onclick = function () { copy(text, pre, cb); };
-      var op = el("a", { class: "btn ghost", href: state.tool === "grok" ? "https://grok.com" : "https://claude.ai/new", target: "_blank", rel: "noopener" }, state.tool === "grok" ? "Open Grok" : "Open Claude");
-      row.appendChild(cb); row.appendChild(op); card.appendChild(row);
+      row.appendChild(cb); card.appendChild(row);
+      card.appendChild(window.GWAIWalk.openBlock({ tool: state.tool, agent: a, text: base }));
     } else {
       var f = el("form", { class: "unlock", novalidate: "novalidate" });
       var lab = el("label", { for: "c-" + a.id, class: "sr" }, "Unlock code for " + a.name);

@@ -388,16 +388,16 @@ function result(h) {
   // copy box
   h.appendChild(el("h2", null, "Your free email helper"));
   h.appendChild(el("p", { class: "help" }, "Copy this and paste it into " + (tr === "grok" ? "a new Grok chat." : "your Claude project instructions, or a new Claude chat.")));
-  var txt = PROMPT[tr].split("[NAME]").join(name);
+  var AG = { id: "Email-Inbox", name: "Email & Inbox Agent" };
+  var txt = PROMPT[tr].split("[NAME]").join(name) + window.GWAIWalk.walkthrough(tr, AG);
   var pre = el("pre", { class: "copybox", tabindex: "0", "aria-label": "Your free email helper text" }, txt);
   h.appendChild(pre);
   var row = el("div", { class: "nav" });
   var cb = el("button", { class: "go", type: "button" }, "Copy my email helper");
   cb.onclick = function () { copy(txt, pre, cb); };
   row.appendChild(cb);
-  var open = el("a", { class: "go ghostgo", href: tr === "grok" ? "https://grok.com" : "https://claude.ai/new", target: "_blank", rel: "noopener" }, tr === "grok" ? "Open Grok" : "Open Claude");
-  row.appendChild(open);
   h.appendChild(row);
+  h.appendChild(window.GWAIWalk.openBlock({ tool: tr, agent: AG, text: PROMPT[tr].split("[NAME]").join(name) }));
 
   h.appendChild(el("p", { class: "help" }, "Stuck? Tell us what you see at hello@wardconsulting.ai. Never send passwords or screenshots of your inbox."));
   h.appendChild(el("h2", null, "Your 5 AI agents"));
