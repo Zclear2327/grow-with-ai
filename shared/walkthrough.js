@@ -68,7 +68,7 @@ function openBlock(opts) { // {tool, agent:{id,name}, text}
   var url = tool === "grok" ? "https://grok.com" : "https://claude.ai/new";
   var wrap = document.createElement("div"); wrap.className = "openblock";
   var b = document.createElement("a"); b.className = "go ghostgo btn primary"; b.href = url; b.target = "_blank"; b.rel = "noopener";
-  b.textContent = "Copy prompt and open " + app;
+  b.textContent = opts.label || ("Copy prompt and open " + app);
   var msg = document.createElement("p"); msg.className = "help openmsg"; msg.setAttribute("role", "status"); msg.setAttribute("aria-live", "polite");
   var list = document.createElement("ol"); list.className = "checklist"; list.hidden = true;
   (BUILT_IN[opts.agent.id] ? builtInSteps(tool, opts.agent) : steps(tool, opts.agent)).forEach(function (t) { var li = document.createElement("li"); var lab = document.createElement("label"); var cb = document.createElement("input"); cb.type = "checkbox"; lab.appendChild(cb); lab.appendChild(document.createTextNode(" " + t)); li.appendChild(lab); list.appendChild(li); });

@@ -1,4 +1,4 @@
-/* Start With AI v3: free setup flow.
+/* Grow With AI free setup flow.
    One question per screen. A formal setup voice asks; then the trainer (Sam or Travis) takes over.
    Answers stay in this browser (localStorage) until the visitor chooses to send them.
    Never asks for passwords, codes, card, bank or ID details. */
@@ -37,14 +37,14 @@ var EMAIL_OPTS = [
   { v: "none", label: "I don't have an email address yet" }
 ];
 var Q = {
-  q1: { sec: 1, type: "text", text: "In one sentence: what does your business do, and who pays you for it?", ph: "For example: We clean homes in Ogden, and homeowners pay us." },
-  q2: { sec: 1, type: "text", text: "If you could hand one chore to someone tomorrow and never think about it again, what would it be?", chips: ["My email", "Quotes and invoices", "Scheduling", "Follow-ups", "Other"] },
+  q1: { sec: 1, type: "text", text: "What kind of business do you run?", ph: "For example: a house-cleaning business in Ogden" },
+  q2: { sec: 1, type: "text", text: "What takes up too much of your week?", chips: ["Email", "Quotes and invoices", "Scheduling", "Follow-ups", "Other"] },
   q3: { sec: 2, type: "single", text: "Where does your work email live?", help: "Not sure? When you open your email, do you see a red M or a blue Outlook logo?", options: EMAIL_OPTS },
   q4a: { sec: 2, type: "single", text: "What do you work on most days?", options: [{ v: "mac", label: "Mac" }, { v: "windows", label: "Windows computer" }, { v: "phone", label: "Mostly my phone" }] },
   q4b: { sec: 2, type: "single", text: "Which web browser do you use?", options: [{ v: "chrome", label: "Chrome (colorful circle)" }, { v: "edge", label: "Edge (blue swirl)" }, { v: "safari", label: "Safari (compass)" }, { v: "other", label: "Other / not sure" }] },
-  q5a: { sec: 2, type: "single", text: "No wrong answer here: when you get a new app, do you…", options: [{ v: "a", label: "Ask someone to help" }, { v: "b", label: "Figure it out with some trial and error" }, { v: "c", label: "Have it running in two minutes" }] },
-  q5b: { sec: 2, type: "single", text: "Do you use AI like ChatGPT, Claude or Grok now?", options: [{ v: "never", label: "Never" }, { v: "sometimes", label: "Sometimes" }, { v: "most", label: "Most days" }] },
-  q5c: { sec: 2, type: "single", text: "Would you be comfortable adding a small browser add-on if we walk you through it?", options: [{ v: "yes", label: "Yes" }, { v: "no", label: "I'd rather not" }] },
+  q5a: { sec: 2, type: "single", text: "How comfortable are you with new apps?", options: [{ v: "start", label: "Just starting" }, { v: "getting", label: "Getting there" }, { v: "very", label: "Very comfortable" }] },
+  q5b: { sec: 2, type: "single", text: "Have you used an AI chat app before?", options: [{ v: "no", label: "No" }, { v: "little", label: "A little" }, { v: "lot", label: "A lot" }] },
+  q5c: { sec: 2, type: "single", text: "Okay to add a small browser add-on if we walk you through it?", options: [{ v: "yes", label: "Yes" }, { v: "no", label: "I'd rather not" }] },
   q6: { sec: 3, type: "single", text: "Would you like your trainer to be Sam, with a female voice and style, or Travis, with a male voice and style?", help: "You can switch any time.", options: [{ v: "Sam", label: "Sam" }, { v: "Travis", label: "Travis" }, { v: "Sam", label: "Either is fine", id: "either" }] }
 };
 
@@ -71,19 +71,10 @@ var OUTLOOK_STEPS = [
 var OUTLOOK_HELP = ["Address taken? Add your town or a number.", "The puzzle won't load? Refresh the page and try again."];
 
 /* ---------- plan of screens ---------- */
-function score(upto) {
-  var s = 0;
-  s += { a: 0, b: 1, c: 2 }[A.q5a] || 0;
-  if (A.q5b === "most") s += 1;
-  if (A.q4a !== "phone" && A.q4b === "chrome") s += 1;
-  if (upto) return s;
-  if (A.q5c === "yes") s += 1;
-  if (meta.hes >= 2) s -= 1;
-  return Math.max(0, Math.min(5, s));
-}
 function baseTrack() {
   if (A.q4a === "phone") return "grok";
-  return score() >= 3 ? "claude" : "grok";
+  if (A.q4b === "chrome" && (A.q5a === "very" || A.q5b === "lot")) return "claude";
+  return "grok";
 }
 function track() { var b = baseTrack(); return A.switched ? (b === "grok" ? "claude" : "grok") : b; }
 function emailType() { return A.q3 === "none" ? (A.newEmail || "gmail") : A.q3; }
@@ -99,7 +90,7 @@ function plan() {
   P.push({ k: "ask", id: "q4a" });
   if (A.q4a && A.q4a !== "phone") P.push({ k: "ask", id: "q4b" });
   P.push({ k: "ask", id: "q5a" }, { k: "ask", id: "q5b" });
-  if (A.q5a && A.q5b && score(true) >= 2) P.push({ k: "ask", id: "q5c" });
+  if (A.q5a && A.q5b && A.q4b === "chrome") P.push({ k: "ask", id: "q5c" });
   P.push({ k: "ask", id: "q6" }, { k: "handoff", sec: 3 }, { k: "reflect", sec: 3 }, { k: "result", sec: 4 });
   return P;
 }
@@ -148,7 +139,7 @@ function hesitance(h, id) {
   var show = function () {
     if (note.textContent) return;
     note.textContent = "Sounds like this one's a bit unclear. That's normal. Pick the closest answer; you can change it later.";
-    meta.hes++; save();
+    save();
   };
   if ((meta.backs[id] || 0) >= 2) show();
   idleTimer = setTimeout(show, 45000);
@@ -274,7 +265,7 @@ function short(s, n) { s = s || ""; return s.length > n ? s.slice(0, n - 1).repl
 function reflect(h) {
   h.appendChild(el("p", { class: "who" }, trainer()));
   var q1 = short(lower1(A.q1), 70), q2 = short(lower1(A.q2), 50);
-  h.appendChild(el("h1", null, "So: " + q1 + ". " + (q2.charAt(0).toUpperCase() + q2.slice(1)) + " is eating your week. You're on " + (EMAIL_NAME[emailType()] || "your email") + " and " + (DEVICE_NAME[A.q4a] || "your computer") + ". Got it."));
+  h.appendChild(el("h1", null, "So you run " + q1 + ". " + (q2.charAt(0).toUpperCase() + q2.slice(1)) + " takes up too much of your week. You're on " + (EMAIL_NAME[emailType()] || "your email") + " and " + (DEVICE_NAME[A.q4a] || "your computer") + ". Got it."));
   h.appendChild(el("p", null, "Here's the simplest way to get your inbox sorted."));
   navRow(h, next, true, "Show me");
 }
@@ -324,12 +315,12 @@ var STEPS = {
   }
 };
 var COST = {
-  grok: "Our setup is free. To start free, use the free Grok app: you send a screenshot of your inbox and your trainer sorts it. For hands-free email (it connects to your inbox and does the work), Grok Bot needs an X Premium plan, about $30 a month, paid to X/xAI. Optional.",
-  claude: "Our setup is free, and Claude has a free plan. On Free, you send a screenshot of your inbox and your trainer sorts it (Microsoft 365 work accounts can also connect on Free, with admin approval). For Gmail to connect directly and for Claude in Chrome, you need Claude Pro, about $20 a month, paid to Anthropic. Optional."
+  grok: "Our setup is free. To start free, use Grok on grok.com or the Grok phone app: you send a screenshot of your inbox and your trainer sorts it. For hands-free email (it connects to your inbox and does the work), you need Grok Bot, which comes with The X Subscription Premium plan ($30 a month, paid to xAI). The $8 Plus plan doesn't include Grok Bot. Optional.",
+  claude: "Our setup is free, and Claude has a free plan. On Free, you can send a screenshot of your inbox, or connect Gmail or a Microsoft 365 work account (your admin may need to approve Microsoft 365 once). For Claude in Chrome, which can do the clicks you approve, you need Claude Pro, about $20 a month ($17 billed yearly), paid to Anthropic. Optional."
 };
 var UPGRADE = {
-  grok: "Get Grok Bot: follow xAI's Grok Bot guide, download it for Mac or Windows (or use the phone app), sign in, choose a Premium plan yourself, then connect Gmail or Outlook and click Allow.",
-  claude: "Gmail connector: + → Connectors → Gmail → Connect → Allow (read-only). Microsoft 365: + → Connectors → Microsoft 365 (your admin may need to approve). Claude in Chrome: Chrome Web Store → Claude by Anthropic → Add to Chrome → pin it → “Ask before acting”."
+  grok: "Get Grok Bot: download the desktop app for Mac or Windows from cursor.com/download/bot (or get the phone app), sign in, choose a plan that includes Grok Bot yourself, then connect Gmail or Outlook and click Allow.",
+  claude: "Gmail connector (any plan): + \u2192 Connectors \u2192 Gmail \u2192 Connect \u2192 Allow. Claude asks before it sends anything; keep it that way. Microsoft 365: + \u2192 Connectors \u2192 Microsoft 365 (your admin may need to approve). Claude in Chrome (Pro or higher): Chrome Web Store \u2192 Claude by Anthropic \u2192 Add to Chrome \u2192 pin it \u2192 \u201cAsk before acting\u201d."
 };
 
 function deviceKey(tr, dev) {
@@ -347,7 +338,7 @@ function result(h) {
 
   var cost = el("div", { class: "note cost" });
   cost.appendChild(el("p", null, COST[tr]));
-  cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing or claude.com/pricing. We're not affiliated with xAI or Anthropic."));
+  cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing or claude.com/pricing."));
   h.appendChild(cost);
 
   // device tabs
@@ -377,6 +368,7 @@ function result(h) {
     ol.appendChild(li);
   });
   h.appendChild(ol);
+  if (tr === "grok" && cur === "computer") h.appendChild(el("p", { class: "help" }, "Grok doesn't need a desktop app; it runs in your browser at grok.com."));
   if (done >= list.length) h.appendChild(el("p", { class: "flash small", role: "status" }, "Nice work. Your free email helper is set up."));
 
   var up = el("details", { class: "stuck" });
@@ -397,9 +389,9 @@ function result(h) {
   cb.onclick = function () { copy(txt, pre, cb); };
   row.appendChild(cb);
   h.appendChild(row);
-  h.appendChild(window.GWAIWalk.openBlock({ tool: tr, agent: AG, text: PROMPT[tr].split("[NAME]").join(name) }));
+  h.appendChild(window.GWAIWalk.openBlock({ tool: tr, agent: AG, text: PROMPT[tr].split("[NAME]").join(name), label: tr === "claude" && cur !== "phone" ? "Copy prompt and open Claude in your browser (or use the desktop app you installed)" : null }));
 
-  h.appendChild(el("p", { class: "help" }, "Stuck? Tell us what you see at hello@wardconsulting.ai. Never send passwords or screenshots of your inbox."));
+  h.appendChild(el("p", { class: "help" }, "Stuck? Email hello@wardconsulting.ai and tell us what you see on screen. Please don't email us passwords or inbox screenshots."));
   h.appendChild(el("h2", null, "Your 5 AI agents"));
   h.appendChild(el("p", { class: "help" }, "Your Email & Inbox Agent is free. Pro adds one new agent every month, and Business adds two, until you have all five."));
   var five = el("ol", { class: "rows" });
@@ -434,12 +426,13 @@ function capture(h, tr) {
   var f = el("form", { novalidate: "novalidate" });
   var l1 = el("label", { class: "fl", for: "fn" }, "First name (optional)"); var fn = el("input", { id: "fn", type: "text", maxlength: "40", autocomplete: "given-name" });
   var l2 = el("label", { class: "fl", for: "em", style: "margin-top:12px" }, "Your email"); var em = el("input", { id: "em", type: "email", autocomplete: "email", required: "required" });
+  var emNote = el("p", { class: "help", id: "em-note" }, "We use your email only to send your setup and updates. Unsubscribe anytime. "); emNote.appendChild(el("a", { href: "../terms/#privacy" }, "Privacy")); em.setAttribute("aria-describedby", "em-note");
   var hp = el("input", { type: "text", name: "_honey", tabindex: "-1", "aria-hidden": "true", autocomplete: "off", style: "position:absolute;left:-9999px;width:1px;height:1px;opacity:0" });
   var cons = el("label", { class: "opt", style: "margin-top:12px" }); var cb = el("input", { type: "checkbox", id: "cons" });
   cons.appendChild(cb); cons.appendChild(el("span", { class: "lab" }, "Email me the steps and one check-in a week from now."));
   var msg = el("p", { class: "help", role: "status", "aria-live": "polite" }, "");
   var send = el("button", { class: "go", type: "submit", style: "margin-top:18px" }, "Send me the steps");
-  [l1, fn, l2, em, hp, cons, send, msg].forEach(function (n) { f.appendChild(n); });
+  [l1, fn, l2, em, emNote, hp, cons, send, msg].forEach(function (n) { f.appendChild(n); });
   h.appendChild(f);
   h.appendChild(el("p", { class: "help" }, "We'll send: your first name, email, track, trainer, device, email type and the chore you named. Nothing else. We don't sell or share your address."));
   f.onsubmit = function (ev) {
@@ -453,7 +446,7 @@ function capture(h, tr) {
     body.append("email", v); body.append("first_name", (fn.value || "").trim().slice(0, 40));
     body.append("_subject", "Free setup: " + tr + " (" + v + ")"); body.append("_template", "table"); body.append("_honey", "");
     body.append("track", tr); body.append("persona", trainer()); body.append("device", A.q4a || "");
-    body.append("email_type", emailType() || ""); body.append("chore", (A.q2 || "").slice(0, 120)); body.append("score", String(score()));
+    body.append("email_type", emailType() || ""); body.append("chore", (A.q2 || "").slice(0, 120));
     body.append("referred_by", (window.wcRef && window.wcRef.code) || "");
     fetch(CFG.form_endpoint, { method: "POST", body: body, headers: { Accept: "application/json" } })
       .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json().catch(function () { return {}; }); })
@@ -464,5 +457,5 @@ function capture(h, tr) {
 
 restore();
 render();
-window.__flow = { plan: plan, score: score, track: track, state: function () { return { A: A, step: step, meta: meta }; } };
+window.__flow = { plan: plan, track: track, state: function () { return { A: A, step: step, meta: meta }; } };
 })();
