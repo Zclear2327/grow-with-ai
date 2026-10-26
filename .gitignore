@@ -1,1 +1,6 @@
 _staging/
+tools/start-videos/out/
+tools/start-videos/cues/
+tools/start-videos/wav/
+tools/start-videos/canvas-*.mp4
+tools/start-videos/label-*.png
