@@ -288,6 +288,7 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
 @media (max-width:720px){.courses.two{grid-template-columns:1fr}}
 @media (max-width:640px){.nav a.home{display:inline-block}}
 .jr-ph{max-width:260px}
+.owner-photo{display:block;width:100%;max-width:260px;height:auto;border:1px solid var(--rule);margin:4px 0 12px}
 .nav a.home,.nav a.train{display:inline-block !important}
 .mark{font-size:clamp(28px,3.6vw,40px) !important;line-height:1.05}
 .brandline{font-family:var(--display);font-weight:700;font-size:clamp(52px,10vw,120px);line-height:.95;letter-spacing:-.01em;margin:8px 0 22px;color:var(--ink)}
@@ -464,7 +465,7 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
       </div>
       <div>
         <h3>JR, co-owner</h3>
-        <div class="jr-ph" role="img" aria-label="Photo of JR coming soon">Photo of JR coming soon</div>
+        <picture><source srcset="media/jr-headshot.webp" type="image/webp"><img class="owner-photo" src="media/jr-headshot.jpg" width="720" height="756" alt="JR, co-owner of Grow With AI, smiling in a dark blazer and white T-shirt" loading="lazy" decoding="async"></picture>
         <p class="note">JR's story is coming soon.</p>
       </div>
     </div>
