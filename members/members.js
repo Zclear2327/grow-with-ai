@@ -6,10 +6,10 @@
 var KEY = "gwai-members-v1";
 var AGENTS = [
   { id: "Email-Inbox", name: "Email & Inbox Agent", tag: "Free", job: "Sorts your inbox, flags what needs you today, and drafts replies for you to send.", start: "Say hello, then send a screenshot of your inbox list (or paste the senders and subjects).", free: true },
-  { id: "Customer-Questions", name: "Customer Questions Agent", tag: "Pro & Business", job: "Answers the questions customers ask most, from your own information, and hands the tricky ones to you.", start: "It builds your answer sheet with you first (about 15 minutes)." },
-  { id: "Sales-Follow-Up", name: "Sales & Follow-Up Agent", tag: "Pro & Business", job: "Keeps track of leads, drafts follow-ups and quotes, and reminds you so nobody slips through.", start: "Each day, say “who do I chase?”" },
-  { id: "Daily-Assistant", name: "Daily Assistant", tag: "Pro & Business", job: "Your morning brief: calendar, to-dos, bookings and errands, and an eye on prices or competitors you care about.", start: "Each morning, say “brief me”." },
-  { id: "Content-Social", name: "Content & Social Agent", tag: "Pro & Business", job: "Drafts posts, newsletters and short video scripts in your voice for you to approve.", start: "Each week, say “plan my posts”." }
+  { id: "Customer-Questions", name: "Customer Questions Agent", tag: "Starter, Pro & Elite", job: "Answers the questions customers ask most, from your own information, and hands the tricky ones to you.", start: "It builds your answer sheet with you first (about 15 minutes)." },
+  { id: "Sales-Follow-Up", name: "Sales & Follow-Up Agent", tag: "Starter, Pro & Elite", job: "Keeps track of leads, drafts follow-ups and quotes, and reminds you so nobody slips through.", start: "Each day, say “who do I chase?”" },
+  { id: "Daily-Assistant", name: "Daily Assistant", tag: "Starter, Pro & Elite", job: "Your morning brief: calendar, to-dos, bookings and errands, and an eye on prices or competitors you care about.", start: "Each morning, say “brief me”." },
+  { id: "Content-Social", name: "Content & Social Agent", tag: "Starter, Pro & Elite", job: "Drafts posts, newsletters and short video scripts in your voice for you to approve.", start: "Each week, say “plan my posts”." }
 ];
 var state = load(), vault = null, opened = {}, free = { grok: "", claude: "" };
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || { codes: {}, trainer: "Sam", tool: "grok" }; } catch (e) { return { codes: {}, trainer: "Sam", tool: "grok" }; } }

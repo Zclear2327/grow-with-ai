@@ -418,9 +418,9 @@ function result(h) {
 
   h.appendChild(el("p", { class: "help" }, "Stuck? Email hello@wardconsulting.ai and tell us what you see on screen. Please don't email us passwords or inbox screenshots."));
   h.appendChild(el("h2", null, "Your 5 AI agents"));
-  h.appendChild(el("p", { class: "help" }, "Your Email & Inbox Agent is free. Pro adds one new agent every month, and Business adds two, until you have all five."));
+  h.appendChild(el("p", { class: "help" }, "Your Email & Inbox Agent is free. Starter adds 1 paid agent of your choice. Pro and Elite include all 4."));
   var five = el("ol", { class: "rows" });
-  [["Email & Inbox Agent", "Free: yours now"], ["Customer Questions Agent", "Pro & Business"], ["Sales & Follow-Up Agent", "Pro & Business"], ["Daily Assistant", "Pro & Business"], ["Content & Social Agent", "Pro & Business"]].forEach(function (a, i) {
+  [["Email & Inbox Agent", "Free: yours now"], ["Customer Questions Agent", "Starter, Pro & Elite"], ["Sales & Follow-Up Agent", "Starter, Pro & Elite"], ["Daily Assistant", "Starter, Pro & Elite"], ["Content & Social Agent", "Starter, Pro & Elite"]].forEach(function (a, i) {
     var li = el("li"); li.appendChild(el("span", { class: "num" }, String(i + 1)));
     var d = el("div"); d.appendChild(el("h3", null, a[0])); d.appendChild(el("p", { class: "because" }, a[1]));
     if (i > 0) { var u = el("a", { href: "../members/", class: "unlocklink" }, "Members: unlock and copy it"); d.appendChild(u); }
