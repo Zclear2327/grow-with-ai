@@ -27,8 +27,8 @@ created, no DNS was changed and no file was moved.
 4. Upload the videos to the video host; swap the sources; re-test playback and captions.
 5. Add the custom domain and DNS records; wait for HTTPS.
 6. Redirect `zclear2327.github.io/grow-with-ai/*` to the new domain (a redirect page per path on Pages, since
-   Pages has no server-side 301), then update canonical tags, `sitemap.xml`, ThriveCart return URLs, the HubSpot
-   form's allowed domain and every link in emails.
+   Pages has no server-side 301), then update canonical tags, `sitemap.xml`, ThriveCart return URLs, the Mailchimp
+   signup form's website address and every link in emails.
 7. Watch a week of traffic and leads, then turn off Pages for the repo.
 
 ## Rollback

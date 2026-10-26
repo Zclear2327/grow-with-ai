@@ -1,5 +1,5 @@
-/* Waitlist / interest forms. Sent through shared/hubspot.js (HubSpot once its form ID is set,
- * the old FormSubmit inbox until then). Nothing is charged; it only records interest. */
+/* Waitlist / interest forms. Sent through shared/leads.js (Chris's inbox always, plus the Mailchimp
+ * audience once its form address is set). Nothing is charged; it only records interest. */
 (function () {
   var START = Date.now();
   document.querySelectorAll("form[data-waitlist]").forEach(function (f) {
