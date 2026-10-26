@@ -1,7 +1,6 @@
-/* Waitlist / interest forms. Posts to the same FormSubmit endpoint as the questionnaire, which
- * delivers to Chris. Nothing is charged; it only records interest. */
+/* Waitlist / interest forms. Sent through shared/hubspot.js (HubSpot once its form ID is set,
+ * the old FormSubmit inbox until then). Nothing is charged; it only records interest. */
 (function () {
-  var ENDPOINT = "https://formsubmit.co/ajax/7fbd7e6f9b9178360b909504bd877f07";
   var START = Date.now();
   document.querySelectorAll("form[data-waitlist]").forEach(function (f) {
     f.addEventListener("submit", function (ev) {
@@ -13,18 +12,10 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg.textContent = "That email does not look right. Check it and try again."; em.focus(); return; }
       if (cb && !cb.checked) { msg.textContent = "Tick the box so we are allowed to email you."; cb.focus(); return; }
       if ((hp && hp.value) || (Date.now() - START) / 1000 < 4) { msg.textContent = "Thanks, you're on the list."; return; }
-      var b = new FormData();
-      b.append("email", v);
-      b.append("list", f.getAttribute("data-waitlist"));
-      if (sel) b.append("interest", sel.options[sel.selectedIndex].text);
-      b.append("referred_by", (window.wcRef && window.wcRef.code) || "");
-      b.append("_subject", "Waitlist: " + f.getAttribute("data-waitlist") + " (" + v + ")");
-      b.append("_template", "table");
       btn.disabled = true; msg.textContent = "Sending...";
-      fetch(ENDPOINT, { method: "POST", body: b, headers: { Accept: "application/json" } })
-        .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json().catch(function () { return {}; }); })
-        .then(function (j) {
-          if (j && (j.success === false || j.success === "false")) throw new Error(j.message || "not accepted");
+      window.GWAILead.send({ email: v, list: f.getAttribute("data-waitlist"), interest: sel ? sel.options[sel.selectedIndex].text : "",
+          consent: !!(cb && cb.checked), subject: "Waitlist: " + f.getAttribute("data-waitlist") + " (" + v + ")" })
+        .then(function () {
           msg.textContent = "Thanks, you're on the list. We'll email you when it opens.";
           var dl = f.getAttribute("data-download");
           if (dl && !f.querySelector(".dl")) {

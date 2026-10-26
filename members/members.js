@@ -1,6 +1,8 @@
 /* Grow With AI members page.
-   The free Email & Inbox Agent is public. Paid agents are stored encrypted (AES-GCM, key from PBKDF2-SHA256)
-   and only open with that agent's unlock code. Nothing is sent anywhere; codes are kept on this device. */
+   The free Email & Inbox Agent is public. Paid agents now live in the hosted member area (ThriveCart Learn),
+   where each person has their own login and access ends on cancel or a failed payment (v6, item B).
+   The old shared unlock codes are RETIRED: no code entry on this page any more. */
+var MEMBER_LOGIN_URL = ""; // TODO Chris: ThriveCart Learn login URL
 (function () {
 "use strict";
 var KEY = "gwai-members-v1";
@@ -18,6 +20,7 @@ function el(t, a, x) { var n = document.createElement(t); if (a) for (var k in a
 function norm(c) { return (c || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
 function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
 
+// RETIRED v6, delete after ThriveCart Learn is live (no longer called by the page).
 function decrypt(id, code) {
   var v = vault && vault[id]; if (!v || !window.crypto || !crypto.subtle) return Promise.reject(new Error("unsupported"));
   return crypto.subtle.importKey("raw", new TextEncoder().encode(norm(code)), "PBKDF2", false, ["deriveKey"])
@@ -55,6 +58,9 @@ function render() {
       row.appendChild(cb); card.appendChild(row);
       card.appendChild(window.GWAIWalk.openBlock({ tool: state.tool, agent: a, text: base }));
     } else {
+      card.appendChild(el("p", { class: "msg" }, "Included in " + a.tag + ". Open it in your member area."));
+    }
+    if (false) { // RETIRED v6, delete after ThriveCart Learn is live: the shared-code unlock form below
       var f = el("form", { class: "unlock", novalidate: "novalidate" });
       var lab = el("label", { for: "c-" + a.id, class: "sr" }, "Unlock code for " + a.name);
       var inp = el("input", { id: "c-" + a.id, type: "text", autocomplete: "off", autocapitalize: "characters", spellcheck: "false", placeholder: "GWAI-XXXX-XXXX", maxlength: "20" });
@@ -77,7 +83,7 @@ function render() {
   });
   var how = document.getElementById("how"); how.innerHTML = "";
   (state.tool === "grok"
-    ? ["Tap “Copy this agent”.", "Open Grok Bot (desktop app from cursor.com/download/bot, or the Grok Bot phone app) and start a new chat.", "Paste and send. Your trainer says “Hi, I'm here.”", "Use one chat per agent so they don't get mixed up."]
+    ? ["Tap “Copy this agent”.", "Open Grok and start a new chat: free Grok (grok.com or the free Grok app) works too, or Grok Bot (optional, desktop app from cursor.com/download/bot or the Grok Bot phone app).", "Paste and send. Your trainer says “Hi, I'm here.”", "Use one chat per agent so they don't get mixed up."]
     : ["Tap “Copy this agent”.", "On a computer: in Claude, click Projects, then New project, name it after the agent, and paste into “Set project instructions”. On a phone: paste into a new chat.", "Start a chat in that project and say hello. Your trainer says “Hi, I'm here.”", "One project per agent keeps them separate."]
   ).forEach(function (t) { how.appendChild(el("li", null, t)); });
 }
@@ -91,17 +97,20 @@ function bindChoices() {
   });
 }
 
-bindChoices(); render();
+function loginPanel() {
+  var host = document.getElementById("login"); if (!host) return; host.innerHTML = "";
+  if (MEMBER_LOGIN_URL) host.appendChild(el("a", { class: "btn primary", href: MEMBER_LOGIN_URL }, "Log in to your member area"));
+  else host.appendChild(el("p", { class: "msg" }, "Member area opens at launch. Bought already? Check your welcome email."));
+}
+
+bindChoices(); loginPanel(); render();
 Promise.all([
-  fetch("vault.json").then(function (r) { return r.json(); }),
+  // RETIRED v6, delete after ThriveCart Learn is live: vault.json (the encrypted paid agents) is no longer fetched,
+  // and codes saved on this device are no longer re-opened. decrypt() above is kept until then.
   fetch("../start/prompts/free-email-grok.txt").then(function (r) { return r.text(); }),
   fetch("../start/prompts/free-email-claude.txt").then(function (r) { return r.text(); })
 ]).then(function (res) {
-  vault = res[0]; free.grok = res[1]; free.claude = res[2]; render();
-  // re-open anything this device already unlocked
-  Object.keys(state.codes).forEach(function (id) {
-    decrypt(id, state.codes[id]).then(function (d) { opened[id] = d; render(); }, function () { delete state.codes[id]; save(); });
-  });
+  free.grok = res[0]; free.claude = res[1]; render();
 }).catch(function () {
   var host = document.getElementById("agents");
   host.insertBefore(el("p", { class: "msg err" }, "Couldn't load your agents. Check your connection and refresh the page."), host.firstChild);
