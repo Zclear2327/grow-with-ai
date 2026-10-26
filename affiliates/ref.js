@@ -53,6 +53,43 @@
   });
   var code = incoming || saved;
 
+  /* Influencer and campaign tracking (v6, item E): ref, aff, src and utm_* from any page's link,
+     kept 90 days as first touch and last touch. Read it as window.wcRef.attrib. */
+  var AKEY = "gwai-attrib-v1", ANAMES = ["ref", "aff", "src", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+  var hit = {}, any = false;
+  ANAMES.forEach(function (k) { var v = clean(params.get(k)); if (v) { hit[k] = v; any = true; } });
+  var attrib = store(function (ls) {
+    var a = null; try { a = JSON.parse(ls.getItem(AKEY) || "null"); } catch (e) { a = null; }
+    if (a && a.until < Date.now()) a = null;
+    if (any) {
+      hit.ts = new Date().toISOString();
+      a = { first: (a && a.first) || hit, last: hit, until: Date.now() + DAYS * 864e5 };
+      ls.setItem(AKEY, JSON.stringify(a));
+    }
+    return a;
+  }) || (any ? { first: hit, last: hit } : null);
+  function attribQuery() { // the latest values, as URL parameters (ref stays out: ThriveCart reads the affiliate from the prefix)
+    var l = (attrib && attrib.last) || {}, q = [];
+    ANAMES.forEach(function (k) { if (k !== "ref" && k !== "aff" && l[k]) q.push(k + "=" + encodeURIComponent(l[k])); });
+    if (code) q.unshift("ref=" + encodeURIComponent(code));
+    return q.join("&");
+  }
+  function addQuery(href, q) {
+    if (!q) return href;
+    var hash = "", i = href.indexOf("#"); if (i >= 0) { hash = href.slice(i); href = href.slice(0, i); }
+    return href + (href.indexOf("?") === -1 ? "?" : "&") + q + hash;
+  }
+  function carry() { // keep the codes on links to /start/ and /packages/ so they survive navigation
+    var q = attribQuery(); if (!q) return;
+    var links = document.querySelectorAll("a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i], u; if (a.dataset.attribStamped || a.hasAttribute("data-checkout")) continue;
+      try { u = new URL(a.getAttribute("href"), location.href); } catch (e) { continue; }
+      if (u.origin !== location.origin || !/\/(start|packages)\/$/.test(u.pathname)) continue;
+      a.setAttribute("href", addQuery(a.getAttribute("href"), q)); a.dataset.attribStamped = "1";
+    }
+  }
+
   function wire() {
     if (code) {
       var links = document.querySelectorAll('a[href^="mailto:hello@wardconsulting.ai"]');
@@ -97,12 +134,12 @@
       var url = CHECKOUT[btns[j].getAttribute("data-checkout")];
       if (!url) continue;
       if (code && /^[A-Za-z0-9]+$/.test(code)) url = url.replace(/^https:\/\/([a-z0-9-]+\.thrivecart\.com\/)/i, "https://" + code.toLowerCase() + "--$1");
-      btns[j].setAttribute("href", url);
+      btns[j].setAttribute("href", addQuery(url, attribQuery()));
     }
   }
-  var run = function () { wire(); checkout(); };
+  var run = function () { wire(); checkout(); carry(); };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();
 
-  window.wcRef = { code: code || null };
+  window.wcRef = { code: code || null, attrib: attrib };
 })();
