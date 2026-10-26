@@ -371,9 +371,11 @@ function result(h) {
     tabs.appendChild(b);
   });
   h.appendChild(tabs);
-  var DV = { grok: { phone: ["grok-phone", "Grok on your phone (23 seconds)"], computer: ["grok-computer", "Grok on your computer (20 seconds)"] },
+  var DV = { grok: { phone: null, computer: null },
     claude: { mac: ["claude-mac", "Claude on a Mac (26 seconds)"], windows: ["claude-windows", "Claude on Windows (22 seconds)"], phone: ["claude-phone", "Claude on your phone (16 seconds)"] } }[tr][cur];
   if (DV) h.appendChild(vid(DV[0], "Video: " + DV[1]));
+  // TODO RECOMMENDED DEFAULT 5 (v5): Grok clips hidden until Grok Bot re-record (see Grok-Bot-Rerecord-Scripts-v1). Restore the two DV entries to bring them back.
+  else if (tr === "grok") h.appendChild(el("p", { class: "help" }, "Video coming soon."));
 
   var list = STEPS[tr][cur], done = A.done || 0;
   var ol = el("ol", { class: "isteps" });
