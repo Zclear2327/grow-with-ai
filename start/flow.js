@@ -30,7 +30,7 @@ function clearAll() { try { localStorage.removeItem(KEY); } catch (e) {} A = {};
 
 /* ---------- questions ---------- */
 var EMAIL_OPTS = [
-  { v: "gmail", label: "Gmail (red M)" },
+  { v: "gmail", label: "Gmail" },
   { v: "m365", label: "Microsoft 365 / Outlook for work (blue Outlook logo, company address)" },
   { v: "outlookcom", label: "Outlook.com, Hotmail or Live (personal)" },
   { v: "other", label: "Something else" },
@@ -39,13 +39,13 @@ var EMAIL_OPTS = [
 var Q = {
   q1: { sec: 1, type: "text", text: "What kind of business do you run?", ph: "For example: a house-cleaning business in Ogden" },
   q2: { sec: 1, type: "text", text: "What takes up too much of your week?", chips: ["Email", "Quotes and invoices", "Scheduling", "Follow-ups", "Other"] },
-  q3: { sec: 2, type: "single", text: "Where does your work email live?", help: "Not sure? When you open your email, do you see a red M or a blue Outlook logo?", options: EMAIL_OPTS },
+  q3: { sec: 2, type: "single", text: "Where does your work email live?", help: "Not sure? Check the address you send email from. Ending in @gmail.com means Gmail.", options: EMAIL_OPTS },
   q4a: { sec: 2, type: "single", text: "What do you work on most days?", options: [{ v: "mac", label: "Mac" }, { v: "windows", label: "Windows computer" }, { v: "phone", label: "Mostly my phone" }] },
-  q4b: { sec: 2, type: "single", text: "Which web browser do you use?", options: [{ v: "chrome", label: "Chrome (colorful circle)" }, { v: "edge", label: "Edge (blue swirl)" }, { v: "safari", label: "Safari (compass)" }, { v: "other", label: "Other / not sure" }] },
+  q4b: { sec: 2, type: "single", text: "Which web browser do you use?", options: [{ v: "chrome", label: "Chrome" }, { v: "edge", label: "Edge" }, { v: "safari", label: "Safari" }, { v: "other", label: "Other / not sure" }] },
   q5a: { sec: 2, type: "single", text: "How comfortable are you with new apps?", options: [{ v: "start", label: "Just starting" }, { v: "getting", label: "Getting there" }, { v: "very", label: "Very comfortable" }] },
   q5b: { sec: 2, type: "single", text: "Have you used an AI chat app before?", options: [{ v: "no", label: "No" }, { v: "little", label: "A little" }, { v: "lot", label: "A lot" }] },
   q5c: { sec: 2, type: "single", text: "Okay to add a small browser add-on if we walk you through it?", options: [{ v: "yes", label: "Yes" }, { v: "no", label: "I'd rather not" }] },
-  q6: { sec: 3, type: "single", text: "Would you like your trainer to be Sam, with a female voice and style, or Travis, with a male voice and style?", help: "You can switch any time.", options: [{ v: "Sam", label: "Sam" }, { v: "Travis", label: "Travis" }, { v: "Sam", label: "Either is fine", id: "either" }] }
+  q6: { sec: 3, type: "single", text: "Pick your trainer: Sam or Travis.", help: "Sam has a female voice and style; Travis has a male voice and style. You can switch any time.", options: [{ v: "Sam", label: "Sam" }, { v: "Travis", label: "Travis" }, { v: "Sam", label: "Either is fine", id: "either" }] }
 };
 
 /* ---------- no-email branch ---------- */
