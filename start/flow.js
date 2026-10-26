@@ -400,8 +400,16 @@ function result(h) {
   h.appendChild(row);
 
   h.appendChild(el("p", { class: "help" }, "Stuck? Tell us what you see at hello@wardconsulting.ai. Never send passwords or screenshots of your inbox."));
-  var nx = el("p", null, "When you want it to do this for you every week, ");
-  var pk = el("a", { href: "../packages/" }, "see the packages"); nx.appendChild(pk); nx.appendChild(document.createTextNode("."));
+  h.appendChild(el("h2", null, "Your 5 AI agents"));
+  h.appendChild(el("p", { class: "help" }, "Your Email & Inbox Agent is free. Pro adds one new agent every month, and Business adds two, until you have all five."));
+  var five = el("ol", { class: "rows" });
+  [["Email & Inbox Agent", "Free: yours now"], ["Customer Questions Agent", "Pro & Business"], ["Sales & Follow-Up Agent", "Pro & Business"], ["Daily Assistant", "Pro & Business"], ["Content & Social Agent", "Pro & Business"]].forEach(function (a, i) {
+    var li = el("li"); li.appendChild(el("span", { class: "num" }, String(i + 1)));
+    var d = el("div"); d.appendChild(el("h3", null, a[0])); d.appendChild(el("p", { class: "because" }, a[1])); li.appendChild(d); five.appendChild(li);
+  });
+  h.appendChild(five);
+  var nx = el("p", null, "Want more agents working for you? ");
+  var pk = el("a", { href: "../packages/" }, "See the packages"); nx.appendChild(pk); nx.appendChild(document.createTextNode("."));
   h.appendChild(nx);
 
   capture(h, tr);
