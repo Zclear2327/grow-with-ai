@@ -4,7 +4,7 @@
    Never asks for passwords, codes, card, bank or ID details. */
 (function () {
 "use strict";
-var CFG = { form_endpoint: "https://formsubmit.co/ajax/7fbd7e6f9b9178360b909504bd877f07", min_seconds_before_send: 10, hubspot_form_id: "" /* HUBSPOT_FORM_ID */ };
+var CFG = { form_endpoint: "https://formsubmit.co/ajax/7fbd7e6f9b9178360b909504bd877f07", min_seconds_before_send: 10, hubspot_form_id: (window.HS && HS.formId) || "" /* set in shared/hubspot.js */ };
 var KEY = "wc-intake-v3";
 var SECTIONS = ["Welcome", "About you", "Your setup", "Your trainer", "Your result"];
 var START = Date.now();
@@ -453,10 +453,10 @@ function capture(h, tr) {
   var f = el("form", { novalidate: "novalidate" });
   var l1 = el("label", { class: "fl", for: "fn" }, "First name (optional)"); var fn = el("input", { id: "fn", type: "text", maxlength: "40", autocomplete: "given-name" });
   var l2 = el("label", { class: "fl", for: "em", style: "margin-top:12px" }, "Your email"); var em = el("input", { id: "em", type: "email", autocomplete: "email", required: "required" });
-  var emNote = el("p", { class: "help", id: "em-note" }, "We use your email only to send your setup and updates. Unsubscribe anytime. "); emNote.appendChild(el("a", { href: "../terms/#privacy" }, "Privacy")); em.setAttribute("aria-describedby", "em-note");
+  var emNote = el("p", { class: "help", id: "em-note" }, "We use your email only to send your setup and updates. Unsubscribe anytime. "); emNote.appendChild(el("a", { href: "../privacy/" }, "Privacy")); em.setAttribute("aria-describedby", "em-note");
   var hp = el("input", { type: "text", name: "_honey", tabindex: "-1", "aria-hidden": "true", autocomplete: "off", style: "position:absolute;left:-9999px;width:1px;height:1px;opacity:0" });
   var cons = el("label", { class: "opt", style: "margin-top:12px" }); var cb = el("input", { type: "checkbox", id: "cons" });
-  cons.appendChild(cb); cons.appendChild(el("span", { class: "lab" }, "Email me the steps and one check-in a week from now."));
+  cons.appendChild(cb); var cl = el("span", { class: "lab" }, window.GWAILead ? GWAILead.consentText + " " : "Email me the steps and one check-in a week from now. "); cl.appendChild(el("a", { href: "../privacy/" }, "Privacy")); cons.appendChild(cl);
   var msg = el("p", { class: "help", role: "status", "aria-live": "polite" }, "");
   var send = el("button", { class: "go", type: "submit", style: "margin-top:18px" }, "Send me the steps");
   [l1, fn, l2, em, emNote, hp, cons, send, msg].forEach(function (n) { f.appendChild(n); });
@@ -469,15 +469,9 @@ function capture(h, tr) {
     if (!cb.checked) { msg.textContent = "Tick the box so we're allowed to email you."; cb.focus(); return; }
     if (hp.value || (Date.now() - START) / 1000 < CFG.min_seconds_before_send) { msg.textContent = "Sent."; return; }
     send.disabled = true; msg.textContent = "Sending…";
-    var body = new FormData();
-    body.append("email", v); body.append("first_name", (fn.value || "").trim().slice(0, 40));
-    body.append("_subject", "Free setup: " + tr + " (" + v + ")"); body.append("_template", "table"); body.append("_honey", "");
-    body.append("track", tr); body.append("persona", trainer()); body.append("device", A.q4a || "");
-    body.append("email_type", emailType() || ""); body.append("chore", (A.q2 || "").slice(0, 120));
-    body.append("referred_by", (window.wcRef && window.wcRef.code) || "");
-    fetch(CFG.form_endpoint, { method: "POST", body: body, headers: { Accept: "application/json" } })
-      .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json().catch(function () { return {}; }); })
-      .then(function (j) { if (j && (j.success === false || j.success === "false")) throw new Error(j.message || "not accepted"); msg.textContent = "Sent. Check your inbox for the steps."; })
+    var intake = "track: " + tr + "; trainer: " + trainer() + "; device: " + (A.q4a || "") + "; email type: " + (emailType() || "") + "; chore: " + (A.q2 || "").slice(0, 120);
+    window.GWAILead.send({ email: v, firstname: (fn.value || "").trim().slice(0, 40), list: "free-setup", gwai_intake: intake, consent: cb.checked, subject: "Free setup: " + tr + " (" + v + ")" })
+      .then(function () { msg.textContent = "Sent. Check your inbox for the steps."; })
       .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Nothing is lost; try again in a minute."; });
   };
 }
