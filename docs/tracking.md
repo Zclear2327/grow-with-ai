@@ -15,7 +15,7 @@ Change `CREATORCODE` (letters, digits, - and _ only) and the `utm_` values. `src
 - They are added to links to `/start/` and `/packages/`, so they survive clicking around.
 - They are added to the checkout buttons once checkout is live. The ThriveCart affiliate ID still goes in the
   address prefix exactly as before; checkout links and keys are unchanged.
-- Both forms send them to HubSpot (or the old inbox until the HubSpot form ID is set) as `ref`, `src`, `utm_source`,
+- Both forms send them to Chris's inbox (FormSubmit) with every lead, as `ref`, `src`, `utm_source`,
   `utm_medium`, `utm_campaign`, `utm_term` and `utm_content`.
 
 ## Pages that read the codes
