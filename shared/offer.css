@@ -1,0 +1,29 @@
+/* Shared styles for the founding, teams, partners and creators pages. Builds on affiliates/aff.css. */
+.offer-table{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+@media (max-width:900px){.offer-table{grid-template-columns:1fr}}
+.offer-table .tier.best{border:2px solid var(--accent)}
+.badge{display:inline-block;font:600 13px/1 Lexend,system-ui,sans-serif;background:var(--accent);color:var(--accent-ink);padding:6px 10px;border-radius:999px;margin-bottom:8px}
+.later{color:var(--muted);font-size:15px;margin:2px 0 10px}
+.btn[aria-disabled="true"]{opacity:.75;cursor:not-allowed}
+.countdown{font:600 18px Lexend,system-ui,sans-serif;margin:8px 0 0}
+.box{border:1px solid var(--rule);border-radius:12px;padding:16px 18px;background:var(--panel);margin:16px 0}
+.box h3{margin-top:0}
+.ph-video{border:2px dashed var(--rule);border-radius:12px;padding:28px 18px;text-align:center;color:var(--muted);background:var(--panel)}
+.lawyer-mark{font-size:13px;color:var(--muted)}
+.draft-banner{border:2px solid var(--brass);border-radius:12px;padding:12px 16px;margin:12px 0;font-weight:700}
+.lead{display:grid;gap:10px;max-width:560px}
+.lead label{font-weight:700}
+.lead input:not([type=checkbox]),.lead select{font:inherit;padding:10px 12px;border:1px solid var(--rule);border-radius:8px;background:var(--panel);color:var(--ink);min-height:44px}
+.lead .tick{font-weight:400;display:flex;gap:10px;align-items:flex-start}
+.lead .tick input{margin-top:5px;min-width:20px;min-height:20px}
+.qc-note{color:var(--bad);font-weight:700}
+.loop3{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;counter-reset:s}
+.loop3 li{border:1px solid var(--rule);border-radius:12px;padding:14px 16px;background:var(--panel);counter-increment:s}
+.loop3 li b{display:block;font-family:Lexend,system-ui,sans-serif}
+.loop3 li b::before{content:counter(s) ". "}
+@media (max-width:720px){.loop3{grid-template-columns:1fr}}
+.faq dt{font-weight:700;margin-top:14px}.faq dd{margin:4px 0 0}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.badge{align-self:flex-start;width:auto}
+.rel-table td:nth-child(3),.rel-table th:nth-child(3){white-space:nowrap}
+@media (max-width:560px){.rel-table thead{display:none}.rel-table tr{display:grid;grid-template-columns:2.2em 1fr;padding:8px 0;border-bottom:1px solid var(--rule)}.rel-table td{border:0;padding:2px 4px}.rel-table td:nth-child(3){grid-column:2;color:var(--muted);font-size:15px}}

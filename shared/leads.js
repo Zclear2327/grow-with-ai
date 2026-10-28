@@ -35,6 +35,8 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
       gwai_intake: d.gwai_intake || "", consent_casl: d.consent ? "true" : "false", consent_timestamp: d.consent ? new Date().toISOString() : "",
       consent_text: d.consent ? CONSENT : "", page_url: location.href };
     ATTR.forEach(function (k) { f[k] = at[k]; });
+    // extra form fields (org, seats, country...) from shared/forms.js; never overwrite the fields above
+    Object.keys(d.extra || {}).forEach(function (k) { if (!(k in f)) f[k] = String(d.extra[k]); });
     var b = new FormData();
     Object.keys(f).forEach(function (k) { b.append(k, f[k]); });
     b.append("mailchimp", MC_ACTION ? "added" : "not set up yet");
@@ -43,7 +45,7 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
     var inbox = fetch(INBOX, { method: "POST", body: b, headers: { Accept: "application/json" } })
       .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json().catch(function () { return {}; }); })
       .then(function (j) { if (j && (j.success === false || j.success === "false")) throw new Error(j.message || "not accepted"); return j; });
-    if (!MC_ACTION || !d.consent) return inbox;
+    if (!MC_ACTION || !d.consent || d.noMarketing) return inbox; // noMarketing: e.g. Quebec, kept off the marketing list
     // Mailchimp is a second copy: a failure there is logged, never shown as a lost lead
     return Promise.all([inbox, mailchimp(d.email, d.firstname).catch(function (e) { console.warn(e.message); return null; })]).then(function (r) { return r[0]; });
   }
