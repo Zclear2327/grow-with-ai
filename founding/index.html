@@ -130,6 +130,13 @@
       <form class="lead" data-lead="founding-waitlist" data-thanks="Thanks, you're on the waitlist. We'll email you when enrollment opens." novalidate>
         <label for="fw-email">Your email</label>
         <input id="fw-email" type="email" autocomplete="email" required>
+      <label for="fw-country">Country</label>
+      <select id="fw-country" name="country" required data-label="country"><option value="">Choose</option><option>United States</option><option>Canada</option><option>Other</option></select>
+      <label for="fw-region">State or province</label>
+      <select id="fw-region" name="region"><option value="">Choose (optional)</option><option value="US">A US state</option><option value="AB">Alberta</option><option value="BC">British Columbia</option><option value="MB">Manitoba</option><option value="NB">New Brunswick</option><option value="NL">Newfoundland and Labrador</option><option value="NS">Nova Scotia</option><option value="ON">Ontario</option><option value="PE">Prince Edward Island</option><option value="QC">Quebec</option><option value="SK">Saskatchewan</option><option value="TERR">Yukon, NWT or Nunavut</option><option value="OTHER">Outside the US and Canada</option></select>
+      <label for="fw-postal">ZIP or postal code (optional)</label>
+      <input id="fw-postal" name="postal" autocomplete="postal-code">
+      <p class="qc-note" role="status" hidden></p>
         <input type="text" name="_honey" tabindex="-1" aria-hidden="true" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <label class="tick"><input class="consent" id="fw-consent" type="checkbox"> Yes, Ward Consulting AI may email me my setup, tips and offers. I can unsubscribe anytime. Ward Consulting AI, 2680 Commerce Way, Ogden, UT 84401. <a href="../privacy/">Privacy</a></label>
         <button class="btn primary" type="submit">Join the waitlist</button>
