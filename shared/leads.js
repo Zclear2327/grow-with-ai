@@ -9,6 +9,8 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
 (function () {
   "use strict";
   var INBOX = "https://formsubmit.co/ajax/7fbd7e6f9b9178360b909504bd877f07";
+  // [CHRIS CONFIRM] Ward Consulting AI receives mail at 2680 Commerce Way, or replace with a PO box/registered mailbox.
+  // The same address must appear in every email footer and in this CONSENT text.
   var CONSENT = "Yes, Ward Consulting AI may email me my setup, tips and offers. I can unsubscribe anytime. Ward Consulting AI, 2680 Commerce Way, Ogden, UT 84401.";
   var ATTR = ["ref", "src", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
   function attrib() { // last-touch values from affiliates/ref.js, first-touch as a fallback
