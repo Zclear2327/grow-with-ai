@@ -316,6 +316,9 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
 .ag.free .ag-tag{border-color:var(--accent);color:var(--accent)}
 #packages{scroll-margin-top:24px}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.vid-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}@media (max-width:720px){.vid-slots{grid-template-columns:1fr}}
+.vid-box{border:2px dashed var(--rule);border-radius:12px;padding:28px 18px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--panel)}
+.vid-ph figcaption{font-size:14px;color:var(--muted);margin-top:8px}
 </style>
 <link rel="stylesheet" href="shared/legal.css">
 </head>
@@ -495,6 +498,18 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
         <div class="src">Z-Clear owner's morning inbox</div>
       </div>
     </div>
+    </div>
+    <div class="vid-slots">
+      <figure class="vid-ph">
+        <!-- TODO JR: record. Shot script: video/shot-scripts-v1.md, Video 1 -->
+        <div class="vid-box"><p><b>Video coming soon:</b> your inbox agent reads an email out loud while you cook, then asks &ldquo;Reply now or later?&rdquo;</p></div>
+        <figcaption>Inbox agent demo. Simple, and you stay in charge.</figcaption>
+      </figure>
+      <figure class="vid-ph">
+        <!-- TODO JR: record. Shot script: video/shot-scripts-v1.md, Video 2 -->
+        <div class="vid-box"><p><b>Video coming soon:</b> a travel agent finds a flight, then shows you the approval screen before anything is paid. You approve, then it books.</p></div>
+        <figcaption>Travel agent demo. Simple, and you stay in charge.</figcaption>
+      </figure>
     </div>
     <p class="note">Results at Chris's company. Your results will vary.</p>
 
