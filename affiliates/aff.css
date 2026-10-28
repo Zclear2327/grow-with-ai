@@ -1,6 +1,6 @@
 :root{
   --paper:#F2F3F0; --panel:#FFFFFF; --ink:#16201D; --muted:#56615C; --rule:#D5DAD5;
-  --accent:#2F6B5A; --accent-ink:#FFFFFF; --brass:#9A6F22; --good:#1F7A4D; --bad:#A23B2A;
+  --accent:#2F6B5A; --accent-ink:#FFFFFF; --brass:#7A5718; --good:#1F7A4D; --bad:#A23B2A;
   --display:"Lexend", "Segoe UI", system-ui, sans-serif;
   --body:"Atkinson Hyperlegible", "Verdana", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
