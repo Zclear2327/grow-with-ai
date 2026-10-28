@@ -9,7 +9,11 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
 (function () {
   "use strict";
   var INBOX = "https://formsubmit.co/ajax/7fbd7e6f9b9178360b909504bd877f07";
+  // [CHRIS CONFIRM] Ward Consulting AI receives mail at 2680 Commerce Way, or replace with a PO box/registered mailbox.
+  // The same address must appear in every email footer and in this CONSENT text.
   var CONSENT = "Yes, Ward Consulting AI may email me my setup, tips and offers. I can unsubscribe anytime. Ward Consulting AI, 2680 Commerce Way, Ogden, UT 84401.";
+  // W6 (CASL): bump CONSENT_VERSION whenever the CONSENT wording changes, so each lead records which text it agreed to.
+  var CONSENT_VERSION = "consent-v1-2026-10-26";
   var ATTR = ["ref", "src", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
   function attrib() { // last-touch values from affiliates/ref.js, first-touch as a fallback
     var a = (window.wcRef && window.wcRef.attrib) || {}, last = a.last || {}, first = a.first || {}, out = {};
@@ -33,7 +37,8 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
   function send(d) {
     var at = attrib(), f = { email: d.email, firstname: d.firstname || "", list: d.list || "", interest: d.interest || "",
       gwai_intake: d.gwai_intake || "", consent_casl: d.consent ? "true" : "false", consent_timestamp: d.consent ? new Date().toISOString() : "",
-      consent_text: d.consent ? CONSENT : "", page_url: location.href };
+      consent_text: d.consent ? CONSENT : "", consent_version: d.consent ? CONSENT_VERSION : "",
+      consent_source: d.consent ? location.pathname : "", page_url: location.href };
     ATTR.forEach(function (k) { f[k] = at[k]; });
     // extra form fields (org, seats, country...) from shared/forms.js; never overwrite the fields above
     Object.keys(d.extra || {}).forEach(function (k) { if (!(k in f)) f[k] = String(d.extra[k]); });
@@ -49,5 +54,5 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
     // Mailchimp is a second copy: a failure there is logged, never shown as a lost lead
     return Promise.all([inbox, mailchimp(d.email, d.firstname).catch(function (e) { console.warn(e.message); return null; })]).then(function (r) { return r[0]; });
   }
-  window.GWAILead = { send: send, consentText: CONSENT, attrib: attrib, ready: function () { return !!MC_ACTION; } };
+  window.GWAILead = { send: send, consentText: CONSENT, consentVersion: CONSENT_VERSION, attrib: attrib, ready: function () { return !!MC_ACTION; } };
 })();

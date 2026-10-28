@@ -314,6 +314,11 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
 .five p{margin:0}
 .ag-tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--rule);color:var(--muted);vertical-align:2px;margin-left:4px}
 .ag.free .ag-tag{border-color:var(--accent);color:var(--accent)}
+#packages{scroll-margin-top:24px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.vid-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}@media (max-width:720px){.vid-slots{grid-template-columns:1fr}}
+.vid-box{border:2px dashed var(--rule);border-radius:12px;padding:28px 18px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--panel)}
+.vid-ph figcaption{font-size:14px;color:var(--muted);margin-top:8px}
 </style>
 <link rel="stylesheet" href="shared/legal.css">
 </head>
@@ -353,21 +358,37 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
       </video>
       <button class="snd" type="button" hidden>Play with sound</button>
     </div>
-    <figcaption>AI-generated video of Chris Ward. The script is his own, and he approved the video.</figcaption>
+    <figcaption>AI-generated video of Chris Ward. The script is his own, and he approved the video. Simple, and you stay in charge.</figcaption>
   </figure>
 
   <div class="hero solo">
     <div>
       <p class="eyebrow">AI for business owners</p>
       <h1><em>More freedom</em> for business owners, with AI doing the busywork.</h1>
-      <p class="lede">If you've been curious about AI but don't know where to start, that's where we come in. We set you up, then you get tested AI agents with plain-English setup that each do part of your work for you, so the repetitive work comes off your plate and your time goes to the work you actually want to do.</p>
+      <p class="lede"><b>Get your time back.</b> If you've been curious about AI but don't know where to start, that's where we come in. We set you up, then you get tested AI agents with plain-English setup that each do part of your work for you, so the repetitive work comes off your plate and your time goes to the work you actually want to do.</p>
       <div class="btns">
         <a class="btn primary big" href="start/">Get your free email helper</a>
         <a class="btn ghost big" href="train/">Free step-by-step training</a>
-        <a class="btn ghost big" href="packages/">See the packages</a>
+        <a class="btn ghost big" href="#packages">See the packages</a>
       </div>
     </div>
   </div>
+
+  <section id="how-top">
+    <!-- from shared/snippets/how-it-works.html (W10 copy; the original #how block below is kept) -->
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">How it works</p>
+        <h2>Simple, and you stay in charge.</h2>
+      </div>
+      <p>No jargon and no big project to start. We begin with the one job you most want off your plate.</p>
+    </div>
+    <ol class="loop three">
+      <li><b>Tell us</b><span>Answer a few quick questions about what takes up your week.</span></li>
+      <li><b>Set up</b><span>Follow plain-English steps to set up the AI helpers in your package.</span></li>
+      <li><b>You approve</b><span>Anything that spends money or can't be undone waits for your yes, and you can see everything they did.</span></li>
+    </ol>
+  </section>
 
   <section id="agents">
     <p class="eyebrow">Your AI agents</p>
@@ -380,13 +401,13 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
       <li class="ag"><span class="ag-n" aria-hidden="true">4</span><div><h3>Daily Assistant <span class="ag-tag">Starter, Pro &amp; Elite</span></h3><p>Your morning brief: calendar, to-dos, bookings and errands, and an eye on prices or competitors you care about.</p></div></li>
       <li class="ag"><span class="ag-n" aria-hidden="true">5</span><div><h3>Content &amp; Social Agent <span class="ag-tag">Starter, Pro &amp; Elite</span></h3><p>Drafts posts, newsletters and short video scripts in your voice for you to approve.</p></div></li>
     </ol>
-    <div class="btns"><a class="btn primary big" href="start/">Get your free agent</a><a class="btn ghost big" href="packages/">See the packages</a></div>
+    <div class="btns"><a class="btn primary big" href="start/">Get your free agent</a><a class="btn ghost big" href="#packages">See the packages</a></div>
   </section>
 
-  <section id="packages">
+  <section id="packages-section">
     <div class="sec-head">
       <div>
-        <p class="eyebrow">Grow With AI Packages &middot; opening soon</p>
+        <p class="eyebrow" id="packages">Grow With AI Packages &middot; opening soon</p>
         <h2>We set you up. Then AI agents do more of your work.</h2>
       </div>
       <p>Start free. Upgrade when you want more agents working for you. Cancel anytime.</p>
@@ -411,14 +432,27 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
         <a class="btn ghost course-cta" href="packages/#join">Join the waitlist<span class="sr"> for Elite</span></a>
       </article>
     </div>
+    <!-- from shared/snippets/how-it-works.html (compact) -->
+    <p class="how-line"><b>Simple, and you stay in charge:</b> tell us what takes up your week, set up with plain-English steps, and you approve anything that spends money or can't be undone.</p>
     <p class="note">Free is $0 (the Email &amp; Inbox Agent). Starter is $29.99 a month for 1 paid agent of your choice. <a href="packages/">See the packages in full</a>. Nothing is charged while packages are on the waitlist. You need your own AI account, paid separately.</p>
+  </section>
+
+  <section id="advanced">
+    <p class="eyebrow">Already building with AI?</p>
+    <h2>Already building apps or sites with Claude?</h2>
+    <p>Skip the basics. Take <b>Claude, the power path</b> in the setup, and ask us about the advanced track: agent teams, connectors, scheduled routines, handoffs between agents, and approval gates.</p>
+    <div class="btns">
+      <a class="btn primary big" href="start/">Start on the Claude path</a>
+      <a class="btn ghost big" href="mailto:hello@wardconsulting.ai?subject=Advanced%20track">Ask about the advanced track</a><!-- [CHRIS CONFIRM] advanced track (T16) has no page yet; this mailto stands in until it does -->
+    </div>
+    <p class="note">In the setup, pick &ldquo;Claude, the power path&rdquo; when asked.</p>
   </section>
 
   <section id="earn">
     <div class="aff-band">
       <p class="eyebrow">Affiliates</p>
       <h2>Earn 35% of every membership you refer.</h2>
-      <p class="lede">Share your own link. When 3 people you refer become members, you stop paying for yours. And you still earn 35% of every membership you refer. You get both.</p>
+      <p class="lede">Share your own link. Approved affiliates earn 35% of net on each paid month from members they refer. Your referrals pay the same price either way.</p>
       <div class="btns"><a class="btn primary big" href="affiliates/">See how affiliates get paid</a></div>
     </div>
   </section>
@@ -453,7 +487,7 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
         </video>
         <button class="snd" type="button" hidden>Play with sound</button>
       </div>
-      <figcaption>The AI team Chris built at Z-Clear, organized like a company, with a person approving anything that matters. The voice is AI-generated.</figcaption>
+      <figcaption>The AI team Chris built at Z-Clear, organized like a company, with a person approving anything that matters. The voice is AI-generated. Simple, and you stay in charge.</figcaption>
     </figure>
     <div class="vg" id="free-setup">
       <h3>Get your free AI email helper</h3>
@@ -475,6 +509,18 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
         <div class="src">Z-Clear owner's morning inbox</div>
       </div>
     </div>
+    </div>
+    <div class="vid-slots">
+      <figure class="vid-ph">
+        <!-- TODO JR: record. Shot script: video/shot-scripts-v1.md, Video 1 -->
+        <div class="vid-box"><p><b>Video coming soon:</b> your inbox agent reads an email out loud while you cook, then asks &ldquo;Reply now or later?&rdquo;</p></div>
+        <figcaption>Inbox agent demo. Simple, and you stay in charge.</figcaption>
+      </figure>
+      <figure class="vid-ph">
+        <!-- TODO JR: record. Shot script: video/shot-scripts-v1.md, Video 2 -->
+        <div class="vid-box"><p><b>Video coming soon:</b> a travel agent finds a flight, then shows you the approval screen before anything is paid. You approve, then it books.</p></div>
+        <figcaption>Travel agent demo. Simple, and you stay in charge.</figcaption>
+      </figure>
     </div>
     <p class="note">Results at Chris's company. Your results will vary.</p>
 

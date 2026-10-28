@@ -30,3 +30,7 @@
 /* The site-wide gold eyebrow (#9A6F22 on #F2F3F0) is 4.03:1, under WCAG AA 4.5:1. Darker on these pages, light theme only. */
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .eyebrow{color:#7A5718}}
 :root[data-theme="light"] .eyebrow{color:#7A5718}
+.renew{padding:12px 14px}.renew h4{margin:0 0 6px;font-family:Lexend,system-ui,sans-serif}.renew p{font-size:15px;margin:4px 0}
+#offer,#order,#apply,#packages{scroll-margin-top:24px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.how-mini h2{margin-top:4px}
