@@ -27,3 +27,6 @@
 .badge{align-self:flex-start;width:auto}
 .rel-table td:nth-child(3),.rel-table th:nth-child(3){white-space:nowrap}
 @media (max-width:560px){.rel-table thead{display:none}.rel-table tr{display:grid;grid-template-columns:2.2em 1fr;padding:8px 0;border-bottom:1px solid var(--rule)}.rel-table td{border:0;padding:2px 4px}.rel-table td:nth-child(3){grid-column:2;color:var(--muted);font-size:15px}}
+/* The site-wide gold eyebrow (#9A6F22 on #F2F3F0) is 4.03:1, under WCAG AA 4.5:1. Darker on these pages, light theme only. */
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .eyebrow{color:#7A5718}}
+:root[data-theme="light"] .eyebrow{color:#7A5718}
