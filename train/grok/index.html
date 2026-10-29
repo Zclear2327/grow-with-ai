@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free step-by-step training: start with Grok | Grow With AI</title>
+<meta name="description" content="Free step-by-step training: get Grok working for you, one simple step at a time, on the free plan.">
+<link rel="canonical" href="https://zclear2327.github.io/grow-with-ai/train/grok/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../affiliates/aff.css">
+<style>
+.train{max-width:640px;margin:0 auto;padding-bottom:64px}
+.bar{display:flex;align-items:center;gap:12px;margin:8px 0 20px;font-size:15px;color:var(--muted)}
+.bar .track{flex:1;height:8px;background:var(--rule);border-radius:4px;overflow:hidden}
+.bar .fill{height:100%;background:var(--accent);width:0;transition:width .25s}
+@media (prefers-reduced-motion:reduce){.bar .fill{transition:none}}
+.free-head{font-family:var(--display);font-weight:700;font-size:clamp(20px,4.5vw,24px);color:var(--accent);margin:4px 0 6px}
+.part{font:700 13px/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--brass);margin:0 0 6px}
+.train h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,38px);line-height:1.15;margin:0 0 14px}
+.train h1:focus{outline:none}
+.train h1:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.do{font-size:21px;line-height:1.45;margin:0 0 16px}
+.how{font-size:18px;line-height:1.5;margin:0 0 16px;padding-left:22px}
+.how li{margin-bottom:6px}
+.video{border:2px dashed var(--rule);border-radius:6px;padding:18px;margin:0 0 18px;color:var(--muted);font-size:16px;text-align:center}
+.video video{width:100%;border-radius:4px;display:block}
+.done-when{background:var(--panel);border-left:4px solid var(--good);padding:12px 16px;margin:0 0 18px;font-size:17px}
+.tip{font-size:16px;color:var(--muted);margin:0 0 18px}
+.say{background:var(--panel);border:1px solid var(--rule);padding:16px;margin:0 0 18px}
+.say p{margin:0 0 10px;font-size:17px;white-space:pre-wrap}
+.say button{font:600 16px/1 var(--body);padding:12px 16px;min-height:44px;border:1px solid var(--accent);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer}
+.go-link{display:block;margin:0 0 18px;font:700 18px/1.2 var(--body);color:var(--ink);text-decoration:none;text-align:center;border:2px solid var(--accent);padding:16px;border-radius:2px;min-height:56px}
+.actions{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.actions .btn{width:100%;text-align:center;min-height:56px;font-size:19px}
+.actions .row{display:flex;gap:12px}
+.actions .row .btn{flex:1;font-size:16px;min-height:48px}
+.help{margin-top:28px;border-top:1px solid var(--rule);padding-top:18px}
+.help p{margin:0 0 10px;font-size:16px}
+.help .btns .btn{min-height:48px}
+.btn:focus-visible,.say button:focus-visible,.go-link:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+[hidden]{display:none !important}
+.check{list-style:none;padding:0;margin:0 0 18px}
+.check li{font-size:18px;padding:8px 0;border-bottom:1px solid var(--rule)}
+.check li::before{content:"\2713  ";color:var(--good);font-weight:700}
+.preview{background:var(--panel);border:1px solid var(--brass);padding:10px 14px;font-size:15px;margin:0 0 18px}
+</style>
+<link rel="stylesheet" href="../../shared/legal.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="../../">Grow With <span>AI</span></a>
+    <nav class="nav" aria-label="Pages">
+      <a class="home" href="../../">Home</a>
+      <a class="cta-sm" href="../../packages/">Packages</a>
+    </nav>
+  </header>
+
+  <main class="train" id="main">
+    <p class="free-head">Free step-by-step training: Grok</p>
+    <p class="tip">Using Claude instead? <a href="../">Go to the Claude training</a>.</p>
+    <div class="bar" aria-hidden="true"><div class="track"><div class="fill" id="fill"></div></div><span id="count"></span></div>
+    <p class="part" id="part"></p>
+    <h1 id="title" tabindex="-1"></h1>
+    <p class="do" id="do"></p>
+    <ul class="how" id="how"></ul>
+    <div class="say" id="say" hidden>
+      <p id="sayText"></p>
+      <button type="button" id="copyBtn">Copy this</button>
+      <span id="copyMsg" role="status" aria-live="polite"></span>
+    </div>
+    <a class="go-link" id="link" target="_blank" rel="noopener" hidden></a>
+    <div class="video" id="video"></div>
+    <p class="done-when" id="doneWhen"></p>
+    <p class="tip" id="tip" hidden></p>
+
+    <div class="actions">
+      <button class="btn primary" type="button" id="next">I did it. Next step</button>
+      <div class="row">
+        <button class="btn ghost" type="button" id="back">Back</button>
+        <button class="btn ghost" type="button" id="skip">Skip this one</button>
+      </div>
+    </div>
+
+    <section class="help" aria-labelledby="helpH">
+      <p id="helpH"><b>Stuck?</b> A real person will help you.</p>
+      <div class="btns" id="helpBtns"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  // Human help. TODO: Chris to supply the number for the Text me / Call me buttons.
+  // While HELP_PHONE is empty, the help button opens an email instead, so it always works.
+  var HELP_PHONE = "";
+  var HELP_EMAIL = "hello@wardconsulting.ai";
+
+  // Grok version of /train/. Each step is ONE thing to do, matching JR's G1-G20 HeyGen scripts
+  // (Drive doc 1N_9q_eJ8nLgElgwof2HooiSw5Jg95ynRUCc8tXrZn0A). grok.com read 2026-10-29: free plan, web + iOS + Android.
+  // video: add { mp4, webm, poster, vtt } under ../../media/train-grok/ once JR's clips are built.
+  var STEPS = [
+    { part: "Get started", title: "Get Grok on your computer",
+      do: "Watch this short video, then do the same on your computer. Grok works in your web browser, so there's nothing to download. Only using your phone? Tap Skip this one.",
+      link: { href: "https://grok.com", label: "Open grok.com" },
+      done: "Grok is open in your browser and you're signed in.",
+      tip: "You only ever type your password on Grok's own page. Never give it to anyone." },
+    { part: "Get started", title: "Talk instead of type",
+      do: "You never have to type here. On your phone keyboard, tap the microphone button and just say what you want. That works in every step below.",
+      done: "You've found the microphone button on your phone keyboard." },
+
+    { part: "Make your account", title: "Open Grok",
+      do: "Tap the button below. It opens Grok's website in a new tab.",
+      link: { href: "https://grok.com", label: "Open grok.com" },
+      done: "You can see Grok's sign-in page." },
+    { part: "Make your account", title: "Sign in",
+      do: "Tap the Google button if you use Google. If you have an X account, you can use that. Or type your email address and follow the steps.",
+      done: "You're signed in, or Grok says it sent you an email.",
+      tip: "If it asks for a password, you make it yourself, on Grok's page only. If anyone else asks for it, don't give them anything." },
+    { part: "Make your account", title: "Check your email",
+      do: "Skip this if you used Google or X. Otherwise open your email, find the message from Grok, and use the code or the link inside it.",
+      done: "Grok opens and shows you the next sign-up screen." },
+    { part: "Make your account", title: "Finish signing up",
+      do: "Answer the last few sign-up screens.",
+      done: "You see an empty message box, ready for you." },
+
+    { part: "Get the phone app", title: "Install the Grok app",
+      do: "On your phone, open the App Store (iPhone) or Google Play (Android). Search for Grok, then tap Get or Install. It's free.",
+      how: ["Check it's the official Grok app, with the same icon you see on grok.com, before you install."],
+      done: "The Grok app is on your phone." },
+    { part: "Get the phone app", title: "Sign in on the app",
+      do: "Open the Grok app and sign in the same way you just did.",
+      done: "You see the same empty message box in the app." },
+
+    { part: "Your first conversation", title: "Say hello to Grok",
+      do: "Tap the message box, then tap the microphone and say this, or copy it and paste it in. Then send it.",
+      say: "I own a small business and I've never used an AI assistant before. Ask me five questions about my business, one at a time, and then suggest three tasks from my week that you could help with.",
+      done: "Grok asks you its first question." },
+    { part: "Your first conversation", title: "Answer its questions",
+      do: "Answer each question the way you would answer a text message. Short is fine.",
+      done: "Grok gives you three tasks it could help with." },
+    { part: "Your first conversation", title: "Ask for a change",
+      do: "Pick one of its answers and ask it to change, for example:",
+      say: "Make that shorter.",
+      done: "Grok rewrites its answer the way you asked.",
+      tip: "When you switch to a different topic, start a new chat. A long chat about many things gets muddled." },
+
+    { part: "Ask well", title: "Give it the details",
+      do: "Grok can't see your business, so tell it. The best requests say four things:",
+      how: ["Who you are and who this is for.", "What a good answer looks like, and how long.", "An example, if you have one.", "\"Before you start, ask me anything you need to know.\""],
+      done: "You've read the four things. Next you'll try them." },
+    { part: "Ask well", title: "Try it on a real job",
+      do: "Copy this, change the words in [brackets] to your own, and send it.",
+      say: "I run [what your business does]. A customer owes us for last month and has paid late before. Write a friendly but clear email, under 120 words, asking for payment by [day]. Before you write it, ask me anything you need to know.",
+      done: "You have an email draft you could actually use." },
+
+    { part: "Photos and files", title: "Ask about a photo",
+      do: "In the Grok app, tap the button to add a photo and take a photo of a receipt or a note. Then send this:",
+      say: "Type out what's on this as a simple list.",
+      done: "Grok lists what's in your photo.",
+      tip: "Button names can look a little different between app versions." },
+
+    { part: "Make it remember you", title: "Tell Grok about you, once",
+      do: "Look for the setting called Customize Grok. Paste this in, fill in the [brackets], and save.",
+      say: "I own a small business: [one sentence on what you sell and who buys it]. Write in plain, warm language. Keep answers short unless I ask for detail. When you don't know a fact, say so instead of guessing.",
+      done: "Your instructions are saved.",
+      tip: "Grok moves this setting around between versions. If you can't find it, paste the same note at the start of a new chat instead." },
+
+    { part: "Use it this week", title: "Answer a customer email",
+      do: "Copy this, fill in the [brackets], paste in a real customer email at the end, and send.",
+      say: "I run a small business: [what you do]. Below is an email from a customer. Write a friendly reply under 150 words that answers every question they asked. If you need a fact you don't have, like a date or price, leave a blank like [DATE] instead of guessing.\n\nThe customer's email:\n[paste it here]",
+      done: "You have a reply you'd be happy to send after reading it once." },
+    { part: "Use it this week", title: "Plan your week",
+      do: "Copy this, fill in the [brackets], and send.",
+      say: "Help me plan next week. Things I need to get done: [list]. Fixed appointments: [list with day and time]. My working hours: [hours]. My most important goal this week: [one sentence]. Make a simple day-by-day table and list anything that won't fit.",
+      done: "You have a plan for next week." },
+
+    { part: "Stay safe", title: "Check its work",
+      do: "Grok is useful but sometimes wrong. After any important answer, ask:",
+      say: "Which parts of that answer are you least sure about?",
+      done: "Grok tells you what to double-check.",
+      tip: "Before anything goes to a customer, a bank or the government, read it yourself in full." },
+    { part: "Stay safe", title: "Never paste these",
+      do: "Never put these into Grok, or any chat tool:",
+      how: ["Passwords, PINs or codes from text messages.", "Card numbers, bank account numbers or Social Security numbers.", "Anything someone told you in confidence."],
+      done: "You know what never goes into a chat.",
+      tip: "Replace names and numbers with \"Customer A\" or \"[ACCOUNT]\". Grok can still help." },
+
+    { part: "You're set up", title: "Stay on the free plan for now",
+      do: "Everything you just did works on Grok's free plan. The free plan has limits, so if you hit one, take a break and come back later. Only upgrade when a limit keeps costing you time.",
+      done: "You're on the free plan, and you know when an upgrade would be worth it." }
+  ];
+
+  var KEY = "gwa_train_grok_step";
+  function load() { try { var v = parseInt(localStorage.getItem(KEY), 10); return isNaN(v) ? 0 : v; } catch (e) { return 0; } }
+  function save(i) { try { localStorage.setItem(KEY, String(i)); } catch (e) {} }
+
+  var i = Math.min(Math.max(load(), 0), STEPS.length);
+  var $ = function (id) { return document.getElementById(id); };
+
+  function helpButtons(label) {
+    var box = $("helpBtns"); box.innerHTML = "";
+    var subject = "Help with Grow With AI training: " + label;
+    function add(text, href, primary) {
+      var a = document.createElement("a"); a.className = "btn " + (primary ? "primary" : "ghost"); a.href = href; a.textContent = text; box.appendChild(a);
+    }
+    if (HELP_PHONE) {
+      add("Text me", "sms:" + HELP_PHONE + "?&body=" + encodeURIComponent("I'm stuck on: " + label), true);
+      add("Call me", "tel:" + HELP_PHONE, false);
+    } else {
+      add("Email for help", "mailto:" + HELP_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent("I'm stuck on: " + label + "\n\nWhat I see on my screen:\n"), true);
+    }
+  }
+
+  function render(focus) {
+    var total = STEPS.length;
+    $("fill").style.width = (Math.min(i, total) / total * 100) + "%";
+    var finished = i >= total;
+    ["part", "do", "video", "doneWhen", "back", "skip"].forEach(function (id) { $(id).hidden = false; });
+    $("how").innerHTML = ""; $("how").hidden = true; $("say").hidden = true; $("link").hidden = true; $("tip").hidden = true; $("copyMsg").textContent = "";
+
+    if (finished) {
+      $("count").textContent = "All done";
+      $("part").textContent = "Finished";
+      $("title").textContent = "You did it.";
+      $("do").textContent = "Grok is set up on your phone, it knows about your business, and you've used it on real work. Here's what you can do now:";
+      var list = ["Talk to Grok by voice instead of typing", "Ask for changes until it's right", "Ask about a photo or a file", "Answer a customer email", "Plan your week", "Check its work, and keep private details out"];
+      var ul = $("how"); ul.className = "check"; ul.hidden = false;
+      list.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      $("video").hidden = true; $("doneWhen").hidden = true; $("skip").hidden = true;
+      $("next").textContent = "Start again from step 1";
+      helpButtons("finished the training");
+    } else {
+      var s = STEPS[i];
+      $("how").className = "how";
+      $("count").textContent = "Step " + (i + 1) + " of " + total;
+      $("part").textContent = s.part;
+      $("title").textContent = s.title;
+      $("do").textContent = s.do;
+      if (s.how) { s.how.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; $("how").appendChild(li); }); $("how").hidden = false; }
+      if (s.say) { $("sayText").textContent = s.say; $("say").hidden = false; }
+      if (s.link) { $("link").href = s.link.href; $("link").textContent = s.link.label + " (opens a new tab)"; $("link").hidden = false; }
+      if (s.tip) { $("tip").textContent = s.tip; $("tip").hidden = false; }
+      var v = $("video"); v.innerHTML = "";
+      if (s.video) {
+        var el = document.createElement("video"); el.controls = true; el.preload = "metadata"; el.setAttribute("playsinline", "");
+        el.setAttribute("aria-label", "Video: " + s.title);
+        if (typeof s.video === "string") { el.src = s.video; } else {
+          if (s.video.poster) el.poster = s.video.poster;
+          [["webm", "video/webm"], ["mp4", "video/mp4"]].forEach(function (f) { if (s.video[f[0]]) { var so = document.createElement("source"); so.src = s.video[f[0]]; so.type = f[1]; el.appendChild(so); } });
+          if (s.video.vtt) { var tr = document.createElement("track"); tr.kind = "captions"; tr.srclang = "en"; tr.label = "English"; tr.src = s.video.vtt; el.appendChild(tr); }
+        }
+        v.appendChild(el);
+      } else {
+        v.textContent = "Video with JR coming soon.";
+      }
+      $("doneWhen").textContent = "You're done when: " + s.done;
+      $("next").textContent = i === total - 1 ? "I did it. Finish" : "I did it. Next step";
+      $("back").hidden = i === 0;
+      helpButtons("step " + (i + 1) + ", " + s.title);
+    }
+    if (focus) { $("title").focus(); window.scrollTo(0, 0); }
+  }
+
+  $("next").addEventListener("click", function () { i = i >= STEPS.length ? 0 : i + 1; save(i); render(true); });
+  $("skip").addEventListener("click", function () { i = Math.min(i + 1, STEPS.length); save(i); render(true); });
+  $("back").addEventListener("click", function () { i = Math.max(i - 1, 0); save(i); render(true); });
+  $("copyBtn").addEventListener("click", function () {
+    var t = $("sayText").textContent, msg = $("copyMsg");
+    function ok() { msg.textContent = " Copied. Now paste it into Grok."; }
+    function fail() { msg.textContent = " Press and hold the text above to copy it."; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, fail); else fail();
+  });
+  render(false);
+})();
+</script>
+<footer class="legalfoot"><p>&copy; 2026 Ward Consulting AI. All rights reserved. Grow With AI, Sam and Travis are trademarks of Ward Consulting AI. The setup flow, trainer scripts and prompts are proprietary and protected by copyright. Not affiliated with xAI, X, Anthropic, Google or Microsoft. Nothing here promises a specific result. Available in English in the US and Canada, except Quebec for now (no French version yet). &middot; <a href="../../teams/">Teams</a> &middot; <a href="../../partners/">Partners</a> &middot; <a href="../../terms/">Terms</a> &middot; <a href="../../privacy/">Privacy</a> &middot; <a href="../../refund/">Refunds</a> &middot; <a href="../../disclosures/">Disclosures</a> &middot; <a href="../../terms/#copyright">Copyright</a> &middot; Ward Consulting AI &middot; 2680 Commerce Way, Ogden, UT 84401</p></footer>
+</body>
+</html>
