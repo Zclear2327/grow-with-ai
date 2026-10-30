@@ -25,10 +25,20 @@ function steps(tool, agent) {
     "Pick a daily time. Each day, open that chat and type: “" + DAILY[agent.id] + "”."
   ];
 }
-var BUILT_IN = { "Customer-Questions": 1, "Sales-Follow-Up": 1, "Daily-Assistant": 1, "Content-Social": 1 };
+var BUILT_IN = { "Workflow": 1, "Customer-Questions": 1, "Sales-Follow-Up": 1, "Daily-Assistant": 1, "Content-Social": 1 };
 // Trainer Agent's paid prompts carry their own 8 steps; mirror them in the checklist instead of adding ours.
 function builtInSteps(tool, agent) {
   var app = tool === "grok" ? "Grok" : "Claude";
+  if (agent.id === "Workflow") return [
+    "Sign in to " + app + " (or create a free account). You type your own password.",
+    "Paste the prompt as your first message and say hi.",
+    "Answer the questions one at a time, from first customer contact to closing the books. Most take one number.",
+    "Check your workflow map and say fix for anything wrong.",
+    "See which agent goes on each step, and what is GREEN, YELLOW or RED.",
+    "Copy each standing approvals block into that agent\u2019s instructions.",
+    "Pick your approval time, and set a reminder on your phone.",
+    "Come back after a week to tune it."
+  ];
   return [
     "Sign in to " + app + " (or create a free account). You type your own password.",
     "Paste the prompt as your first message, say hi, and tell your trainer Sam or Travis.",
