@@ -99,7 +99,7 @@ function secOf(s) { return s.k === "ask" ? Q[s.id].sec : s.sec; }
 /* ---------- dom helpers ---------- */
 function el(tag, attrs, txt) { var n = document.createElement(tag); if (attrs) for (var k in attrs) n.setAttribute(k, attrs[k]); if (txt != null) n.textContent = txt; return n; }
 function host() { return document.getElementById("q"); }
-// Short videos: Chris (V1-V7, V10) and the AI trainers Sam and Travis. Never autoplay; captions on by default.
+// Short videos: Chris (V1-V7, V10), JR on the Grok track (grok-phone-jr, grok-computer-jr, first-win-grok) and the AI trainers Sam and Travis. Never autoplay; captions on by default.
 var VIDEO_BASE = "video/";
 function vid(name, label, cls) {
   var f = el("figure", { class: "vid" + (cls ? " " + cls : "") });
@@ -399,11 +399,10 @@ function result(h) {
     tabs.appendChild(b);
   });
   h.appendChild(tabs);
-  var DV = { grok: { phone: null, computer: null },
+  var DV = { grok: { phone: ["grok-phone-jr", "Grok on your phone, with JR (31 seconds)"], computer: ["grok-computer-jr", "Grok on a computer, with JR (22 seconds)"] },
     claude: { mac: ["claude-mac", "Claude on a Mac (26 seconds)"], windows: ["claude-windows", "Claude on Windows (22 seconds)"], phone: ["claude-phone", "Claude on your phone (16 seconds)"] } }[tr][cur];
   if (DV) h.appendChild(vid(DV[0], "Video: " + DV[1]));
-  // TODO v6: re-record for free grok.com path.
-  // TODO RECOMMENDED DEFAULT 5 (v5): Grok clips hidden until Grok Bot re-record (see Grok-Bot-Rerecord-Scripts-v1). Restore the two DV entries to bring them back.
+  // Grok clips: JR, free grok.com path (2026-10-30). Chris's older Grok Bot clips (grok-phone, grok-computer) stay unused.
   else if (tr === "grok") h.appendChild(el("p", { class: "help" }, "Video coming soon."));
 
   var list = STEPS[tr][cur], done = A.done || 0;
@@ -432,7 +431,7 @@ function result(h) {
 
   // copy box
   h.appendChild(el("h2", null, "Your free email helper"));
-  h.appendChild(vid("first-win", "Video: your first win (23 seconds)"));
+  h.appendChild(tr === "grok" ? vid("first-win-grok", "Video: your first win, with JR (21 seconds)") : vid("first-win", "Video: your first win (23 seconds)"));
   h.appendChild(el("p", { class: "help" }, "Copy this and paste it into " + (tr === "grok" ? "a new Grok chat." : "your Claude project instructions, or a new Claude chat.")));
   var AG = { id: "Email-Inbox", name: "Email & Inbox Agent" };
   var txt = PROMPT[tr].split("[NAME]").join(name) + window.GWAIWalk.walkthrough(tr, AG);
