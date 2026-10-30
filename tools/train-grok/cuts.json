@@ -1,0 +1,202 @@
+[
+ {
+  "k": "T01",
+  "start": 0.0,
+  "end": 20.945,
+  "speech": [
+   0.16,
+   20.54
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T02",
+  "start": 20.945,
+  "end": 33.43,
+  "speech": [
+   21.35,
+   33.02
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T03",
+  "start": 33.43,
+  "end": 42.895,
+  "speech": [
+   33.84,
+   42.46
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T04",
+  "start": 42.895,
+  "end": 55.94,
+  "speech": [
+   43.33,
+   55.44
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T05",
+  "start": 55.94,
+  "end": 66.69,
+  "speech": [
+   56.44,
+   66.27
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T06",
+  "start": 66.69,
+  "end": 72.645,
+  "speech": [
+   67.11,
+   72.2
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T07",
+  "start": 72.645,
+  "end": 86.935,
+  "speech": [
+   73.09,
+   86.46
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T08",
+  "start": 86.935,
+  "end": 93.685,
+  "speech": [
+   87.41,
+   93.3
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T09",
+  "start": 93.685,
+  "end": 104.19,
+  "speech": [
+   94.07,
+   103.81
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T10",
+  "start": 104.19,
+  "end": 111.585,
+  "speech": [
+   104.57,
+   111.2
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T11",
+  "start": 111.585,
+  "end": 119.785,
+  "speech": [
+   111.97,
+   119.41
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T12",
+  "start": 119.785,
+  "end": 131.91,
+  "speech": [
+   120.16,
+   131.48
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T13",
+  "start": 131.91,
+  "end": 143.2,
+  "speech": [
+   132.34,
+   142.8
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T14",
+  "start": 143.2,
+  "end": 152.33,
+  "speech": [
+   143.6,
+   151.86
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T15",
+  "start": 152.33,
+  "end": 165.82,
+  "speech": [
+   152.8,
+   165.39
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T16",
+  "start": 165.82,
+  "end": 176.265,
+  "speech": [
+   166.25,
+   175.84
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T17",
+  "start": 176.265,
+  "end": 184.655,
+  "speech": [
+   176.69,
+   184.28
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T18",
+  "start": 184.655,
+  "end": 198.12,
+  "speech": [
+   185.03,
+   197.76
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T19",
+  "start": 198.12,
+  "end": 212.315,
+  "speech": [
+   198.48,
+   211.84
+  ],
+  "cut_in_pause": true
+ },
+ {
+  "k": "T20",
+  "start": 212.315,
+  "end": 225.152,
+  "speech": [
+   212.79,
+   225.15
+  ],
+  "cut_in_pause": true
+ }
+]
