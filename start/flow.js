@@ -446,13 +446,14 @@ function result(h) {
   h.appendChild(window.GWAIWalk.openBlock({ tool: tr, agent: AG, text: PROMPT[tr].split("[NAME]").join(name), label: tr === "claude" && cur !== "phone" ? "Copy prompt and open Claude in your browser (or use the desktop app you installed)" : null }));
 
   h.appendChild(el("p", { class: "help" }, "Stuck? Email hello@wardconsulting.ai and tell us what you see on screen. Please don't email us passwords or inbox screenshots."));
-  h.appendChild(el("h2", null, "Your 5 AI agents"));
-  h.appendChild(el("p", { class: "help" }, "Your Email & Inbox Agent is free. Starter adds 1 paid agent of your choice. Pro and Elite include all 4."));
+  h.appendChild(el("h2", null, "Your 6 AI agents"));
+  h.appendChild(el("p", { class: "help" }, "Your Email & Inbox Agent and Workflow Agent are free. Starter adds 1 paid agent of your choice. Pro and Elite include all 4 paid agents."));
   var five = el("ol", { class: "rows" });
-  [["Email & Inbox Agent", "Free: yours now"], ["Customer Questions Agent", "Starter, Pro & Elite"], ["Sales & Follow-Up Agent", "Starter, Pro & Elite"], ["Daily Assistant", "Starter, Pro & Elite"], ["Content & Social Agent", "Starter, Pro & Elite"]].forEach(function (a, i) {
+  [["Email & Inbox Agent", "Free: yours now"], ["Workflow Agent", "Free: copy it on the members page"], ["Customer Questions Agent", "Starter, Pro & Elite"], ["Sales & Follow-Up Agent", "Starter, Pro & Elite"], ["Daily Assistant", "Starter, Pro & Elite"], ["Content & Social Agent", "Starter, Pro & Elite"]].forEach(function (a, i) {
     var li = el("li"); li.appendChild(el("span", { class: "num" }, String(i + 1)));
     var d = el("div"); d.appendChild(el("h3", null, a[0])); d.appendChild(el("p", { class: "because" }, a[1]));
-    if (i > 0) { var u = el("a", { href: "../members/", class: "unlocklink" }, "Members: unlock and copy it"); d.appendChild(u); }
+    if (i === 1) { d.appendChild(el("a", { href: "../members/#agent-Workflow", class: "unlocklink" }, "Copy your free Workflow Agent")); }
+    else if (i > 1) { var u = el("a", { href: "../members/", class: "unlocklink" }, "Members: unlock and copy it"); d.appendChild(u); }
     li.appendChild(d); five.appendChild(li);
   });
   h.appendChild(five);

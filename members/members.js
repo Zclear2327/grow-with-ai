@@ -1,5 +1,5 @@
 /* Grow With AI members page.
-   The free Email & Inbox Agent is public. Paid agents now live in the hosted member area (ThriveCart Learn),
+   The free Email & Inbox Agent and Workflow Agent are public. Paid agents now live in the hosted member area (ThriveCart Learn),
    where each person has their own login and access ends on cancel or a failed payment (v6, item B).
    The old shared unlock codes are RETIRED: no code entry on this page any more. */
 var MEMBER_LOGIN_URL = ""; // TODO Chris: ThriveCart Learn login URL
@@ -8,12 +8,13 @@ var MEMBER_LOGIN_URL = ""; // TODO Chris: ThriveCart Learn login URL
 var KEY = "gwai-members-v1";
 var AGENTS = [
   { id: "Email-Inbox", name: "Email & Inbox Agent", tag: "Free", job: "Sorts your inbox, flags what needs you today, and drafts replies for you to send.", start: "Say hello, then send a screenshot of your inbox list (or paste the senders and subjects).", free: true },
+  { id: "Workflow", name: "Workflow Agent", tag: "Free", job: "Maps how your business runs, from first contact to closing the books, puts the right agent on each step, and cuts how often your agents stop to ask permission.", start: "Say hello. Your trainer asks about 45 quick questions, one at a time, most answered with one number.", free: true },
   { id: "Customer-Questions", name: "Customer Questions Agent", tag: "Starter, Pro & Elite", job: "Answers the questions customers ask most, from your own information, and hands the tricky ones to you.", start: "It builds your answer sheet with you first (about 15 minutes)." },
   { id: "Sales-Follow-Up", name: "Sales & Follow-Up Agent", tag: "Starter, Pro & Elite", job: "Keeps track of leads, drafts follow-ups and quotes, and reminds you so nobody slips through.", start: "Each day, say “who do I chase?”" },
   { id: "Daily-Assistant", name: "Daily Assistant", tag: "Starter, Pro & Elite", job: "Your morning brief: calendar, to-dos, bookings and errands, and an eye on prices or competitors you care about.", start: "Each morning, say “brief me”." },
   { id: "Content-Social", name: "Content & Social Agent", tag: "Starter, Pro & Elite", job: "Drafts posts, newsletters and short video scripts in your voice for you to approve.", start: "Each week, say “plan my posts”." }
 ];
-var state = load(), vault = null, opened = {}, free = { grok: "", claude: "" };
+var state = load(), vault = null, opened = {}, free = { "Email-Inbox": { grok: "", claude: "" }, "Workflow": { grok: "", claude: "" } };
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || { codes: {}, trainer: "Sam", tool: "grok" }; } catch (e) { return { codes: {}, trainer: "Sam", tool: "grok" }; } }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 function el(t, a, x) { var n = document.createElement(t); if (a) for (var k in a) n.setAttribute(k, a[k]); if (x != null) n.textContent = x; return n; }
@@ -30,7 +31,7 @@ function decrypt(id, code) {
 }
 
 function promptFor(a) {
-  var t = a.free ? free[state.tool] : (opened[a.id] || {})[state.tool];
+  var t = a.free ? (free[a.id] || {})[state.tool] : (opened[a.id] || {})[state.tool];
   return t ? t.split("[NAME]").join(state.trainer) : "";
 }
 
@@ -108,9 +109,11 @@ Promise.all([
   // RETIRED v6, delete after ThriveCart Learn is live: vault.json (the encrypted paid agents) is no longer fetched,
   // and codes saved on this device are no longer re-opened. decrypt() above is kept until then.
   fetch("../start/prompts/free-email-grok.txt").then(function (r) { return r.text(); }),
-  fetch("../start/prompts/free-email-claude.txt").then(function (r) { return r.text(); })
+  fetch("../start/prompts/free-email-claude.txt").then(function (r) { return r.text(); }),
+  fetch("../start/prompts/free-workflow-grok.txt").then(function (r) { return r.text(); }),
+  fetch("../start/prompts/free-workflow-claude.txt").then(function (r) { return r.text(); })
 ]).then(function (res) {
-  free.grok = res[0]; free.claude = res[1]; render();
+  free["Email-Inbox"] = { grok: res[0], claude: res[1] }; free["Workflow"] = { grok: res[2], claude: res[3] }; render();
 }).catch(function () {
   var host = document.getElementById("agents");
   host.insertBefore(el("p", { class: "msg err" }, "Couldn't load your agents. Check your connection and refresh the page."), host.firstChild);
