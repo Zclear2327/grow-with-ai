@@ -1,4 +1,7 @@
 _staging/
+# Personal and family photos, parked for the owner to delete.
+# Kept out of git so GitHub Pages and any checkout-based deploy do not publish them.
+delete-later/
 tools/start-videos/out/
 tools/start-videos/cues/
 tools/start-videos/wav/
