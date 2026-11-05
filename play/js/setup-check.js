@@ -412,6 +412,7 @@ function materialize(def, tool) {
 window.setupCatalog = function (tool, answers) {
   var list = [];
   SETUP_CATALOG.forEach(function (def) {
+    if (def.id === "platform" && window.SETUP_ONBOARD_PROFILE && (window.SETUP_ONBOARD_PROFILE.platform === "claude" || window.SETUP_ONBOARD_PROFILE.platform === "grok")) return;
     if (def.id !== "platform" && !tool) return;
     if (def.when && !def.when(answers || [])) return;
     var q = materialize(def, tool);
@@ -442,7 +443,7 @@ window.makeSetupRow = function (tool, question, choice, outcome, guideInfo) {
   };
 };
 
-window.setupNextAction = function (tool, answers) {
+window.setupNextAction = function (tool, answers, profile) {
   var unresolved = [];
   var later = {};
   answers.forEach(function (row) {
@@ -457,6 +458,28 @@ window.setupNextAction = function (tool, answers) {
       href: unresolved[0].href,
       link: "Open " + (unresolved[0].stepTitle || "that step")
     };
+  }
+  var task = profile && profile.firstTask;
+  var jobDone = false;
+  var helloLater = false;
+  answers.forEach(function (row) {
+    if (row.id === "job" && row.outcome === "ok") jobDone = true;
+    if (row.id === "hello" && row.outcome === "later") helloLater = true;
+  });
+  if (task && task.step && !jobDone && (task.diag === "hello" || !helloLater)) {
+    var blocked = false;
+    answers.forEach(function (row) {
+      if (row.id === task.diag && row.outcome === "ok") blocked = true;
+    });
+    if (!blocked) {
+      return {
+        kind: "next",
+        title: task.title,
+        body: task.why + " This is a training step, not a change made to your account.",
+        href: setupStepHref(tool, task.step),
+        link: "Open " + task.title
+      };
+    }
   }
   var order = ["hello", "photo", "remember", "job"];
   var i;

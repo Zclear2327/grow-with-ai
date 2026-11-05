@@ -268,6 +268,12 @@
       ? "Setup check"
       : (q.topic === "myth" ? "A common idea about AI" : "From the trainer");
     document.getElementById("qText").textContent = q.q;
+    var context = document.getElementById("qContext");
+    if (context) {
+      var hint = setupMode && window.onboardHint ? window.onboardHint(q.id, window.SETUP_ONBOARD_PROFILE) : "";
+      context.hidden = !hint;
+      context.textContent = hint || "";
+    }
     var box = document.getElementById("choices");
     var free = document.getElementById("freeText");
     box.innerHTML = "";
@@ -497,7 +503,7 @@
       else if (row.outcome === "later") buckets.later.push(row);
       else if (row.outcome === "ok" || row.outcome === "skipped") buckets.ok.push(row);
     });
-    var next = window.setupNextAction(state.tool || setupTool || "claude", state.answers);
+    var next = window.setupNextAction(state.tool || setupTool || "claude", state.answers, window.SETUP_ONBOARD_PROFILE || null);
     var payload = {
       savedAt: new Date().toISOString(),
       openedFrom: setupTool || "direct",
@@ -727,14 +733,38 @@
     }
   };
 
-  if (setupMode) {
+  var showQuestionBtn = document.getElementById("showQuestion");
+  if (showQuestionBtn) {
+    showQuestionBtn.hidden = !setupMode;
+    showQuestionBtn.addEventListener("click", function () {
+      if (state.screen !== "idle" || state.spinning) return;
+      openQuestion();
+    });
+  }
+  window.__SLOT.beginDiagnostic = function (profile) {
+    window.SETUP_ONBOARD_PROFILE = profile || null;
+    if (profile && (profile.platform === "claude" || profile.platform === "grok")) {
+      state.tool = profile.platform;
+      setupTool = profile.platform;
+    }
+    document.body.classList.remove("setup-onboard");
     document.title = "Setup Check | Grow With AI";
     var sub = document.querySelector(".subtitle");
     var title = document.querySelector(".jackpot");
     var tag = document.querySelector(".tagline");
     if (sub) sub.textContent = "Setup check";
     if (title) title.textContent = "How did setup go?";
-    if (tag) tag.textContent = "Spin once for each question. If a step did not work, the check shows that training step. Points only. These notes are from the training, not a live assistant.";
+    if (tag) tag.textContent = "Spin is optional. Show the question, or spin first. If a step did not work, the check shows that training step. Points only. These notes are from the training, not a live assistant.";
+    if (showQuestionBtn) showQuestionBtn.hidden = false;
+    resetGame();
+  };
+
+  if (setupMode && params.get("phase") === "check") {
+    document.body.classList.remove("setup-onboard");
+    window.__SLOT.beginDiagnostic(window.SETUP_ONBOARD_PROFILE || null);
+  } else if (setupMode) {
+    document.body.classList.add("setup-onboard");
+    document.title = "Set up your AI | Grow With AI";
   }
 
   buildLeds();

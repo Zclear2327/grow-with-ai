@@ -73,7 +73,60 @@
 
     <div class="spin-wrap">
       <button type="button" class="spin-btn" id="spinBtn">Spin</button>
+      <button type="button" class="show-q" id="showQuestion" hidden>Show the question</button>
     </div>
+
+    <section id="onboard" class="onboard" hidden>
+      <p class="subtitle" id="obKicker">Set up your AI</p>
+      <p class="ob-count" id="obCount"></p>
+      <h2 id="obQuestion" tabindex="-1"></h2>
+      <p class="ob-help" id="obHelp"></p>
+      <div class="ob-choices" id="obChoices"></div>
+      <div class="ob-text" id="obText" hidden>
+        <label for="obInput" id="obTextLabel"></label>
+        <input id="obInput" maxlength="80" autocomplete="off" spellcheck="false">
+        <p class="ob-warn">Do not type passwords, PINs, card numbers, bank numbers, or Social Security numbers.</p>
+      </div>
+      <p class="ob-ack" id="obAck" role="status"></p>
+      <div class="ob-nav">
+        <button type="button" class="btn secondary" id="obBack">Back</button>
+        <button type="button" class="btn secondary" id="obSkip">Skip</button>
+        <button type="button" class="btn" id="obNext">Next</button>
+      </div>
+      <p class="ob-speech">
+        <button type="button" class="icon-btn" id="obSpeak" aria-pressed="false">Play question</button>
+        <span>Browser speech. This is not Sam's or Travis's voice.</span>
+      </p>
+      <p class="ob-optional"><a href="./">The slot quiz is optional</a></p>
+    </section>
+
+    <section id="obDone" class="onboard" hidden>
+      <p class="subtitle">Set up your AI</p>
+      <h2 id="obGreet" tabindex="-1"></h2>
+      <p class="ob-help" id="obGreetBody"></p>
+      <figure class="ob-clip" id="obClip" hidden>
+        <video id="obVideo" controls preload="none" playsinline></video>
+        <figcaption id="obClipCap"></figcaption>
+      </figure>
+      <div class="ob-summary" id="obSummary"></div>
+      <p class="ob-platform">Which app will you paste the prompt into?</p>
+      <div class="ob-choices" id="obPlatformChoices"></div>
+      <p class="ob-ack" id="obTask"></p>
+      <label for="obPrompt">Starter prompt. Copy it into that app yourself. This page does not install it or open your account.</label>
+      <textarea id="obPrompt" readonly rows="10"></textarea>
+      <div class="ob-nav">
+        <button type="button" class="btn" id="obCopy">Copy prompt</button>
+        <button type="button" class="btn secondary" id="obCheck">Continue the setup check</button>
+      </div>
+      <p class="ob-help" id="obCopyMsg" role="status"></p>
+      <a class="btn secondary" id="obDraft" href="mailto:hello@wardconsulting.ai">Open email draft</a>
+      <p class="ob-warn">This opens a draft in your mail app. Nothing is sent until you send it. Saved answers stay in this browser only.</p>
+      <div class="ob-nav">
+        <button type="button" class="btn secondary" id="obEdit">Edit answers</button>
+        <button type="button" class="btn secondary" id="obClear">Clear setup on this browser</button>
+      </div>
+      <p class="ob-optional"><a href="./">The slot quiz is optional</a></p>
+    </section>
     <p class="disclaimer">Just for fun — no real money.</p>
     <p class="tagline">Spin the reels, then answer a question about AI or what you learned in the trainer. Right answers win points. Mix-ups get a kind, plain explanation.</p>
   </main>
@@ -83,6 +136,7 @@
       <p class="q-meta" id="qMeta">Question 1 of 20</p>
       <h2 id="qHeading" tabindex="-1">Your question</h2>
       <p class="q-text" id="qText"></p>
+      <p class="q-context" id="qContext" hidden></p>
       <div class="choices" id="choices"></div>
       <div class="free-text" id="freeText" hidden>
         <label for="freeTextInput" id="freeTextLabel"></label>
@@ -198,5 +252,6 @@
   <script src="js/symbols.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/game.js"></script>
+  <script src="js/onboard.js"></script>
 </body>
 </html>
