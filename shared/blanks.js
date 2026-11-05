@@ -31,13 +31,26 @@
   function fill(t, vals) {
     return t.replace(BLANK, function (all, k) { var v = (vals[k] || "").trim(); return v ? v : all; });
   }
-  function copyText(txt, ok, fail) {
+  /* Copy in one tap on every phone. Order: the clipboard API; then a hidden text box (iPhone needs it
+     editable, not read-only, or the copy silently fails); and if the phone still refuses (some in-app
+     browsers do), select the prompt on screen so one tap on the phone's own Copy finishes it. */
+  function selectOnScreen(el) {
+    if (!el) return;
+    var r = document.createRange(); r.selectNodeContents(el);
+    var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  }
+  function copyText(txt, ok, fail, shownEl) {
     function fallback() {
       var ta = document.createElement("textarea");
-      ta.value = txt; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.top = "0"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, txt.length);
+      ta.value = txt; ta.contentEditable = "true"; ta.readOnly = false;
+      ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px";
+      document.body.appendChild(ta);
+      var r = document.createRange(); r.selectNodeContents(ta);
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      ta.focus(); ta.setSelectionRange(0, txt.length);
       var done = false; try { done = document.execCommand("copy"); } catch (e) {}
-      document.body.removeChild(ta); done ? ok() : fail();
+      document.body.removeChild(ta);
+      if (done) ok(); else { selectOnScreen(shownEl); fail(); }
     }
     if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) navigator.clipboard.writeText(txt).then(ok, fallback);
     else fallback();
@@ -67,7 +80,7 @@
       }
       copyText(fill(template, vals),
         function () { msg.textContent = " Copied. Now paste it into " + appName + "."; },
-        function () { msg.textContent = " Your phone blocked copying. Press and hold the prompt above, then tap Copy."; });
+        function () { msg.textContent = " Your phone blocked the copy button. The prompt above is now selected: tap Copy on your phone's menu, or press and hold it."; }, textEl);
     };
     update();
   }
