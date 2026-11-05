@@ -47,12 +47,25 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
     b.append("mailchimp", MC_ACTION ? "added" : "not set up yet");
     b.append("_subject", d.subject || ("Lead: " + (d.list || "site") + " (" + d.email + ")"));
     b.append("_template", "table"); b.append("_honey", "");
-    var inbox = fetch(INBOX, { method: "POST", body: b, headers: { Accept: "application/json" } })
-      .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json().catch(function () { return {}; }); })
-      .then(function (j) { if (j && (j.success === false || j.success === "false")) throw new Error(j.message || "not accepted"); return j; });
+    // One automatic retry after 3 seconds: the form service sometimes drops a request ("Failed to fetch").
+    function post() {
+      return fetch(INBOX, { method: "POST", body: b, headers: { Accept: "application/json" } })
+        .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json().catch(function () { return {}; }); })
+        .then(function (j) { if (j && (j.success === false || j.success === "false")) throw new Error(j.message || "not accepted"); return j; });
+    }
+    var inbox = post().catch(function () { return new Promise(function (ok) { setTimeout(ok, 3000); }).then(post); });
     if (!MC_ACTION || !d.consent || d.noMarketing) return inbox; // noMarketing: e.g. Quebec, kept off the marketing list
     // Mailchimp is a second copy: a failure there is logged, never shown as a lost lead
     return Promise.all([inbox, mailchimp(d.email, d.firstname).catch(function (e) { console.warn(e.message); return null; })]).then(function (r) { return r[0]; });
   }
-  window.GWAILead = { send: send, consentText: CONSENT, consentVersion: CONSENT_VERSION, attrib: attrib, ready: function () { return !!MC_ACTION; } };
+  /* If sending still fails, give people a ready-to-send email so the sign-up isn't lost. */
+  var HELP = "hello@wardconsulting.ai";
+  function fallbackLink(d) {
+    var a = document.createElement("a");
+    a.href = "mailto:" + HELP + "?subject=" + encodeURIComponent(d.subject || "Sign-up") +
+      "&body=" + encodeURIComponent("Please sign me up.\nEmail: " + d.email + "\nList: " + (d.list || "") + (d.gwai_intake ? "\n" + d.gwai_intake : ""));
+    a.textContent = "Send it by email instead";
+    return a;
+  }
+  window.GWAILead = { send: send, fallbackLink: fallbackLink, consentText: CONSENT, consentVersion: CONSENT_VERSION, attrib: attrib, ready: function () { return !!MC_ACTION; } };
 })();
