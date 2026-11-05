@@ -381,6 +381,20 @@
     var tryLink = document.getElementById("guideTry");
     tryLink.href = guide.href;
     tryLink.textContent = guide.mode === "assist" ? "Open that step" : "Try again";
+    var extra = document.getElementById("guideExtra");
+    if (extra) {
+      extra.innerHTML = "";
+      (guide.links || []).forEach(function (item) {
+        var a = document.createElement("a");
+        a.className = "btn secondary";
+        a.href = item.href;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = item.label;
+        extra.appendChild(a);
+      });
+      extra.hidden = !(guide.links && guide.links.length);
+    }
     document.getElementById("guideFixed").hidden = guide.mode === "assist";
     document.getElementById("guideOwn").hidden = guide.mode !== "assist";
     showCard(guideCard);

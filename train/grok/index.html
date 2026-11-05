@@ -28,6 +28,9 @@
 .video video{width:100%;border-radius:4px;display:block}
 .done-when{background:var(--panel);border-left:4px solid var(--good);padding:12px 16px;margin:0 0 18px;font-size:17px}
 .tip{font-size:16px;color:var(--muted);margin:0 0 18px}
+.agent-handoff{border:1px solid var(--rule);padding:14px 16px;margin:0 0 18px;background:var(--panel)}
+.agent-handoff .do{font-size:18px}
+.agent-handoff .btn{margin-top:8px}
 .play-recap{text-align:center;margin:12px 0 0}
 .say{background:var(--panel);border:1px solid var(--rule);padding:16px;margin:0 0 18px}
 .say p{margin:0 0 10px;font-size:17px;white-space:pre-wrap}
@@ -84,6 +87,7 @@
     <div class="video" id="video"></div>
     <p class="done-when" id="doneWhen"></p>
     <p class="tip" id="tip" hidden></p>
+    <section id="agentHandoff" class="agent-handoff" hidden></section>
 
     <div class="actions">
       <button class="btn primary" type="button" id="next">I did it. Next step</button>
@@ -104,6 +108,7 @@
 </div>
 
 <script src="../../shared/blanks.js"></script>
+<script src="../../shared/grok-training-agent.js"></script>
 <script>
 (function () {
   // Human help. TODO: Chris to supply the number for the Text me / Call me buttons.
@@ -245,6 +250,8 @@
     $("playTip").hidden = !finished;
     $("playQuiz").hidden = !finished;
     $("setupCheck").hidden = !finished;
+    $("agentHandoff").hidden = true;
+    $("agentHandoff").innerHTML = "";
 
     if (finished) {
       $("count").textContent = "All done";
@@ -268,6 +275,9 @@
       if (s.say) { GWAIBlanks.render($("blanks"), $("sayText"), $("copyBtn"), $("copyMsg"), s.say, "Grok"); $("yours").hidden = $("blanks").hidden; $("say").hidden = false; }
       if (s.link) { $("link").href = s.link.href; $("link").textContent = s.link.label + " (opens a new tab)"; $("link").hidden = false; }
       if (s.tip) { $("tip").textContent = s.tip; $("tip").hidden = false; }
+      if ((i === 6 || i === 7) && window.GWAIGrokTrainingAgent) {
+        window.GWAIGrokTrainingAgent.mount($("agentHandoff"), "../../");
+      }
       var v = $("video"); v.innerHTML = "";
       if (s.video) {
         var el = document.createElement("video"); el.controls = true; el.preload = "metadata"; el.setAttribute("playsinline", "");

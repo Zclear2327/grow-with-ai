@@ -448,6 +448,11 @@
   function refreshPrompt() {
     var task = firstTask();
     document.getElementById("obTask").textContent = task.why + " Suggested training step: " + task.title + ". Pasting the prompt does not open that step or your account.";
+    var grokHost = document.getElementById("obGrokAgent");
+    if (grokHost && window.GWAIGrokTrainingAgent) {
+      if (state.platform === "grok") window.GWAIGrokTrainingAgent.mount(grokHost, "../");
+      else { grokHost.hidden = true; grokHost.innerHTML = ""; }
+    }
     document.getElementById("obPrompt").value = promptText();
     document.getElementById("obDraft").href = draftHref();
   }

@@ -112,6 +112,7 @@
       <p class="ob-platform">Which app will you paste the prompt into?</p>
       <div class="ob-choices" id="obPlatformChoices"></div>
       <p class="ob-ack" id="obTask"></p>
+      <section id="obGrokAgent" class="agent-fallback" hidden></section>
       <label for="obPrompt">Starter prompt. Copy it into that app yourself. This page does not install it or open your account.</label>
       <textarea id="obPrompt" readonly rows="10"></textarea>
       <div class="ob-nav">
@@ -200,6 +201,7 @@
       <h2 id="guideHeading" tabindex="-1">Try this step</h2>
       <p class="teach-body" id="guideBody"></p>
       <p class="check-mail-note" id="guideSource">These words are from the training step. This is not a live assistant.</p>
+      <div id="guideExtra" hidden></div>
       <a class="btn" id="guideTry" href="../train/" target="_blank" rel="noopener">Try again</a>
       <button type="button" class="btn secondary" id="guideStuck">Still need help</button>
       <button type="button" class="btn secondary" id="guideFixed">Fixed it</button>
@@ -247,6 +249,7 @@
     <div class="win-banner" id="winBanner"><span id="winTitle">You got it</span><span class="win-sub" id="winSub">+100 points</span></div>
   </div>
 
+  <script src="../shared/grok-training-agent.js"></script>
   <script src="js/questions.js"></script>
   <script src="js/setup-check.js"></script>
   <script src="js/symbols.js"></script>

@@ -777,4 +777,8 @@ body.setup-onboard .disclaimer { display: none; }
 .ob-clip video { width: 100%; border-radius: 6px; background: #050910; }
 .ob-clip figcaption { color: var(--ink-dim); font-size: 14px; margin-top: 6px; }
 #obPrompt { min-height: 12em; resize: vertical; }
+.agent-fallback { margin: 12px 0; padding: 12px 14px; border: 1px solid rgba(170, 214, 226, .35); border-radius: 6px; }
+.agent-fallback .part { color: var(--gold-hi); }
+.agent-fallback .do, .agent-fallback .tip { color: var(--ink); font-size: 15px; }
+.agent-fallback .go-link { display: block; margin: 8px 0; color: var(--ice-2); }
 #obDraft { margin-top: 8px; }

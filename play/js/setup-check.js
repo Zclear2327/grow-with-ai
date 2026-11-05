@@ -69,6 +69,7 @@ function setupGuide(tool, choice) {
     step: g.step,
     href: setupStepHref(tool, g.step),
     body: g.body,
+    links: g.links || [],
     mode: choice.outcome === "assist" ? "assist" : "trouble"
   };
 }
@@ -81,8 +82,10 @@ function choice(id, text, outcome, extra) {
   return row;
 }
 
-function guide(step, body) {
-  return { step: step, body: body };
+function guide(step, body, extra) {
+  var row = { step: step, body: body };
+  if (extra && extra.links) row.links = extra.links;
+  return row;
 }
 
 /* Shared choice lists are built per tool inside the catalog so a Claude
@@ -116,7 +119,7 @@ var SETUP_CATALOG = [
         choice("phone", "Skipped it. I only use my phone", "skipped"),
         choice("stuck", "Could not get Grok open in the browser", "trouble", {
           guide: {
-            grok: guide(1, "Grok works in the web browser, so there is nothing to download. Watch the short video on the step, then open grok.com. If you only use a phone, the step says to skip it.")
+            grok: guide(1, "Grok works in the web browser, so there is nothing to download. Watch the short video on the step, then open Grok yourself. grok.com is Grok's home page, not our training agent. This site has no publishable Grok bot link. After a chat is open, copy the current training prompt from the members page and paste it into a new chat only if you choose to. Pasting does not send, publish, spend, delete, or change settings. If you only use a phone, the step says to skip this one.", { links: [{ href: "../members/#agent-Email-Inbox", label: "Open the page that holds the training prompt" }] })
           }
         })
       ]
@@ -210,7 +213,7 @@ var SETUP_CATALOG = [
         choice("skip", "I skipped the phone app", "skipped"),
         choice("find", "Could not find it in the App Store or Google Play", "trouble", {
           guide: {
-            grok: guide(7, "On your phone, open the App Store (iPhone) or Google Play (Android). Search for Grok, then tap Get or Install. It's free. Check it's the official Grok app, with the same icon you see on grok.com, before you install.")
+            grok: guide(7, "On your phone, open the App Store (iPhone) or Google Play (Android). Search for Grok, then tap Get or Install. It's free. Check it's the official Grok app, with the same icon you see on grok.com, before you install. After it is installed, this site still has no Grok bot or template link to open. Copy the current training prompt from the members page and paste it into a new chat yourself. That paste does not change settings, send, publish, spend, or delete anything. This site has not verified that the Grok app can import a bot template.", { links: [{ href: "../members/#agent-Email-Inbox", label: "Open the page that holds the training prompt" }] })
           }
         }),
         choice("signin", "The app is installed, but I could not sign in", "trouble", {
