@@ -124,11 +124,13 @@ var VIDEO_BASE = "video/";
 // Batch 2 teal holograms. Sam/Travis and the JR Grok clips stay on the original filenames.
 var TEAL_V3 = { welcome: 1, gmail: 1, "claude-mac": 1, "claude-phone": 1, "claude-windows": 1, "first-win": 1 };
 function vidStem(name) { return "gwai-" + name + (TEAL_V3[name] ? "-teal-v3" : ""); }
+// JR's clips were tagged with the wrong pixel shape (93:176), so phones squeezed him thin. The -sq copies carry the right tag (Nov 5 2026); the originals stay.
+var SQUARE_FIX = { "grok-phone-jr": 1, "grok-computer-jr": 1, "first-win-grok": 1 };
 function vid(name, label, cls) {
   var stem = vidStem(name);
   var f = el("figure", { class: "vid" + (cls ? " " + cls : "") });
   var v = el("video", { controls: "", preload: "none", playsinline: "", poster: VIDEO_BASE + stem + ".jpg", "aria-label": label });
-  v.appendChild(el("source", { src: VIDEO_BASE + stem + ".mp4", type: "video/mp4" }));
+  v.appendChild(el("source", { src: VIDEO_BASE + stem + (SQUARE_FIX[name] ? "-sq" : "") + ".mp4", type: "video/mp4" }));
   v.appendChild(el("track", { kind: "captions", srclang: "en", label: "English", src: VIDEO_BASE + stem + ".vtt", default: "" }));
   f.appendChild(v); f.appendChild(el("figcaption", null, label));
   return f;
