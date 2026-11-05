@@ -54,6 +54,7 @@
 .preview{background:var(--panel);border:1px solid var(--brass);padding:10px 14px;font-size:15px;margin:0 0 18px}
 </style>
 <link rel="stylesheet" href="../shared/legal.css">
+<link rel="stylesheet" href="../shared/console.css">
 </head>
 <body>
 <div class="wrap">
@@ -87,8 +88,9 @@
 
     <div class="actions">
       <button class="btn primary" type="button" id="next">I did it. Next step</button>
-      <p class="tip play-recap" id="playTip" hidden>You finished the steps. Want a quick recap?</p>
+      <p class="tip play-recap" id="playTip" hidden>You finished the steps. Play a recap, or tell Ward how setup went.</p>
       <a class="btn primary" id="playQuiz" href="../play/" hidden>Play the AI Slot Quiz</a>
+      <a class="btn primary" id="setupCheck" href="../play/?mode=setup&amp;tool=claude" hidden>Run the Setup Check</a>
       <div class="row">
         <button class="btn ghost" type="button" id="back">Back</button>
         <button class="btn ghost" type="button" id="skip">Skip this one</button>
@@ -211,6 +213,15 @@
   function save(i) { try { localStorage.setItem(KEY, String(i)); } catch (e) {} }
 
   var i = Math.min(Math.max(load(), 0), STEPS.length);
+  /* ?step=4 opens step 4 (1-based), so a Setup Check link can land on that step. */
+  var stepParam = new URLSearchParams(location.search).get("step");
+  if (stepParam) {
+    var requestedStep = parseInt(stepParam, 10);
+    if (!isNaN(requestedStep) && requestedStep >= 1 && requestedStep <= STEPS.length) {
+      i = requestedStep - 1;
+      save(i);
+    }
+  }
   var $ = function (id) { return document.getElementById(id); };
 
   function helpButtons(label) {
@@ -235,6 +246,7 @@
     $("how").innerHTML = ""; $("how").hidden = true; $("say").hidden = true; $("link").hidden = true; $("tip").hidden = true; $("copyMsg").textContent = "";
     $("playTip").hidden = !finished;
     $("playQuiz").hidden = !finished;
+    $("setupCheck").hidden = !finished;
 
     if (finished) {
       $("count").textContent = "All done";

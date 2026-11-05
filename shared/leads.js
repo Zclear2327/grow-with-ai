@@ -64,7 +64,7 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
     var a = document.createElement("a");
     a.href = "mailto:" + HELP + "?subject=" + encodeURIComponent(d.subject || "Sign-up") +
       "&body=" + encodeURIComponent("Please sign me up.\nEmail: " + d.email + "\nList: " + (d.list || "") + (d.gwai_intake ? "\n" + d.gwai_intake : ""));
-    a.textContent = "Send it by email instead";
+    a.textContent = "Open an email draft instead (you press Send)";
     return a;
   }
   window.GWAILead = { send: send, fallbackLink: fallbackLink, consentText: CONSENT, consentVersion: CONSENT_VERSION, attrib: attrib, ready: function () { return !!MC_ACTION; } };

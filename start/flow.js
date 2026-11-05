@@ -5,8 +5,8 @@
 (function () {
 "use strict";
 var CFG = { form_endpoint: "https://formsubmit.co/ajax/7fbd7e6f9b9178360b909504bd877f07", min_seconds_before_send: 10, mailchimp_action: (typeof MC_ACTION !== "undefined" && MC_ACTION) || "" /* set in shared/leads.js */ };
-var KEY = "wc-intake-v4"; // v4 = the 10-question survey (Nov 2026); v3 answers no longer fit
-var SECTIONS = ["Welcome", "About you", "Your setup", "Your trainer", "Your result"];
+var KEY = "wc-intake-v5"; // v5 = guided conversation + setup details (Nov 5 2026); v4 answers no longer fit
+var SECTIONS = ["Welcome", "Getting to know you", "Setup details", "Your summary", "Your result"];
 var START = Date.now();
 var A = {}, step = 0, meta = { backs: {}, hes: 0, reached: {} };
 var PROMPT = { grok: text("P_GROK"), claude: text("P_CLAUDE") };
@@ -36,24 +36,29 @@ var EMAIL_OPTS = [
   { v: "other", label: "Something else" },
   { v: "none", label: "I don't have an email address yet" }
 ];
-/* The 10-question survey (approved by Chris, "approve survey v1", Nov 5 2026).
-   Every question is one tap. multi = pick up to max (no max = any). The device question adds a browser
-   question only on a computer. The Sam/Travis pick (q6) stays its own screen because it carries the meet videos. */
+/* Guided setup (Chris, Nov 5 2026: "Combine them"). A scripted, one-question-at-a-time conversation with Sam or
+   Travis: Chris's 10 questions (n 1-10), then 4 short setup details (d 1-4) that keep the Grok/Claude and
+   Grok Bot routing. Every question can be skipped; the summary lets people change any answer.
+   This is scripted guidance, not a live AI. The real trainer starts when they paste the prompt into Grok or Claude. */
 var Q = {
-  s1: { sec: 1, n: 1, type: "single", text: "What kind of business do you run?", other: "other", ph: "For example: dog grooming", options: [{ v: "home", label: "Home services or trades" }, { v: "shop", label: "Shop or online store" }, { v: "beauty", label: "Beauty or wellness" }, { v: "pro", label: "Professional services" }, { v: "food", label: "Food or events" }, { v: "other", label: "Something else" }] },
-  s2: { sec: 1, n: 2, type: "single", text: "How many people work in it, counting you?", options: [{ v: "1", label: "Just me" }, { v: "2-5", label: "2 to 5" }, { v: "6-20", label: "6 to 20" }, { v: "21+", label: "More than 20" }] },
-  s3: { sec: 1, n: 3, type: "multi", max: 2, text: "Where do most new customers come from?", help: "Pick up to 2.", options: [{ v: "referrals", label: "Referrals" }, { v: "google", label: "Google or my website" }, { v: "social", label: "Social media" }, { v: "calls", label: "Phone calls or walk-ins" }, { v: "markets", label: "Marketplaces like Amazon or Etsy" }] },
-  s4: { sec: 1, n: 4, type: "multi", max: 2, text: "What takes too much of your week?", help: "Pick up to 2. These become your 2 free workflows.", options: [{ v: "email", label: "Email" }, { v: "quotes", label: "Quotes and invoices" }, { v: "scheduling", label: "Scheduling" }, { v: "followups", label: "Following up with leads" }, { v: "social", label: "Social posts" }, { v: "books", label: "Bookkeeping" }] },
-  q3: { sec: 2, n: 5, type: "single", text: "Where does your work email live?", help: "Not sure? Check the address you send email from. Ending in @gmail.com means Gmail.", options: EMAIL_OPTS },
-  s6: { sec: 2, n: 6, type: "multi", text: "What do you run the business on?", help: "Pick all that apply.", options: [{ v: "google", label: "Google (Gmail, Calendar, Sheets)" }, { v: "m365", label: "Microsoft 365" }, { v: "quickbooks", label: "QuickBooks" }, { v: "square", label: "Square or Shopify" }, { v: "crm", label: "A customer list app (CRM)" }, { v: "paper", label: "Paper or a whiteboard" }] },
-  q4a: { sec: 2, n: 7, type: "single", text: "What do you use most days?", options: [{ v: "phone", label: "Phone" }, { v: "mac", label: "Mac" }, { v: "windows", label: "Windows computer" }] },
-  q4b: { sec: 2, n: 7, type: "single", text: "Which web browser do you use?", options: [{ v: "chrome", label: "Chrome" }, { v: "edge", label: "Edge" }, { v: "safari", label: "Safari" }, { v: "other", label: "Other / not sure" }] },
-  q5b: { sec: 2, n: 8, type: "single", text: "Have you used an AI chat app before?", options: [{ v: "no", label: "No" }, { v: "little", label: "A little" }, { v: "lot", label: "A lot" }] },
-  s9: { sec: 2, n: 9, type: "multi", all: true, text: "What should AI never do without asking you first?", help: "All are ticked to start. Untick only what you're happy for it to do on its own.", options: [{ v: "send", label: "Send emails or texts" }, { v: "spend", label: "Spend money" }, { v: "prices", label: "Change prices" }, { v: "contact", label: "Contact customers" }, { v: "delete", label: "Delete anything" }] },
-  s10: { sec: 2, n: 10, type: "single", text: "How do you want to start?", options: [{ v: "free", label: "Free, no new costs" }, { v: "pay", label: "I'll pay about $20 to $30 a month so the AI can connect to my email and calendar" }, { v: "unsure", label: "Not sure yet" }] },
-  q6: { sec: 3, type: "single", text: "Pick your trainer: Sam or Travis.", help: "Sam has a female voice and style; Travis has a male voice and style. You can switch any time.", options: [{ v: "Sam", label: "Sam" }, { v: "Travis", label: "Travis" }, { v: "Sam", label: "Either is fine", id: "either" }] }
+  q6: { sec: 1, n: 1, type: "single", text: "First, who would you like as your guide: Sam or Travis?", help: "Both are AI trainer characters, not real people. You can switch any time.", options: [{ v: "Sam", label: "Sam" }, { v: "Travis", label: "Travis" }, { v: "Sam", label: "Either is fine", id: "either" }] },
+  nm: { sec: 1, n: 2, type: "text", optional: true, text: "What should we call you?", help: "Optional. A first name or nickname is plenty.", ph: "For example: Dana" },
+  s1: { sec: 1, n: 3, type: "single", text: "What kind of work do you do?", other: "other", ph: "For example: dog grooming", options: [{ v: "home", label: "Home services or trades" }, { v: "shop", label: "Shop or online store" }, { v: "beauty", label: "Beauty or wellness" }, { v: "pro", label: "Professional services" }, { v: "food", label: "Food or events" }, { v: "other", label: "Something else" }] },
+  goal: { sec: 1, n: 4, type: "single", text: "What's your first goal with AI?", other: "other", ph: "In a few words", options: [{ v: "inbox", label: "Get my inbox under control" }, { v: "customers", label: "Answer customers faster" }, { v: "sales", label: "Follow up and win more work" }, { v: "admin", label: "Spend less time on paperwork" }, { v: "learn", label: "Just learn what AI can do" }, { v: "other", label: "Something else" }] },
+  s4: { sec: 1, n: 5, type: "multi", max: 2, text: "Which repetitive task would you like help with first?", help: "Pick up to 2. These become your 2 free workflows.", options: [{ v: "email", label: "Email" }, { v: "quotes", label: "Quotes and invoices" }, { v: "scheduling", label: "Scheduling" }, { v: "followups", label: "Following up with leads" }, { v: "social", label: "Social posts" }, { v: "books", label: "Bookkeeping" }] },
+  q5b: { sec: 1, n: 6, type: "single", text: "How much have you used an AI chat app before?", options: [{ v: "no", label: "Not yet" }, { v: "little", label: "A little" }, { v: "lot", label: "A lot" }] },
+  len: { sec: 1, n: 7, type: "single", text: "Do you like answers brief or detailed?", options: [{ v: "brief", label: "Brief: just the key points" }, { v: "detailed", label: "Detailed: walk me through it" }] },
+  learn: { sec: 1, n: 8, type: "single", text: "How do you learn a new step best?", options: [{ v: "steps", label: "Step by step" }, { v: "examples", label: "Show me an example" }] },
+  q4a: { sec: 1, n: 9, type: "single", text: "What will you use most days?", options: [{ v: "phone", label: "Phone" }, { v: "mac", label: "Mac" }, { v: "windows", label: "Windows computer" }] },
+  q4b: { sec: 1, n: 9, type: "single", text: "Which web browser do you use?", options: [{ v: "chrome", label: "Chrome" }, { v: "edge", label: "Edge" }, { v: "safari", label: "Safari" }, { v: "other", label: "Other / not sure" }] },
+  talk: { sec: 1, n: 9, type: "single", text: "Would you rather type or talk to it?", options: [{ v: "type", label: "Type" }, { v: "speak", label: "Talk out loud" }, { v: "both", label: "Both" }] },
+  win: { sec: 1, n: 10, type: "single", text: "What would a useful first result look like?", other: "other", ph: "In a few words", options: [{ v: "inbox", label: "My inbox sorted" }, { v: "reply", label: "A customer reply drafted" }, { v: "week", label: "My week planned" }, { v: "quote", label: "A quote or invoice drafted" }, { v: "post", label: "A social post drafted" }, { v: "other", label: "Something else" }] },
+  q3: { sec: 2, d: 1, type: "single", text: "Where does your work email live?", help: "Not sure? Check the address you send email from. Ending in @gmail.com means Gmail.", options: EMAIL_OPTS },
+  s6: { sec: 2, d: 2, type: "multi", text: "What do you run the business on?", help: "Pick all that apply.", options: [{ v: "google", label: "Google (Gmail, Calendar, Sheets)" }, { v: "m365", label: "Microsoft 365" }, { v: "quickbooks", label: "QuickBooks" }, { v: "square", label: "Square or Shopify" }, { v: "crm", label: "A customer list app (CRM)" }, { v: "paper", label: "Paper or a whiteboard" }] },
+  s9: { sec: 2, d: 3, type: "multi", all: true, text: "What should AI never do without asking you first?", help: "All are ticked to start. Untick only what you're happy for it to do on its own.", options: [{ v: "send", label: "Send emails or texts" }, { v: "spend", label: "Spend money" }, { v: "prices", label: "Change prices" }, { v: "contact", label: "Contact customers" }, { v: "delete", label: "Delete anything" }, { v: "site", label: "Change my website or settings" }, { v: "connect", label: "Connect my accounts" }] },
+  s10: { sec: 2, d: 4, type: "single", text: "How do you want to start?", options: [{ v: "free", label: "Free, no new costs" }, { v: "pay", label: "I'll pay about $20 to $30 a month so the AI can connect to my email and calendar" }, { v: "unsure", label: "Not sure yet" }] }
 };
-var SURVEY_TOTAL = 10;
+var SURVEY_TOTAL = 10, DETAIL_TOTAL = 4;
 function labelOf(id, v) { var o = (Q[id].options || []).filter(function (x) { return x.v === v; })[0]; return o ? o.label : v; }
 function labelsOf(id) { return (A[id] || []).map(function (v) { return labelOf(id, v); }); }
 function joinAnd(a) { return a.length < 2 ? (a[0] || "") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
@@ -107,18 +112,20 @@ function emailType() { return A.q3 === "none" ? (A.newEmail || "gmail") : A.q3; 
 function trainer() { return A.q6 || "Sam"; }
 
 function plan() {
-  var P = [{ k: "welcome", sec: 0 }, { k: "ask", id: "s1" }, { k: "ask", id: "s2" }, { k: "ask", id: "s3" }, { k: "ask", id: "s4" }, { k: "ask", id: "q3" }];
+  var P = [{ k: "welcome", sec: 0 }];
+  ["q6", "nm", "s1", "goal", "s4", "q5b", "len", "learn", "q4a"].forEach(function (id) { P.push({ k: "ask", id: id }); });
+  if (A.q4a && A.q4a !== "phone") P.push({ k: "ask", id: "q4b" });
+  P.push({ k: "ask", id: "talk" }, { k: "ask", id: "win" }, { k: "ask", id: "q3" });
   if (A.q3 === "none") {
     P.push({ k: "ne_choice", sec: 2 });
     var steps = A.neKind === "outlookcom" ? OUTLOOK_STEPS : GMAIL_STEPS;
     if (A.neKind) steps.forEach(function (s, i) { P.push({ k: "ne_step", sec: 2, i: i }); });
   }
-  P.push({ k: "ask", id: "s6" }, { k: "ask", id: "q4a" });
-  if (A.q4a && A.q4a !== "phone") P.push({ k: "ask", id: "q4b" });
-  P.push({ k: "ask", id: "q5b" }, { k: "ask", id: "s9" }, { k: "ask", id: "s10" });
-  P.push({ k: "ask", id: "q6" }, { k: "handoff", sec: 3 }, { k: "reflect", sec: 3 }, { k: "result", sec: 4 });
+  P.push({ k: "ask", id: "s6" }, { k: "ask", id: "s9" }, { k: "ask", id: "s10" });
+  P.push({ k: "summary", sec: 3 }, { k: "handoff", sec: 3 }, { k: "result", sec: 4 });
   return P;
 }
+function stepOf(id) { var P = plan(); for (var i = 0; i < P.length; i++) if (P[i].id === id) return i; return -1; }
 function secOf(s) { return s.k === "ask" ? Q[s.id].sec : s.sec; }
 
 /* ---------- dom helpers ---------- */
@@ -178,7 +185,7 @@ function render() {
   SECTIONS.forEach(function (_, i) { ul.appendChild(el("li", { "data-on": i <= si ? "1" : "0" })); });
   document.getElementById("stepname").textContent = "Section " + (si + 1) + " of " + SECTIONS.length + " · " + SECTIONS[si];
   if (step > 0) { var bt = el("button", { class: "backtop", type: "button", "aria-label": "Go back to the previous screen" }, "← Back"); bt.onclick = back; h.appendChild(bt); }
-  ({ welcome: welcome, ask: ask, ne_choice: neChoice, ne_step: neStep, handoff: handoff, reflect: reflect, result: result })[s.k](h, s);
+  ({ welcome: welcome, summary: summary, ask: ask, ne_choice: neChoice, ne_step: neStep, handoff: handoff, reflect: reflect, result: result })[s.k](h, s);
   save();
   var f = h.querySelector("h1"); if (f && render.ready) { f.setAttribute("tabindex", "-1"); f.focus(); }
   render.ready = true;
@@ -218,16 +225,16 @@ function welcome(h) {
   h.appendChild(vid("welcome", "Video: Chris Ward welcomes you (20 seconds)"));
   h.appendChild(el("p", { class: "voice" }, "Setup"));
   h.appendChild(el("h1", null, "Welcome to Ward Consulting AI."));
-  h.appendChild(el("p", null, "First, 10 quick multiple-choice questions, about 2 minutes. Your answers pick the best AI for you (Grok or Claude) and tell your trainer about your business, so you never get asked twice. Your first win takes about 10 minutes, and the full setup about 20. The setup is free."));
+  h.appendChild(el("p", null, "First, Sam or Travis asks you 10 quick questions, one at a time, then 4 short setup details. It takes about 2 minutes, and you can skip or change any answer. Your answers pick the best AI for you (Grok or Claude) and brief your trainer, so you never get asked twice. Your first win takes about 10 minutes. The setup is free."));
   h.appendChild(el("p", { class: "help" }, "Available in English in the US and Canada, except Quebec for now (no French version yet)."));
-  h.appendChild(el("p", { class: "help" }, "You stay in charge. We never ask for passwords, customer names or money figures. Your answers stay in this browser until you choose to send them."));
+  h.appendChild(el("p", { class: "help" }, "This part is a scripted setup, not a live AI. Sam and Travis are AI trainer characters; the real conversation starts when you paste your trainer prompt into Grok or Claude. Never type passwords, codes, card numbers or customer details here. Your answers stay in this browser unless you choose to send them, and you can clear them any time."));
   navRow(h, next, true, "Begin");
 }
 
 function ask(h, s) {
   var q = Q[s.id];
   meta.reached[s.id] = 1;
-  h.appendChild(el("p", { class: "voice" }, q.n ? "Question " + q.n + " of " + SURVEY_TOTAL : "Setup"));
+  h.appendChild(el("p", { class: "voice" }, q.n ? "Question " + q.n + " of " + SURVEY_TOTAL + " \u00b7 scripted setup with " + (A.q6 ? trainer() : "Sam or Travis") : q.d ? "Setup detail " + q.d + " of " + DETAIL_TOTAL : "Setup"));
   h.appendChild(el("h1", { id: "qh" }, q.text));
   if (q.help) h.appendChild(el("p", { class: "help" }, q.help));
   if (q.type === "text") {
@@ -248,8 +255,8 @@ function ask(h, s) {
     var upd = function () { var v = inp.value.trim(); nb.disabled = !v; count.textContent = (120 - inp.value.length) + " characters left"; };
     var submit = function () {
       var v = inp.value.trim().slice(0, 120); if (!v) return;
-      A[s.id] = v; save();
-      thanks(s.id === "q1" && v.length > 80 ? "Thank you, that's what I needed." : "Thank you.", next);
+      A[s.id] = v; delete A[s.id + "_skipped"]; save();
+      thanks(s.id === "nm" ? "Nice to meet you, " + v + "." : ack(), next);
     };
     nb = navRow(h, submit, false);
     inp.addEventListener("input", upd);
@@ -274,7 +281,7 @@ function ask(h, s) {
       li.appendChild(b); mul.appendChild(li);
     });
     h.appendChild(mul); h.appendChild(note);
-    mnb = navRow(h, function () { if (!q.all && !A[s.id].length) return; save(); thanks("Thank you.", next); }, true);
+    mnb = navRow(h, function () { if (!q.all && !A[s.id].length) return; save(); thanks(ack(), next); }, true);
     paint();
   } else {
     var ul = el("ul", { class: "opts", role: "list" });
@@ -286,14 +293,14 @@ function ask(h, s) {
       b.appendChild(el("span", { class: "lab" }, o.label));
       b.onclick = function () {
         var prevEmail = A.q3;
-        A[s.id] = o.v;
+        A[s.id] = o.v; delete A[s.id + "_skipped"];
         if (s.id === "q6") A.q6_either = !!o.id;
         if (s.id === "q3" && prevEmail !== o.v) { delete A.neKind; delete A.newEmail; }
         if (s.id === "q4a" && o.v === "phone") delete A.q4b;
         save();
         if (q.other && o.v === q.other) { showOther(); return; }
         if (q.other) delete A[s.id + "_text"];
-        thanks("Thank you.", next);
+        thanks(ack(), next);
       };
       li.appendChild(b); ul.appendChild(li);
     });
@@ -305,7 +312,7 @@ function ask(h, s) {
       var inp = el("input", { id: s.id + "-other", type: "text", maxlength: "60", autocomplete: "off", placeholder: q.ph || "" });
       inp.value = A[s.id + "_text"] || "";
       otherBox.appendChild(lab); otherBox.appendChild(inp); h.appendChild(otherBox);
-      var ob = navRow(otherBox, function () { var v = inp.value.trim().slice(0, 60); if (!v) return; A[s.id + "_text"] = v; save(); thanks("Thank you.", next); }, !!inp.value.trim());
+      var ob = navRow(otherBox, function () { var v = inp.value.trim().slice(0, 60); if (!v) return; A[s.id + "_text"] = v; save(); thanks(ack(), next); }, !!inp.value.trim());
       inp.addEventListener("input", function () { ob.disabled = !inp.value.trim(); });
       inp.addEventListener("keydown", function (e) { if (e.key === "Enter") ob.click(); });
       inp.focus();
@@ -318,8 +325,13 @@ function ask(h, s) {
     pair.appendChild(vid("meet-travis", "Meet Travis, AI trainer (8 seconds)", "small"));
     h.insertBefore(pair, h.querySelector(".voice"));
   }
+  // Every question can be skipped; the summary shows it as "skipped" and lets them answer later.
+  var sk = el("button", { class: "back skipq", type: "button" }, q.optional ? "Skip" : "Skip this question");
+  sk.onclick = function () { A[s.id + "_skipped"] = 1; save(); next(); };
+  h.appendChild(sk);
   hesitance(h, s.id);
 }
+function ack() { var n = (A.nm || "").trim(); return n ? "Thanks, " + n + "." : "Thank you."; }
 
 function neChoice(h) {
   h.appendChild(el("p", { class: "voice" }, "Setup"));
@@ -394,19 +406,71 @@ function reflect(h) {
 
 /* "About my business": goes at the top of the prompt people copy, so the trainer, the Workflow agent,
    dr eggbot and the CEO agent start from these answers and never re-ask. No customer names, passwords or money. */
+function ans(id) { // plain-words answer for the summary and the trainer prompt
+  if (A[id + "_skipped"] && (A[id] == null || (A[id].length === 0))) return "skipped";
+  var q = Q[id], v = A[id];
+  if (v == null || v === "") return "not answered";
+  if (q.type === "multi") return labelsOf(id).join(", ") || "none";
+  if (q.type === "text") return v;
+  if (q.other && v === q.other) return A[id + "_text"] || "something else";
+  if (id === "q3") return EMAIL_NAME[emailType()] || labelOf(id, v);
+  return labelOf(id, v);
+}
+var SUMMARY_ROWS = [["q6", "Guide"], ["nm", "Name"], ["s1", "Work"], ["goal", "First goal"], ["s4", "Tasks to help with first"], ["q5b", "AI experience"], ["len", "Answers"], ["learn", "Learning style"], ["q4a", "Device"], ["q4b", "Browser"], ["talk", "Type or talk"], ["win", "Useful first result"], ["q3", "Work email"], ["s6", "Runs the business on"], ["s9", "Never without asking"], ["s10", "Plan"]];
+
+/* First training task, from their answers (same idea as the Setup Check in play/). Step numbers match
+   train/ and train/grok/, which open a step with ?step=N. */
+function firstTask() {
+  var t = A.s4 || [], w = A.win;
+  if (A.q5b === "no") return { n: 9, title: "Say hello", why: "You're new to AI chat, so start with a friendly first conversation." };
+  // the first result they asked for wins; their task list breaks ties
+  if (w === "reply" || w === "inbox") return { n: 16, title: "Answer a customer email", why: "You want a customer reply or a sorted inbox first." };
+  if (w === "week") return { n: 17, title: "Plan your week", why: "You want your week planned first." };
+  if (w === "quote") return { n: 13, title: "Try it on a real job", why: "You want a quote or invoice first." };
+  if (t.indexOf("email") >= 0 || t.indexOf("followups") >= 0) return { n: 16, title: "Answer a customer email", why: "Email and follow-ups take your time." };
+  if (t.indexOf("scheduling") >= 0) return { n: 17, title: "Plan your week", why: "You want help with scheduling." };
+  if (t.indexOf("quotes") >= 0 || t.indexOf("books") >= 0) return { n: 13, title: "Try it on a real job", why: "Quotes, invoices and payments are on your list." };
+  return { n: 9, title: "Say hello", why: "A good first step for everyone." };
+}
+function taskHref(tr, n) { return (tr === "claude" ? "../train/" : "../train/grok/") + "?step=" + n; }
+
+function summary(h) {
+  var tr = track(), ft = firstTask();
+  h.appendChild(el("p", { class: "voice" }, "Your summary"));
+  h.appendChild(el("h1", null, (A.nm ? A.nm + ", here's" : "Here's") + " what you told " + trainer() + "."));
+  h.appendChild(el("p", { class: "help" }, "Tap Change to fix anything. These answers stay in this browser and go into your trainer prompt so " + trainer() + " doesn't ask again."));
+  var dl = el("ul", { class: "sumlist", role: "list" });
+  SUMMARY_ROWS.forEach(function (r) {
+    if (r[0] === "q4b" && A.q4a === "phone") return;
+    if (r[0] === "nm" && !A.nm) { if (!A.nm_skipped) return; }
+    var li = el("li");
+    li.appendChild(el("span", { class: "sk" }, r[1]));
+    li.appendChild(el("span", { class: "sv" }, ans(r[0])));
+    var b = el("button", { class: "back sumedit", type: "button", "aria-label": "Change " + r[1] }, "Change");
+    b.onclick = function () { var i = stepOf(r[0]); if (i >= 0) { step = i; save(); render(); window.scrollTo(0, 0); } };
+    li.appendChild(b); dl.appendChild(li);
+  });
+  h.appendChild(dl);
+  var box = el("div", { class: "note" });
+  box.appendChild(el("p", null, "Your track: " + (isBot(tr) ? "Grok Bot (paid)" : tr === "grok" ? "Grok (free)" : "Claude") + ". " + whyTrack(tr)));
+  box.appendChild(el("p", null, "Your first training task: step " + ft.n + ", " + ft.title + ". " + ft.why));
+  h.appendChild(box);
+  navRow(h, next, true, "Looks right. Continue");
+}
+
 function aboutBlock(tr) {
-  var dev = A.q4a === "phone" ? "phone" : (A.q4a === "mac" ? "Mac" : "Windows") + (A.q4b ? " (" + labelOf("q4b", A.q4b) + ")" : "");
   var lines = [
-    "About my business (from my setup answers. Use these and don't ask me again):",
-    "- Business: " + bizLabel() + "; team: " + (labelOf("s2", A.s2) || "not said"),
-    "- New customers come from: " + (labelsOf("s3").join(", ") || "not said"),
-    "- What takes too much of my week (my 2 free workflows): " + (labelsOf("s4").join(", ") || "not said"),
-    "- Work email: " + (EMAIL_NAME[emailType()] || "not said"),
-    "- I run the business on: " + (labelsOf("s6").join(", ") || "not said"),
-    "- Device: " + dev + "; AI experience: " + (labelOf("q5b", A.q5b) || "not said"),
-    "- Never do these without asking me first: " + (labelsOf("s9").join(", ") || "nothing on this list"),
-    "- Plan: " + (labelOf("s10", A.s10) || "not said"),
-    "- Platform: " + (isBot(tr) ? "Grok Bot (paid)" : tr === "grok" ? "Grok (free)" : "Claude"),
+    "About me (from my setup answers. Use these and don't ask me again):",
+    "- Guide: " + trainer() + (A.nm ? "; call me " + A.nm : ""),
+    "- My work: " + ans("s1") + "; first goal: " + ans("goal"),
+    "- What I want help with first (my 2 free workflows): " + ans("s4"),
+    "- AI experience: " + ans("q5b") + "; answers: " + ans("len") + "; I learn best: " + ans("learn"),
+    "- Device: " + ans("q4a") + (A.q4b && A.q4a !== "phone" ? " (" + ans("q4b") + ")" : "") + "; I prefer to: " + ans("talk"),
+    "- A useful first result for me: " + ans("win"),
+    "- Work email: " + ans("q3") + "; I run the business on: " + ans("s6"),
+    "- Never do these without my explicit yes first: " + ans("s9"),
+    "- Plan: " + ans("s10") + "; Platform: " + (isBot(tr) ? "Grok Bot (paid)" : tr === "grok" ? "Grok (free)" : "Claude"),
+    "- My first training task: step " + firstTask().n + ", " + firstTask().title,
     ""
   ];
   return lines.join("\n") + "\n";
@@ -552,7 +616,13 @@ function result(h) {
   if (tk !== "grokbot") h.appendChild(up); // Grok Bot users already have the upgrade
 
   // copy box
-  h.appendChild(el("h2", null, "Your free email helper"));
+  var ft = firstTask();
+  var nextBox = el("div", { class: "note nextbox" });
+  nextBox.appendChild(el("p", null, "Your first training task: step " + ft.n + ", " + ft.title + "."));
+  nextBox.appendChild(el("a", { class: "linkbtn go", href: taskHref(tr, ft.n) }, "Open step " + ft.n + " of the " + (tr === "claude" ? "Claude" : "Grok") + " training"));
+  h.appendChild(nextBox);
+  h.appendChild(el("h2", null, "Your trainer prompt (copy and paste)"));
+  h.appendChild(el("p", { class: "help" }, "This is a prompt you copy, not a link. We don't have a verified share link to our trainer yet, so pasting this is how " + name + " starts in " + (tk === "grokbot" ? "your Grok Bot app" : tr === "grok" ? "Grok" : "Claude") + ". Grok and Grok Bot are different apps; use the one your steps above are for."));
   h.appendChild(tr === "grok" ? vid("first-win-grok", "Video: your first win, with JR (21 seconds)") : vid("first-win", "Video: your first win (23 seconds)"));
   h.appendChild(el("p", { class: "help" }, "Copy this and paste it into " + (tk === "grokbot" ? "a new chat in your Grok Bot app." : tr === "grok" ? "a new Grok chat." : "your Claude project instructions, or a new Claude chat.")));
   var AG = { id: "Email-Inbox", name: "Email & Inbox Agent" };
@@ -586,7 +656,10 @@ function result(h) {
 
   var nav = el("div", { class: "nav" });
   var rs = el("button", { class: "back", type: "button" }, "Start over");
-  rs.onclick = function () { if (!confirm("Clear your answers and start again?")) return; clearAll(); render(); };
+  rs.onclick = function () { if (!confirm("Clear your answers from this browser and start again?")) return; clearAll(); render(); };
+  rs.textContent = "Clear my answers and start over";
+  var chk = el("a", { class: "linkbtn", href: "../play/?mode=setup&phase=check&tool=" + (tr === "claude" ? "claude" : "grok") }, "Something not working? Run the Setup Check");
+  nav.appendChild(chk);
   nav.appendChild(rs); h.appendChild(nav);
 }
 

@@ -12,13 +12,13 @@ window.SLOT_QUESTIONS = [
     topic: "myth",
     q: "Does an AI assistant have feelings, or a mind of its own?",
     choices: [
-      "No. It predicts helpful text. It does not feel, want, or live a life.",
+      "There's no evidence it does. It's a tool that predicts helpful text, so treat it as a tool, not a friend.",
       "Yes. It thinks and feels the way a person does.",
       "Yes. It gets lonely if you don't talk to it.",
       "It has secret opinions it hides from you."
     ],
     correct: 0,
-    teach: "An AI assistant is a tool that predicts the next words in a reply. It can sound warm, but it does not have feelings, wants, or a private inner life."
+    teach: "An AI assistant is a tool that predicts the next words in a reply. It can sound warm, but there's no evidence it has feelings or a life of its own. Scientists still debate the deep questions, so the safe habit is simple: use it as a tool and check its work."
   },
   {
     id: "all-jobs",
@@ -26,12 +26,12 @@ window.SLOT_QUESTIONS = [
     q: "Will AI take every job and leave people with nothing to do?",
     choices: [
       "Yes. People will not be needed.",
-      "No. It can take repetitive busywork off your plate. People still decide, check the work, and do the parts that need a human.",
+      "Nobody knows exactly how jobs will change. Today it's best at repetitive busywork, while people still decide, check the work, and do the parts that need a human.",
       "It only replaces managers.",
       "It already did, so there is no point learning it."
     ],
     correct: 1,
-    teach: "Grow With AI is built so repetitive work can come off your plate while you stay in charge. You still approve anything that matters, and you still do the work that needs a person."
+    teach: "No one can say for sure what AI will do to every job. What it does well today is take repetitive work off your plate while you stay in charge. You still approve anything that matters, and you still do the work that needs a person."
   },
   {
     id: "always-right",
@@ -170,11 +170,11 @@ window.SLOT_QUESTIONS = [
     choices: [
       "Yes. Voice only works after you pay.",
       "Yes. The microphone is only for videos.",
-      "No. You never have to type. Use the microphone button on your phone keyboard.",
+      "No. You can talk instead of typing most messages with the microphone button on your phone keyboard.",
       "Only Grok can hear you. Claude cannot."
     ],
     correct: 2,
-    teach: "Both trainers say you never have to type: on your phone keyboard, tap the microphone and say what you want. That works in every step."
+    teach: "Both trainers let you talk instead of type: on your phone keyboard, tap the microphone and say what you want. A few steps still ask you to paste or fill in a box."
   },
   {
     id: "free-agents",
