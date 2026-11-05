@@ -153,9 +153,10 @@ function waitlistScreen(h) { // CAPACITY.mode === "waitlist" (start/capacity.js)
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg.textContent = "That email doesn't look right. Check it and try again."; em.focus(); return; }
     if (!cb.checked) { msg.textContent = "Tick the box so we're allowed to email you."; cb.focus(); return; }
     send.disabled = true; msg.textContent = "Sending…";
-    window.GWAILead.send({ email: v, list: "start-waitlist", consent: true, subject: "Setup waitlist (" + v + ")" })
+    var lead = { email: v, list: "start-waitlist", consent: true, subject: "Setup waitlist (" + v + ")" };
+    window.GWAILead.send(lead)
       .then(function () { msg.textContent = "Thanks, you're on the list. We'll email you when the next group opens."; })
-      .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Try again in a minute."; });
+      .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Try again in a minute, or: "; msg.appendChild(window.GWAILead.fallbackLink(lead)); });
   };
 }
 
@@ -587,9 +588,10 @@ function capture(h, tr) {
     if (hp.value || (Date.now() - START) / 1000 < CFG.min_seconds_before_send) { msg.textContent = "Sent."; return; }
     send.disabled = true; msg.textContent = "Sending…";
     var intake = "track: " + tr + "; trainer: " + trainer() + "; device: " + (A.q4a || "") + "; email type: " + (emailType() || "") + "; time sinks: " + labelsOf("s4").join(", ");
-    window.GWAILead.send({ email: v, firstname: (fn.value || "").trim().slice(0, 40), list: "free-setup", gwai_intake: intake, consent: cb.checked, subject: "Free setup: " + tr + " (" + v + ")" })
+    var lead = { email: v, firstname: (fn.value || "").trim().slice(0, 40), list: "free-setup", gwai_intake: intake, consent: cb.checked, subject: "Free setup: " + tr + " (" + v + ")" };
+    window.GWAILead.send(lead)
       .then(function () { msg.textContent = "Sent. Check your inbox for the steps."; })
-      .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Nothing is lost; try again in a minute."; });
+      .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Your answers are still here. Try again in a minute, or: "; msg.appendChild(window.GWAILead.fallbackLink(lead)); });
   };
 }
 
