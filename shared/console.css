@@ -1,0 +1,75 @@
+/* Grow With AI "console" theme: a premium starship console look for the setup (start/) and the two
+   training pages (train/, train/grok/). Load it LAST so it overrides the page palette.
+   Deep-space navy, titanium lines, glass panels, restrained cyan light. One theme, used in light and dark
+   mode alike, so the theme toggle is hidden on these pages. Contrast is checked for body text and buttons. */
+:root, :root[data-theme="light"], :root[data-theme="dark"] {
+  --paper:#060A12; --panel:#0D1524; --ink:#E9EEF5; --muted:#A3B2C6; --rule:#263449;
+  --accent:#62D2EE; --accent-ink:#03131B; --brass:#C6D0DD; --good:#74D6AE; --bad:#F29A92;
+  --inset:#0F1B2E; --inset-rule:#2F4A6A; --warn-bg:#16140C;
+  --glass:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+  --glass-line:rgba(170,195,230,.20);
+  --glow:0 0 0 1px rgba(98,210,238,.35), 0 0 18px rgba(98,210,238,.18);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { color-scheme: dark; } }
+
+html { background:#060A12; }
+body {
+  background:
+    radial-gradient(1100px 520px at 50% -8%, rgba(98,210,238,.09), transparent 70%),
+    radial-gradient(800px 400px at 100% 100%, rgba(120,140,200,.06), transparent 70%),
+    linear-gradient(180deg, #060A12 0%, #08101C 100%) fixed;
+  color:var(--ink);
+}
+
+/* header: thin titanium rule instead of a heavy bar */
+header, .top, .site-head { border-bottom:1px solid var(--glass-line) !important; background:rgba(6,10,18,.72) !important; backdrop-filter:blur(10px); }
+#theme { display:none !important; }
+
+/* glass panels */
+.opt, .note, .say, .copybox, .stuck, .isteps li, .sumlist li, .tabs .tab, .video, .vid video, .otherbox input, .blanks input, .blanks textarea, input[type=text], input[type=email], textarea {
+  background:var(--glass), var(--panel) !important;
+  border:1px solid var(--glass-line) !important;
+  border-radius:14px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  color:var(--ink);
+}
+.video { border-style:solid !important; }
+.opt:hover, .tabs .tab:hover { border-color:rgba(98,210,238,.55) !important; }
+.opt[aria-pressed="true"], .tabs .tab[aria-selected="true"] { border-color:var(--accent) !important; box-shadow:var(--glow) !important; background:linear-gradient(180deg, rgba(98,210,238,.14), rgba(98,210,238,.04)), var(--panel) !important; }
+.opt .tick { border-color:var(--glass-line) !important; }
+.opt[aria-pressed="true"] .tick { background:var(--accent) !important; border-color:var(--accent) !important; }
+
+/* primary actions: polished cyan, dark text */
+.go, .btn.primary, .say button, #copyBtn, .linkbtn.go {
+  background:linear-gradient(180deg, #7FE0F5, #46BFDD) !important;
+  color:var(--accent-ink) !important; border:1px solid rgba(255,255,255,.35) !important;
+  border-radius:999px !important; box-shadow:0 6px 22px rgba(70,191,221,.22) !important; font-weight:700;
+}
+.go[disabled] { opacity:.45 !important; box-shadow:none !important; }
+.back, .btn.ghost, .skipq, .sumedit, .linkbtn:not(.go) {
+  background:transparent !important; color:var(--ink) !important;
+  border:1px solid var(--glass-line) !important; border-radius:999px !important;
+}
+.back:hover, .btn.ghost:hover, .linkbtn:not(.go):hover { border-color:rgba(98,210,238,.6) !important; }
+
+/* labels and type */
+.voice, .part, .who, .sk { color:var(--brass) !important; letter-spacing:.12em; text-transform:uppercase; font-size:12.5px !important; }
+.who { text-transform:none; letter-spacing:.02em; font-size:15px !important; color:var(--accent) !important; }
+h1, h2 { color:#F3F6FA; letter-spacing:-.01em; }
+.help, .tip, .done-when, .count { color:var(--muted) !important; }
+a { color:var(--accent); }
+.bar .track, #steps li[data-on="0"] { background:#1A2638 !important; }
+.bar .fill, #steps li[data-on="1"] { background:linear-gradient(90deg, #46BFDD, #8FE6F7) !important; box-shadow:0 0 10px rgba(98,210,238,.45); }
+:focus-visible { outline:2px solid var(--accent) !important; outline-offset:3px; }
+
+/* summary list */
+.sumlist { list-style:none; padding:0; margin:16px 0; display:grid; gap:8px; }
+.sumlist li { display:grid; grid-template-columns:minmax(7rem, 34%) 1fr auto; gap:10px; align-items:center; padding:10px 12px; }
+.sumlist .sv { color:var(--ink); }
+.sumedit { padding:6px 12px !important; font-size:14px !important; min-height:36px; }
+@media (max-width: 480px) { .sumlist li { grid-template-columns:1fr auto; } .sumlist .sk { grid-column:1 / -1; } }
+.skipq { margin-top:12px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+.back, .linkbtn:not(.go) { text-decoration:none !important; padding:8px 16px !important; display:inline-block; margin:4px 6px 4px 0; }
