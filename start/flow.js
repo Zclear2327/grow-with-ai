@@ -92,12 +92,17 @@ function baseTrack() {
 }
 function whyTrack(tr) {
   if (A.switched) return "You chose this track yourself.";
+  if (isBot(tr)) return "Why Grok Bot: you chose to pay so the AI can connect to your email, and Grok Bot connects to your inbox directly.";
   if (tr === "claude") return "Why Claude: you work on a computer, you're happy to pay for connections, and " + (usesTools() ? "you run the business on tools Claude can connect to." : "you already use AI a lot.");
   if (A.q4a === "phone") return "Why Grok: it's the simplest to start on a phone.";
   if (A.s10 !== "pay") return "Why Grok: it's the simplest free start. You can switch to Claude any time.";
   return "Why Grok: it's the simplest place to start. Switch to Claude if you want deeper connections to your tools.";
 }
 function track() { var b = baseTrack(); return A.switched ? (b === "grok" ? "claude" : "grok") : b; }
+/* Chris, Nov 5: "Grok Bot for paid, free Grok for free". On the Grok track, people who said they will pay
+   get the Grok Bot app; everyone else stays on free Grok. They can switch to free with one tap. */
+function isBot(tr) { return tr === "grok" && A.s10 === "pay" && !A.botOff; }
+function trackKey(tr) { return isBot(tr) ? "grokbot" : tr; }
 function emailType() { return A.q3 === "none" ? (A.newEmail || "gmail") : A.q3; }
 function trainer() { return A.q6 || "Sam"; }
 
@@ -401,7 +406,7 @@ function aboutBlock(tr) {
     "- Device: " + dev + "; AI experience: " + (labelOf("q5b", A.q5b) || "not said"),
     "- Never do these without asking me first: " + (labelsOf("s9").join(", ") || "nothing on this list"),
     "- Plan: " + (labelOf("s10", A.s10) || "not said"),
-    "- Platform: " + (tr === "grok" ? "Grok" : "Claude"),
+    "- Platform: " + (isBot(tr) ? "Grok Bot (paid)" : tr === "grok" ? "Grok (free)" : "Claude"),
     ""
   ];
   return lines.join("\n") + "\n";
@@ -452,7 +457,24 @@ var STEPS = {
     ]
   }
 };
+STEPS.grokbot = {
+  computer: [
+    ["Open the official Grok Bot download page and download the app for your Mac or Windows computer.", "the app downloading", "https://cursor.com/download/bot"],
+    ["Open the app and sign in with your X account. You type your own password and codes.", "you're signed in"],
+    ["If it asks for a plan, pick one that includes Grok Bot (X Premium, about $30 a month, paid to X). Skip this if you already have it.", "the Grok Bot home screen"],
+    ["Start a new chat. Tap “Copy my email helper” below, paste it in, and send.", "your trainer say “Hi, I'm here”"],
+    ["When your trainer asks, connect your Gmail or Outlook in the app and click Allow.", "your inbox sorted into groups"]
+  ],
+  phone: [
+    ["On your phone, open the official Grok Bot download page and get the app for iPhone or Android.", "the app installing", "https://cursor.com/download/bot"],
+    ["Open the app and sign in with your X account. You type your own password and codes.", "you're signed in"],
+    ["If it asks for a plan, pick one that includes Grok Bot (X Premium, about $30 a month, paid to X). Skip this if you already have it.", "the Grok Bot home screen"],
+    ["Start a new chat. Tap “Copy my email helper” below, paste it in, and send.", "your trainer say “Hi, I'm here”"],
+    ["When your trainer asks, connect your Gmail or Outlook in the app and tap Allow.", "your inbox sorted into groups"]
+  ]
+};
 var COST = {
+  grokbot: "Our setup is free. Grok Bot is paid: it needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it). It connects to your inbox directly, so there are no screenshots to send. Rather start free? Tap \u201cStart free with Grok instead\u201d.",
   grok: "Our setup is free, and Grok has a free plan. Start at grok.com or in the free Grok app: send a screenshot of your inbox and get your first sorted list. Optional upgrade: Grok Bot can connect to your inbox directly. It needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it).",
   claude: "Our setup is free, and Claude has a free plan. On Free, you can send a screenshot of your inbox, or connect Gmail or a Microsoft 365 work account (your admin may need to approve Microsoft 365 once). For Claude in Chrome, which can do the clicks you approve, you need Claude Pro, about $20 a month ($17 billed yearly), paid to Anthropic. Optional."
 };
@@ -479,26 +501,33 @@ function result(h) {
     tabs.appendChild(b);
   });
   h.appendChild(tabs);
-  var DV = { grok: { phone: ["grok-phone-jr", "Grok on your phone, with JR (31 seconds)"], computer: ["grok-computer-jr", "Grok on a computer, with JR (22 seconds)"] },
-    claude: { mac: ["claude-mac", "Claude on a Mac (26 seconds)"], windows: ["claude-windows", "Claude on Windows (22 seconds)"], phone: ["claude-phone", "Claude on your phone (16 seconds)"] } }[tr][cur];
+  var tk = trackKey(tr);
+  var DV = { grokbot: {}, grok: { phone: ["grok-phone-jr", "Grok on your phone, with JR (31 seconds)"], computer: ["grok-computer-jr", "Grok on a computer, with JR (22 seconds)"] },
+    claude: { mac: ["claude-mac", "Claude on a Mac (26 seconds)"], windows: ["claude-windows", "Claude on Windows (22 seconds)"], phone: ["claude-phone", "Claude on your phone (16 seconds)"] } }[tk][cur];
   if (DV) h.appendChild(vid(DV[0], "Video: " + DV[1]));
   // Grok clips: JR, free grok.com path (2026-10-30). Chris's older Grok Bot clips (grok-phone, grok-computer) stay unused.
+  else if (tk === "grokbot") h.appendChild(el("p", { class: "help" }, "Grok Bot video coming soon. The steps are below."));
   else if (tr === "grok") h.appendChild(el("p", { class: "help" }, "Video coming soon."));
-  h.appendChild(el("p", { class: "who" }, "Your trainer: " + name + " · Your track: " + (tr === "grok" ? "Grok, the easy path" : "Claude, the power path")));
+  h.appendChild(el("p", { class: "who" }, "Your trainer: " + name + " · Your track: " + (tk === "grokbot" ? "Grok Bot (paid)" : tr === "grok" ? "Grok, the easy path" : "Claude, the power path")));
   h.appendChild(el("h1", null, "Let's get your inbox sorted."));
   h.appendChild(el("p", { class: "help why" }, whyTrack(tr)));
   if (meta.finished !== tr) { meta.finished = tr; save(); }
   var sw = el("button", { class: "back", type: "button" }, "Prefer " + (tr === "grok" ? "Claude, the power path" : "Grok, the easy path") + "? Switch");
   sw.onclick = function () { A.switched = !A.switched; delete A.done; save(); render(); };
   h.appendChild(sw);
+  if (tr === "grok" && A.s10 === "pay") {
+    var bt = el("button", { class: "back", type: "button" }, A.botOff ? "Use Grok Bot (paid) instead" : "Start free with Grok instead");
+    bt.onclick = function () { A.botOff = !A.botOff; delete A.done; save(); render(); };
+    h.appendChild(bt);
+  }
 
   var cost = el("div", { class: "note cost" });
-  cost.appendChild(el("p", null, COST[tr]));
+  cost.appendChild(el("p", null, COST[tk]));
   cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing or claude.com/pricing."));
   h.appendChild(cost);
 
 
-  var list = STEPS[tr][cur], done = A.done || 0;
+  var list = STEPS[tk][cur], done = A.done || 0;
   var ol = el("ol", { class: "isteps" });
   list.forEach(function (s, i) {
     var li = el("li", { class: i < done ? "ok" : i === done ? "now" : "later" });
@@ -513,19 +542,19 @@ function result(h) {
     ol.appendChild(li);
   });
   h.appendChild(ol);
-  if (tr === "grok" && cur === "computer") h.appendChild(el("p", { class: "help" }, "Grok doesn't need a desktop app; it runs in your browser at grok.com."));
+  if (tk === "grok" && cur === "computer") h.appendChild(el("p", { class: "help" }, "Grok doesn't need a desktop app; it runs in your browser at grok.com."));
   if (done >= list.length) h.appendChild(el("p", { class: "flash small", role: "status" }, "Nice work. Your free email helper is set up."));
 
   var up = el("details", { class: "stuck" });
   up.appendChild(el("summary", null, tr === "grok" ? "Optional upgrade: Grok Bot connects to your inbox (paid)" : "Optional: Claude Pro extras (paid)"));
   up.appendChild(el("p", null, UPGRADE[tr]));
   if (tr === "grok") up.appendChild(el("a", { href: "https://docs.x.ai/grok-bot/get-started", target: "_blank", rel: "noopener" }, "xAI's Grok Bot guide (new tab)"));
-  h.appendChild(up);
+  if (tk !== "grokbot") h.appendChild(up); // Grok Bot users already have the upgrade
 
   // copy box
   h.appendChild(el("h2", null, "Your free email helper"));
   h.appendChild(tr === "grok" ? vid("first-win-grok", "Video: your first win, with JR (21 seconds)") : vid("first-win", "Video: your first win (23 seconds)"));
-  h.appendChild(el("p", { class: "help" }, "Copy this and paste it into " + (tr === "grok" ? "a new Grok chat." : "your Claude project instructions, or a new Claude chat.")));
+  h.appendChild(el("p", { class: "help" }, "Copy this and paste it into " + (tk === "grokbot" ? "a new chat in your Grok Bot app." : tr === "grok" ? "a new Grok chat." : "your Claude project instructions, or a new Claude chat.")));
   var AG = { id: "Email-Inbox", name: "Email & Inbox Agent" };
   var txt = aboutBlock(tr) + PROMPT[tr].split("[NAME]").join(name) + window.GWAIWalk.walkthrough(tr, AG);
   var pre = el("pre", { class: "copybox", tabindex: "0", "aria-label": "Your free email helper text" }, txt);
@@ -589,7 +618,7 @@ function capture(h, tr) {
     if (!cb.checked) { msg.textContent = "Tick the box so we're allowed to email you."; cb.focus(); return; }
     if (hp.value || (Date.now() - START) / 1000 < CFG.min_seconds_before_send) { msg.textContent = "Sent."; return; }
     send.disabled = true; msg.textContent = "Sending…";
-    var intake = "track: " + tr + "; trainer: " + trainer() + "; device: " + (A.q4a || "") + "; email type: " + (emailType() || "") + "; time sinks: " + labelsOf("s4").join(", ");
+    var intake = "track: " + trackKey(tr) + "; trainer: " + trainer() + "; device: " + (A.q4a || "") + "; email type: " + (emailType() || "") + "; time sinks: " + labelsOf("s4").join(", ");
     var lead = { email: v, firstname: (fn.value || "").trim().slice(0, 40), list: "free-setup", gwai_intake: intake, consent: cb.checked, subject: "Free setup: " + tr + " (" + v + ")" };
     window.GWAILead.send(lead)
       .then(function () { msg.textContent = "Sent. Check your inbox for the steps."; })
