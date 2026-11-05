@@ -369,16 +369,21 @@
     }
     size();
     var bits = [];
-    var n = reduceMotion ? 12 : 56;
+    var n = reduceMotion ? 16 : 72;
+    var cx = canvas.width / 2;
+    var cy = canvas.height * 0.44;
     for (var i = 0; i < n; i++) {
+      var ang = Math.random() * Math.PI * 2;
+      var speed = reduceMotion ? 0.15 : 0.35 + Math.random() * 1.7;
       bits.push({
-        x: canvas.width * (0.2 + Math.random() * 0.6),
-        y: -20 - Math.random() * 180,
-        r: 6 + Math.random() * 9,
-        vx: (Math.random() - 0.5) * 3.2,
-        vy: 2.4 + Math.random() * 5.5,
-        rot: Math.random() * Math.PI,
-        vr: (Math.random() - 0.5) * 0.25
+        x: cx + (Math.random() - 0.5) * 36,
+        y: cy + (Math.random() - 0.5) * 16,
+        vx: Math.cos(ang) * speed,
+        vy: Math.sin(ang) * speed * 0.72 - 0.25,
+        life: 0.35 + Math.random() * 0.65,
+        decay: reduceMotion ? 0.02 : 0.005 + Math.random() * 0.008,
+        r: Math.random() < 0.12 ? 1.6 + Math.random() * 1.2 : 0.45 + Math.random() * 0.9,
+        gold: Math.random() < 0.16
       });
     }
     var running = true;
@@ -388,22 +393,22 @@
       bits.forEach(function (c) {
         c.x += c.vx;
         c.y += c.vy;
-        c.vy += 0.12;
-        c.rot += c.vr;
+        c.life -= c.decay;
+        if (c.life <= 0) return;
         ctx.save();
-        ctx.translate(c.x, c.y);
-        ctx.rotate(c.rot);
-        ctx.scale(1, 0.72);
-        var g = ctx.createRadialGradient(-c.r * 0.3, -c.r * 0.3, 1, 0, 0, c.r);
-        g.addColorStop(0, "#fff6c8");
-        g.addColorStop(0.45, "#ffd24a");
-        g.addColorStop(1, "#8a5a00");
-        ctx.fillStyle = g;
+        ctx.globalAlpha = Math.max(0, Math.min(1, c.life));
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = c.gold ? "rgba(214, 186, 120, .85)" : "rgba(150, 240, 255, .95)";
+        ctx.fillStyle = c.gold ? "#f3e6c4" : "#f3fdff";
         ctx.beginPath();
-        ctx.arc(0, 0, c.r, 0, Math.PI * 2);
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = "rgba(255,244,192,.8)";
-        ctx.lineWidth = 1.2;
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = c.gold ? "rgba(231, 215, 168, .55)" : "rgba(190, 246, 255, .7)";
+        ctx.lineWidth = 0.7;
+        ctx.beginPath();
+        ctx.moveTo(c.x, c.y);
+        ctx.lineTo(c.x - c.vx * 7, c.y - c.vy * 7);
         ctx.stroke();
         ctx.restore();
       });
