@@ -210,10 +210,10 @@ function hesitance(h, id) {
 
 /* ---------- screens ---------- */
 function welcome(h) {
+  h.appendChild(vid("welcome", "Video: Chris Ward welcomes you (20 seconds)"));
   h.appendChild(el("p", { class: "voice" }, "Setup"));
   h.appendChild(el("h1", null, "Welcome to Ward Consulting AI."));
   h.appendChild(el("p", null, "First, 10 quick multiple-choice questions, about 2 minutes. Your answers pick the best AI for you (Grok or Claude) and tell your trainer about your business, so you never get asked twice. Your first win takes about 10 minutes, and the full setup about 20. The setup is free."));
-  h.appendChild(vid("welcome", "Video: Chris Ward welcomes you (20 seconds)"));
   h.appendChild(el("p", { class: "help" }, "Available in English in the US and Canada, except Quebec for now (no French version yet)."));
   h.appendChild(el("p", { class: "help" }, "You stay in charge. We never ask for passwords, customer names or money figures. Your answers stay in this browser until you choose to send them."));
   navRow(h, next, true, "Begin");
@@ -311,7 +311,7 @@ function ask(h, s) {
     var pair = el("div", { class: "vidpair" });
     pair.appendChild(vid("meet-sam", "Meet Sam, AI trainer (9 seconds)", "small"));
     pair.appendChild(vid("meet-travis", "Meet Travis, AI trainer (8 seconds)", "small"));
-    h.insertBefore(pair, h.querySelector(".opts"));
+    h.insertBefore(pair, h.querySelector(".voice"));
   }
   hesitance(h, s.id);
 }
@@ -356,9 +356,9 @@ function handoff(h) {
   h.appendChild(p1);
   var wrap = el("div", { class: "warm", hidden: "hidden" });
   var hi = el("h1", { class: "warmh" }, "Hi, I'm here. How are you doing?");
+  wrap.appendChild(vid(trainer() === "Travis" ? "meet-travis" : "meet-sam", trainer() + ", your AI trainer, says hi", "small center"));
   wrap.appendChild(el("p", { class: "who" }, trainer()));
   wrap.appendChild(hi);
-  wrap.appendChild(vid(trainer() === "Travis" ? "meet-travis" : "meet-sam", trainer() + ", your AI trainer, says hi", "small center"));
   var row = el("div", { class: "nav center" }), reply = el("p", { class: "reply", role: "status", "aria-live": "polite" });
   [["Good", "Love that. Let's keep it that way."], ["Busy", "Then let's give you some time back."]].forEach(function (o) {
     var b = el("button", { class: "go", type: "button" }, o[0]);
@@ -468,20 +468,7 @@ function deviceKey(tr, dev) {
 
 function result(h) {
   var tr = track(), name = trainer(), dev = A.viewDevice || A.q4a || "windows";
-  h.appendChild(el("p", { class: "who" }, "Your trainer: " + name + " · Your track: " + (tr === "grok" ? "Grok, the easy path" : "Claude, the power path")));
-  h.appendChild(el("h1", null, "Let's get your inbox sorted."));
-  h.appendChild(el("p", { class: "help why" }, whyTrack(tr)));
-  if (meta.finished !== tr) { meta.finished = tr; save(); }
-  var sw = el("button", { class: "back", type: "button" }, "Prefer " + (tr === "grok" ? "Claude, the power path" : "Grok, the easy path") + "? Switch");
-  sw.onclick = function () { A.switched = !A.switched; delete A.done; save(); render(); };
-  h.appendChild(sw);
-
-  var cost = el("div", { class: "note cost" });
-  cost.appendChild(el("p", null, COST[tr]));
-  cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing or claude.com/pricing."));
-  h.appendChild(cost);
-
-  // device tabs
+  // device tabs and the video come first; the steps and details sit under the video (Chris, Nov 5)
   var keys = tr === "grok" ? [["phone", "Phone"], ["computer", "Mac or Windows"]] : [["mac", "Mac"], ["windows", "Windows"], ["phone", "Phone"]];
   var cur = deviceKey(tr, dev === "computer" ? "mac" : dev);
   if (tr === "grok" && dev !== "phone") cur = "computer";
@@ -497,6 +484,19 @@ function result(h) {
   if (DV) h.appendChild(vid(DV[0], "Video: " + DV[1]));
   // Grok clips: JR, free grok.com path (2026-10-30). Chris's older Grok Bot clips (grok-phone, grok-computer) stay unused.
   else if (tr === "grok") h.appendChild(el("p", { class: "help" }, "Video coming soon."));
+  h.appendChild(el("p", { class: "who" }, "Your trainer: " + name + " · Your track: " + (tr === "grok" ? "Grok, the easy path" : "Claude, the power path")));
+  h.appendChild(el("h1", null, "Let's get your inbox sorted."));
+  h.appendChild(el("p", { class: "help why" }, whyTrack(tr)));
+  if (meta.finished !== tr) { meta.finished = tr; save(); }
+  var sw = el("button", { class: "back", type: "button" }, "Prefer " + (tr === "grok" ? "Claude, the power path" : "Grok, the easy path") + "? Switch");
+  sw.onclick = function () { A.switched = !A.switched; delete A.done; save(); render(); };
+  h.appendChild(sw);
+
+  var cost = el("div", { class: "note cost" });
+  cost.appendChild(el("p", null, COST[tr]));
+  cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing or claude.com/pricing."));
+  h.appendChild(cost);
+
 
   var list = STEPS[tr][cur], done = A.done || 0;
   var ol = el("ol", { class: "isteps" });
