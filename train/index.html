@@ -28,6 +28,7 @@
 .video video{width:100%;border-radius:4px;display:block}
 .done-when{background:var(--panel);border-left:4px solid var(--good);padding:12px 16px;margin:0 0 18px;font-size:17px}
 .tip{font-size:16px;color:var(--muted);margin:0 0 18px}
+.play-recap{text-align:center;margin:12px 0 0}
 .say{background:var(--panel);border:1px solid var(--rule);padding:16px;margin:0 0 18px}
 .say p{margin:0 0 10px;font-size:17px;white-space:pre-wrap}
 .blanks .blank{margin:0 0 14px;white-space:normal}
@@ -86,6 +87,8 @@
 
     <div class="actions">
       <button class="btn primary" type="button" id="next">I did it. Next step</button>
+      <p class="tip play-recap" id="playTip" hidden>You finished the steps. Want a quick recap?</p>
+      <a class="btn primary" id="playQuiz" href="../play/" hidden>Play the AI Slot Quiz</a>
       <div class="row">
         <button class="btn ghost" type="button" id="back">Back</button>
         <button class="btn ghost" type="button" id="skip">Skip this one</button>
@@ -230,6 +233,8 @@
     var finished = i >= total;
     ["part", "do", "video", "doneWhen", "back", "skip"].forEach(function (id) { $(id).hidden = false; });
     $("how").innerHTML = ""; $("how").hidden = true; $("say").hidden = true; $("link").hidden = true; $("tip").hidden = true; $("copyMsg").textContent = "";
+    $("playTip").hidden = !finished;
+    $("playQuiz").hidden = !finished;
 
     if (finished) {
       $("count").textContent = "All done";

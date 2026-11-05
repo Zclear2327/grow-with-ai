@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI Slot Quiz | Grow With AI</title>
+  <meta name="description" content="A just-for-fun slot quiz about AI and what you learned in the Grow With AI trainer. Points only — no real money.">
+  <link rel="canonical" href="https://zclear2327.github.io/grow-with-ai/play/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700&family=Nunito:wght@500;700;800&display=swap">
+  <link rel="stylesheet" href="css/game.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2314061f' stroke='%23e0b63a' stroke-width='4'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-size='36' font-family='serif' fill='%23ffd24a'%3E7%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <a class="skip" href="#spinBtn">Skip to spin</a>
+  <header class="top">
+    <a class="brand" href="../">Grow With <span>AI</span></a>
+    <div class="top-actions">
+      <button type="button" class="icon-btn" id="muteBtn" aria-pressed="false" aria-label="Mute sounds">Mute</button>
+    </div>
+  </header>
+
+  <main class="stage" id="main">
+    <div class="marquee">
+      <p class="jackpot">Jackpot</p>
+      <p class="subtitle">AI Slot Quiz</p>
+    </div>
+
+    <div class="hud">
+      <div class="meter" aria-live="polite">
+        <span class="label">Points</span>
+        <span class="value" id="pointsValue">0000</span>
+      </div>
+      <div class="meter">
+        <span class="label">Question</span>
+        <span class="value" id="qValue">1/20</span>
+      </div>
+    </div>
+
+    <div class="cabinet" id="cabinet">
+      <svg class="frame-ornament tl" viewBox="0 0 80 80" aria-hidden="true">
+        <path fill="none" stroke="#fff4c0" stroke-width="3" d="M10 70 C12 28 28 12 70 10"/>
+        <path fill="none" stroke="#c49a28" stroke-width="2" d="M22 70 C22 40 36 22 70 22"/>
+        <circle cx="18" cy="18" r="5" fill="#ffe27a" stroke="#fff4c0"/>
+        <circle cx="34" cy="14" r="2.4" fill="#ff7ae8"/>
+        <circle cx="14" cy="34" r="2.4" fill="#7cf0ff"/>
+      </svg>
+      <svg class="frame-ornament tr" viewBox="0 0 80 80" aria-hidden="true">
+        <path fill="none" stroke="#fff4c0" stroke-width="3" d="M10 70 C12 28 28 12 70 10"/>
+        <path fill="none" stroke="#c49a28" stroke-width="2" d="M22 70 C22 40 36 22 70 22"/>
+        <circle cx="18" cy="18" r="5" fill="#ffe27a" stroke="#fff4c0"/>
+        <circle cx="34" cy="14" r="2.4" fill="#ff7ae8"/>
+        <circle cx="14" cy="34" r="2.4" fill="#7cf0ff"/>
+      </svg>
+      <svg class="frame-ornament bl" viewBox="0 0 80 80" aria-hidden="true">
+        <path fill="none" stroke="#fff4c0" stroke-width="3" d="M10 70 C12 28 28 12 70 10"/>
+        <path fill="none" stroke="#c49a28" stroke-width="2" d="M22 70 C22 40 36 22 70 22"/>
+        <circle cx="18" cy="18" r="5" fill="#ffe27a" stroke="#fff4c0"/>
+        <circle cx="34" cy="14" r="2.4" fill="#ff7ae8"/>
+        <circle cx="14" cy="34" r="2.4" fill="#7cf0ff"/>
+      </svg>
+      <svg class="frame-ornament br" viewBox="0 0 80 80" aria-hidden="true">
+        <path fill="none" stroke="#fff4c0" stroke-width="3" d="M10 70 C12 28 28 12 70 10"/>
+        <path fill="none" stroke="#c49a28" stroke-width="2" d="M22 70 C22 40 36 22 70 22"/>
+        <circle cx="18" cy="18" r="5" fill="#ffe27a" stroke="#fff4c0"/>
+        <circle cx="34" cy="14" r="2.4" fill="#ff7ae8"/>
+        <circle cx="14" cy="34" r="2.4" fill="#7cf0ff"/>
+      </svg>
+
+      <div class="cabinet-inner">
+        <div class="leds" aria-hidden="true" id="leds"></div>
+        <div class="reels-wrap">
+          <span class="payline-nub left" aria-hidden="true"></span>
+          <span class="payline-nub right" aria-hidden="true"></span>
+          <div class="payline" aria-hidden="true"></div>
+          <div class="reels" id="reels" role="img" aria-label="Five slot reels with AI symbols"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spin-wrap">
+      <button type="button" class="spin-btn" id="spinBtn">Spin</button>
+    </div>
+    <p class="disclaimer">Just for fun — no real money.</p>
+    <p class="tagline">Spin the reels, then answer a question about AI or what you learned in the trainer. Right answers win points. Mix-ups get a kind, plain explanation.</p>
+  </main>
+
+  <div class="overlay" id="overlay" hidden>
+    <section class="card" id="questionCard" role="dialog" aria-labelledby="qHeading" aria-modal="true" hidden>
+      <p class="q-meta" id="qMeta">Question 1 of 20</p>
+      <h2 id="qHeading" tabindex="-1">Your question</h2>
+      <p class="q-text" id="qText"></p>
+      <div class="choices" id="choices"></div>
+    </section>
+
+    <section class="card" id="teachCard" role="dialog" aria-labelledby="teachHeading" aria-modal="true" hidden>
+      <div class="teacher">
+        <svg class="teacher-face" viewBox="0 0 72 72" aria-hidden="true">
+          <defs>
+            <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fff4c0"/>
+              <stop offset="1" stop-color="#d4a017"/>
+            </linearGradient>
+          </defs>
+          <circle cx="36" cy="36" r="34" fill="#2a0a42" stroke="#e0b63a" stroke-width="3"/>
+          <rect x="18" y="20" width="36" height="32" rx="10" fill="url(#tg)"/>
+          <rect x="22" y="28" width="28" height="12" rx="5" fill="#1a0d30"/>
+          <circle cx="30" cy="34" r="3.4" fill="#7cf0ff"/>
+          <circle cx="42" cy="34" r="3.4" fill="#7cf0ff"/>
+          <path d="M29 45q7 5 14 0" fill="none" stroke="#3a2060" stroke-width="2.2" stroke-linecap="round"/>
+          <rect x="33" y="10" width="6" height="10" rx="2" fill="#e0b63a"/>
+          <circle cx="36" cy="10" r="4" fill="#ffe27a"/>
+        </svg>
+        <div>
+          <h2 id="teachHeading" tabindex="-1">Here’s the idea</h2>
+          <p>A common mix-up — here’s the plain answer.</p>
+        </div>
+      </div>
+      <p class="correct-label">The true answer</p>
+      <p class="correct-answer" id="teachAnswer"></p>
+      <p class="teach-body" id="teachBody"></p>
+      <button type="button" class="btn" id="gotItBtn">Got it</button>
+    </section>
+
+    <section class="card" id="endCard" role="dialog" aria-labelledby="endHeading" aria-modal="true" hidden>
+      <p class="q-meta">You finished the quiz</p>
+      <h2 id="endHeading" tabindex="-1">Nice work</h2>
+      <p class="end-score" id="endScore"></p>
+      <p class="end-note" id="endNote"></p>
+      <button type="button" class="btn" id="againBtn">Play again</button>
+      <div class="end-links">
+        <a class="btn secondary" href="../train/">Back to the Claude trainer</a>
+        <a class="btn secondary" href="../train/grok/">Back to the Grok trainer</a>
+        <a class="btn secondary" href="../">Grow With AI home</a>
+      </div>
+      <p class="disclaimer" style="color:#5a3a20;margin-top:14px">Just for fun — no real money.</p>
+    </section>
+  </div>
+
+  <div class="win-layer" id="winLayer" hidden>
+    <div class="win-banner" id="winBanner">Big Win!<span class="win-sub" id="winSub">+100 points</span></div>
+    <canvas id="coins"></canvas>
+  </div>
+
+  <script src="js/questions.js"></script>
+  <script src="js/symbols.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
