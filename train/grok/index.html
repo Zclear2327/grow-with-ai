@@ -30,6 +30,12 @@
 .tip{font-size:16px;color:var(--muted);margin:0 0 18px}
 .say{background:var(--panel);border:1px solid var(--rule);padding:16px;margin:0 0 18px}
 .say p{margin:0 0 10px;font-size:17px;white-space:pre-wrap}
+.blanks .blank{margin:0 0 14px;white-space:normal}
+.blanks label{display:block;font-weight:600;margin:0 0 6px}
+.blanks input,.blanks textarea{width:100%;box-sizing:border-box;font:16px/1.4 var(--body);padding:10px 12px;border:1px solid var(--rule);border-radius:2px;background:var(--bg,#fff);color:var(--ink)}
+.blanks textarea{min-height:6em;resize:vertical}
+.blanks input:focus-visible,.blanks textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.say .yours{font-size:14px;font-weight:600;margin:4px 0 6px}
 .say button{font:600 16px/1 var(--body);padding:12px 16px;min-height:44px;border:1px solid var(--accent);background:transparent;color:var(--ink);border-radius:2px;cursor:pointer}
 .go-link{display:block;margin:0 0 18px;font:700 18px/1.2 var(--body);color:var(--ink);text-decoration:none;text-align:center;border:2px solid var(--accent);padding:16px;border-radius:2px;min-height:56px}
 .actions{display:flex;flex-direction:column;gap:12px;margin-top:8px}
@@ -67,6 +73,8 @@
     <p class="do" id="do"></p>
     <ul class="how" id="how"></ul>
     <div class="say" id="say" hidden>
+      <div class="blanks" id="blanks" hidden></div>
+      <p class="yours" id="yours" hidden>Your prompt:</p>
       <p id="sayText"></p>
       <button type="button" id="copyBtn">Copy this</button>
       <span id="copyMsg" role="status" aria-live="polite"></span>
@@ -91,6 +99,7 @@
   </main>
 </div>
 
+<script src="../../shared/blanks.js"></script>
 <script>
 (function () {
   // Human help. TODO: Chris to supply the number for the Text me / Call me buttons.
@@ -152,7 +161,7 @@
       how: ["Who you are and who this is for.", "What a good answer looks like, and how long.", "An example, if you have one.", "\"Before you start, ask me anything you need to know.\""],
       done: "You've read the four things. Next you'll try them." },
     { part: "Ask well", title: "Try it on a real job", video: { mp4: "../../media/train-grok/step-13.mp4", poster: "../../media/train-grok/step-13-poster.jpg", vtt: "../../media/train-grok/step-13.vtt" },
-      do: "Copy this, change the words in [brackets] to your own, and send it.",
+      do: "Fill in the blanks below. Tap Copy my prompt, then paste it into Grok and send it.",
       say: "I run [what your business does]. A customer owes us for last month and has paid late before. Write a friendly but clear email, under 120 words, asking for payment by [day]. Before you write it, ask me anything you need to know.",
       done: "You have an email draft you could actually use." },
 
@@ -163,17 +172,17 @@
       tip: "Button names can look a little different between app versions." },
 
     { part: "Make it remember you", title: "Tell Grok about you, once", video: { mp4: "../../media/train-grok/step-15.mp4", poster: "../../media/train-grok/step-15-poster.jpg", vtt: "../../media/train-grok/step-15.vtt" },
-      do: "Look for the setting called Customize Grok. Paste this in, fill in the [brackets], and save.",
+      do: "Fill in the blank below and tap Copy my prompt. Then look for the setting called Customize Grok, paste it in, and save.",
       say: "I own a small business: [one sentence on what you sell and who buys it]. Write in plain, warm language. Keep answers short unless I ask for detail. When you don't know a fact, say so instead of guessing.",
       done: "Your instructions are saved.",
       tip: "Grok moves this setting around between versions. If you can't find it, paste the same note at the start of a new chat instead." },
 
     { part: "Use it this week", title: "Answer a customer email", video: { mp4: "../../media/train-grok/step-16.mp4", poster: "../../media/train-grok/step-16-poster.jpg", vtt: "../../media/train-grok/step-16.vtt" },
-      do: "Copy this, fill in the [brackets], paste in a real customer email at the end, and send.",
+      do: "Fill in the blanks below, including a real customer email. Tap Copy my prompt, then paste it into Grok and send it.",
       say: "I run a small business: [what you do]. Below is an email from a customer. Write a friendly reply under 150 words that answers every question they asked. If you need a fact you don't have, like a date or price, leave a blank like [DATE] instead of guessing.\n\nThe customer's email:\n[paste it here]",
       done: "You have a reply you'd be happy to send after reading it once." },
     { part: "Use it this week", title: "Plan your week", video: { mp4: "../../media/train-grok/step-17.mp4", poster: "../../media/train-grok/step-17-poster.jpg", vtt: "../../media/train-grok/step-17.vtt" },
-      do: "Copy this, fill in the [brackets], and send.",
+      do: "Fill in the blanks below. Tap Copy my prompt, then paste it into Grok and send it.",
       say: "Help me plan next week. Things I need to get done: [list]. Fixed appointments: [list with day and time]. My working hours: [hours]. My most important goal this week: [one sentence]. Make a simple day-by-day table and list anything that won't fit.",
       done: "You have a plan for next week." },
 
@@ -240,7 +249,7 @@
       $("title").textContent = s.title;
       $("do").textContent = s.do;
       if (s.how) { s.how.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; $("how").appendChild(li); }); $("how").hidden = false; }
-      if (s.say) { $("sayText").textContent = s.say; $("say").hidden = false; }
+      if (s.say) { GWAIBlanks.render($("blanks"), $("sayText"), $("copyBtn"), $("copyMsg"), s.say, "Grok"); $("yours").hidden = $("blanks").hidden; $("say").hidden = false; }
       if (s.link) { $("link").href = s.link.href; $("link").textContent = s.link.label + " (opens a new tab)"; $("link").hidden = false; }
       if (s.tip) { $("tip").textContent = s.tip; $("tip").hidden = false; }
       var v = $("video"); v.innerHTML = "";
@@ -267,12 +276,6 @@
   $("next").addEventListener("click", function () { i = i >= STEPS.length ? 0 : i + 1; save(i); render(true); });
   $("skip").addEventListener("click", function () { i = Math.min(i + 1, STEPS.length); save(i); render(true); });
   $("back").addEventListener("click", function () { i = Math.max(i - 1, 0); save(i); render(true); });
-  $("copyBtn").addEventListener("click", function () {
-    var t = $("sayText").textContent, msg = $("copyMsg");
-    function ok() { msg.textContent = " Copied. Now paste it into Grok."; }
-    function fail() { msg.textContent = " Press and hold the text above to copy it."; }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, fail); else fail();
-  });
   render(false);
 })();
 </script>
