@@ -87,8 +87,9 @@
 
     <div class="actions">
       <button class="btn primary" type="button" id="next">I did it. Next step</button>
-      <p class="tip play-recap" id="playTip" hidden>You finished the steps. Want a quick recap?</p>
+      <p class="tip play-recap" id="playTip" hidden>You finished the steps. Play a recap, or tell Ward how setup went.</p>
       <a class="btn primary" id="playQuiz" href="../../play/" hidden>Play the AI Slot Quiz</a>
+      <a class="btn primary" id="setupCheck" href="../../play/?mode=setup&amp;tool=grok" hidden>Run the Setup Check</a>
       <div class="row">
         <button class="btn ghost" type="button" id="back">Back</button>
         <button class="btn ghost" type="button" id="skip">Skip this one</button>
@@ -234,6 +235,7 @@
     $("how").innerHTML = ""; $("how").hidden = true; $("say").hidden = true; $("link").hidden = true; $("tip").hidden = true; $("copyMsg").textContent = "";
     $("playTip").hidden = !finished;
     $("playQuiz").hidden = !finished;
+    $("setupCheck").hidden = !finished;
 
     if (finished) {
       $("count").textContent = "All done";

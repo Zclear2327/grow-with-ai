@@ -5,12 +5,15 @@
   var POINTS_CORRECT = 100;
   var order = window.SLOT_SYMBOL_ORDER;
   var symbols = window.SLOT_SYMBOLS;
-  var questions = window.SLOT_QUESTIONS.slice();
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var params = new URLSearchParams(location.search);
   var fast = params.get("fast") === "1";
   var shotMode = params.get("shot");
+  var setupTool = params.get("tool") === "grok" ? "grok" : (params.get("tool") === "claude" ? "claude" : "");
+  var setupMode = params.get("mode") === "setup" && window.SETUP_QUESTIONS && window.SETUP_QUESTIONS.length;
   if (fast) reduceMotion = true;
+
+  var questions = setupMode ? window.SETUP_QUESTIONS.slice() : window.SLOT_QUESTIONS.slice();
 
   var state = {
     screen: "idle",
@@ -19,7 +22,8 @@
     displayPoints: 0,
     correctCount: 0,
     current: null,
-    spinning: false
+    spinning: false,
+    answers: []
   };
 
   var reelsEl = document.getElementById("reels");
@@ -31,7 +35,9 @@
   var questionCard = document.getElementById("questionCard");
   var teachCard = document.getElementById("teachCard");
   var endCard = document.getElementById("endCard");
+  var checkCard = document.getElementById("checkCard");
   var winLayer = document.getElementById("winLayer");
+  var winTitle = document.getElementById("winTitle");
   var winSub = document.getElementById("winSub");
   var coins = document.getElementById("coins");
   var reelViews = [];
@@ -166,6 +172,7 @@
     questionCard.hidden = true;
     teachCard.hidden = true;
     endCard.hidden = true;
+    if (checkCard) checkCard.hidden = true;
     overlay.hidden = true;
     overlay.classList.remove("center");
   }
@@ -174,8 +181,9 @@
     questionCard.hidden = true;
     teachCard.hidden = true;
     endCard.hidden = true;
+    if (checkCard) checkCard.hidden = true;
     overlay.hidden = false;
-    overlay.classList.toggle("center", el === endCard);
+    overlay.classList.toggle("center", el === endCard || el === checkCard);
     el.hidden = false;
     var heading = el.querySelector("h2");
     if (heading) heading.focus({ preventScroll: true });
@@ -250,14 +258,31 @@
     if (!q) { openEnd(); return; }
     state.current = q;
     state.screen = "question";
-    var indexed = q.choices.map(function (text, i) { return { text: text, i: i }; });
-    var shuffled = shuffle(indexed);
     document.getElementById("qMeta").textContent = "Question " + (state.qIndex + 1) + " of " + questions.length;
-    document.getElementById("qHeading").textContent = q.topic === "myth" ? "A common idea about AI" : "From the trainer";
+    document.getElementById("qHeading").textContent = setupMode
+      ? "Setup check"
+      : (q.topic === "myth" ? "A common idea about AI" : "From the trainer");
     document.getElementById("qText").textContent = q.q;
     var box = document.getElementById("choices");
+    var free = document.getElementById("freeText");
     box.innerHTML = "";
-    shuffled.forEach(function (item) {
+    if (q.kind === "text") {
+      free.hidden = false;
+      document.getElementById("freeTextSend").disabled = false;
+      document.getElementById("freeTextSkip").disabled = false;
+      document.getElementById("freeTextLabel").textContent = q.hint || "";
+      var input = document.getElementById("freeTextInput");
+      input.value = "";
+      input.placeholder = q.placeholder || "";
+      updateHud();
+      showCard(questionCard);
+      input.focus();
+      return;
+    }
+    if (free) free.hidden = true;
+    var indexed = q.choices.map(function (text, i) { return { text: text, i: i }; });
+    var shown = setupMode ? indexed : shuffle(indexed);
+    shown.forEach(function (item) {
       var b = document.createElement("button");
       b.type = "button";
       b.className = "choice";
@@ -272,11 +297,31 @@
     if (first) first.focus();
   }
 
+  function recordSetupAnswer(q, text) {
+    var row = { id: q.id, label: q.label, q: q.q, answer: text };
+    var replaced = false;
+    for (var i = 0; i < state.answers.length; i++) {
+      if (state.answers[i].id === q.id) {
+        state.answers[i] = row;
+        replaced = true;
+      }
+    }
+    if (!replaced) state.answers.push(row);
+    if (window.saveSetupCheck && window.setupCheckPayload) {
+      window.saveSetupCheck(window.setupCheckPayload(setupTool, state.answers, false));
+    }
+  }
+
   function answer(choiceIndex) {
     if (state.screen !== "question") return;
     var q = state.current;
     var buttons = document.querySelectorAll("#choices .choice");
     buttons.forEach(function (b) { b.disabled = true; });
+    if (setupMode) {
+      recordSetupAnswer(q, q.choices[choiceIndex]);
+      showWin();
+      return;
+    }
     var ok = choiceIndex === q.correct;
     if (ok) {
       state.correctCount += 1;
@@ -286,9 +331,20 @@
     }
   }
 
+  function answerText(raw) {
+    if (state.screen !== "question" || !state.current || state.current.kind !== "text") return;
+    var value = (raw || "").replace(/\s+/g, " ").trim();
+    if (!value) value = "Nothing else";
+    document.getElementById("freeTextSend").disabled = true;
+    document.getElementById("freeTextSkip").disabled = true;
+    recordSetupAnswer(state.current, value);
+    showWin();
+  }
+
   function showWin() {
     state.screen = "win";
     hideCards();
+    if (winTitle) winTitle.textContent = setupMode ? "Thank you" : "You got it";
     winSub.textContent = "+" + POINTS_CORRECT + " points";
     winLayer.hidden = false;
     window.SlotAudio.fanfare();
@@ -325,7 +381,38 @@
     spinBtn.focus();
   }
 
+  function openCheckEnd() {
+    state.screen = "end";
+    var payload = window.setupCheckPayload(setupTool, state.answers, true);
+    window.saveSetupCheck(payload);
+    var delivery = window.deliverSetupCheck(payload);
+    var list = document.getElementById("checkSummary");
+    list.innerHTML = "";
+    state.answers.forEach(function (row) {
+      var li = document.createElement("li");
+      var q = document.createElement("span");
+      q.className = "check-q";
+      q.textContent = row.label || row.q;
+      var a = document.createElement("span");
+      a.className = "check-a";
+      a.textContent = row.answer;
+      li.appendChild(q);
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+    document.getElementById("checkScore").textContent = pad4(state.points) + " pts";
+    var send = document.getElementById("sendWard");
+    send.href = delivery.mailto;
+    send.dataset.endpoint = delivery.endpoint || "";
+    window.SlotAudio.end();
+    showCard(checkCard);
+  }
+
   function openEnd() {
+    if (setupMode) {
+      openCheckEnd();
+      return;
+    }
     state.screen = "end";
     var total = questions.length;
     var right = state.correctCount;
@@ -345,13 +432,20 @@
   }
 
   function resetGame() {
-    questions = shuffle(window.SLOT_QUESTIONS.slice());
+    questions = setupMode ? window.SETUP_QUESTIONS.slice() : shuffle(window.SLOT_QUESTIONS.slice());
     state.screen = "idle";
     state.qIndex = 0;
     state.points = 0;
     state.displayPoints = 0;
     state.correctCount = 0;
     state.current = null;
+    state.answers = [];
+    var input = document.getElementById("freeTextInput");
+    if (input) input.value = "";
+    var sendNote = document.getElementById("freeTextSend");
+    var skipNote = document.getElementById("freeTextSkip");
+    if (sendNote) sendNote.disabled = false;
+    if (skipNote) skipNote.disabled = false;
     hideCards();
     winLayer.hidden = true;
     stopCoins();
@@ -447,6 +541,16 @@
     resetGame();
     spinBtn.focus();
   });
+  document.getElementById("freeTextSend").addEventListener("click", function () {
+    answerText(document.getElementById("freeTextInput").value);
+  });
+  document.getElementById("freeTextSkip").addEventListener("click", function () {
+    answerText("");
+  });
+  document.getElementById("checkAgain").addEventListener("click", function () {
+    resetGame();
+    spinBtn.focus();
+  });
 
   window.addEventListener("resize", function () { applyOffsets(true); });
 
@@ -482,6 +586,16 @@
     }
   };
 
+  if (setupMode) {
+    document.title = "Setup Check | Grow With AI";
+    var sub = document.querySelector(".subtitle");
+    var title = document.querySelector(".jackpot");
+    var tag = document.querySelector(".tagline");
+    if (sub) sub.textContent = "Setup check";
+    if (title) title.textContent = "How did setup go?";
+    if (tag) tag.textContent = "Spin once for each question. There are no wrong answers. Every answer earns points, then you can send the summary to Ward.";
+  }
+
   buildLeds();
   buildReels();
   resetGame();
@@ -498,10 +612,26 @@
   } else if (shot === "question") {
     openQuestion();
   } else if (shot === "end") {
-    state.correctCount = 16;
-    state.points = 1600;
-    state.displayPoints = 1600;
+    if (setupMode) {
+      state.answers = questions.map(function (q) {
+        return {
+          id: q.id,
+          label: q.label,
+          q: q.q,
+          answer: q.kind === "text" ? "The sign-up email took a minute to find." : q.choices[0]
+        };
+      });
+      state.points = questions.length * POINTS_CORRECT;
+      state.displayPoints = state.points;
+    } else {
+      state.correctCount = 16;
+      state.points = 1600;
+      state.displayPoints = 1600;
+    }
     updateHud();
     openEnd();
+  } else if (shot === "text" && setupMode) {
+    state.qIndex = questions.length - 1;
+    openQuestion();
   }
 })();

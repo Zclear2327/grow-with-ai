@@ -84,6 +84,12 @@
       <h2 id="qHeading" tabindex="-1">Your question</h2>
       <p class="q-text" id="qText"></p>
       <div class="choices" id="choices"></div>
+      <div class="free-text" id="freeText" hidden>
+        <label for="freeTextInput" id="freeTextLabel"></label>
+        <textarea id="freeTextInput" rows="4" maxlength="600"></textarea>
+        <button type="button" class="btn" id="freeTextSend">Save this note</button>
+        <button type="button" class="btn secondary" id="freeTextSkip">Nothing else</button>
+      </div>
     </section>
 
     <section class="card" id="teachCard" role="dialog" aria-labelledby="teachHeading" aria-modal="true" hidden>
@@ -134,16 +140,34 @@
       </div>
       <p class="disclaimer end-disclaimer">Just for fun — no real money.</p>
     </section>
+
+    <section class="card" id="checkCard" role="dialog" aria-labelledby="checkHeading" aria-modal="true" hidden>
+      <p class="q-meta">Setup check</p>
+      <h2 id="checkHeading" tabindex="-1">Thanks. Here's what you told Ward.</h2>
+      <p class="end-score" id="checkScore"></p>
+      <p class="end-note" id="checkNote">Every answer earned points. Nothing here was right or wrong.</p>
+      <a class="btn" id="sendWard" href="mailto:hello@wardconsulting.ai">Send to Ward</a>
+      <p class="check-mail-note">This opens an email to hello@wardconsulting.ai with your answers filled in. Send it from your mail app.</p>
+      <ul class="check-summary" id="checkSummary"></ul>
+      <button type="button" class="btn secondary" id="checkAgain">Run it again</button>
+      <div class="end-links">
+        <a class="btn secondary" href="../train/">Back to the Claude trainer</a>
+        <a class="btn secondary" href="../train/grok/">Back to the Grok trainer</a>
+        <a class="btn secondary" href="../">Grow With AI home</a>
+      </div>
+      <p class="disclaimer end-disclaimer">Just for fun — no real money.</p>
+    </section>
   </div>
 
   <div class="win-layer" id="winLayer" hidden>
     <div class="pulse" aria-hidden="true"></div>
     <div class="pulse late" aria-hidden="true"></div>
     <canvas id="coins" aria-hidden="true"></canvas>
-    <div class="win-banner" id="winBanner">You got it<span class="win-sub" id="winSub">+100 points</span></div>
+    <div class="win-banner" id="winBanner"><span id="winTitle">You got it</span><span class="win-sub" id="winSub">+100 points</span></div>
   </div>
 
   <script src="js/questions.js"></script>
+  <script src="js/setup-check.js"></script>
   <script src="js/symbols.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/game.js"></script>
