@@ -10,10 +10,10 @@
   var fast = params.get("fast") === "1";
   var shotMode = params.get("shot");
   var setupTool = params.get("tool") === "grok" ? "grok" : (params.get("tool") === "claude" ? "claude" : "");
-  var setupMode = params.get("mode") === "setup" && window.SETUP_QUESTIONS && window.SETUP_QUESTIONS.length;
+  var setupMode = params.get("mode") === "setup" && window.setupCatalog;
   if (fast) reduceMotion = true;
 
-  var questions = setupMode ? window.SETUP_QUESTIONS.slice() : window.SLOT_QUESTIONS.slice();
+  var questions = setupMode ? window.setupCatalog(setupTool, []) : window.SLOT_QUESTIONS.slice();
 
   var state = {
     screen: "idle",
@@ -23,7 +23,9 @@
     correctCount: 0,
     current: null,
     spinning: false,
-    answers: []
+    answers: [],
+    tool: setupTool,
+    pending: null
   };
 
   var reelsEl = document.getElementById("reels");
@@ -36,6 +38,7 @@
   var teachCard = document.getElementById("teachCard");
   var endCard = document.getElementById("endCard");
   var checkCard = document.getElementById("checkCard");
+  var guideCard = document.getElementById("guideCard");
   var winLayer = document.getElementById("winLayer");
   var winTitle = document.getElementById("winTitle");
   var winSub = document.getElementById("winSub");
@@ -173,6 +176,7 @@
     teachCard.hidden = true;
     endCard.hidden = true;
     if (checkCard) checkCard.hidden = true;
+    if (guideCard) guideCard.hidden = true;
     overlay.hidden = true;
     overlay.classList.remove("center");
   }
@@ -182,8 +186,9 @@
     teachCard.hidden = true;
     endCard.hidden = true;
     if (checkCard) checkCard.hidden = true;
+    if (guideCard) guideCard.hidden = true;
     overlay.hidden = false;
-    overlay.classList.toggle("center", el === endCard || el === checkCard);
+    overlay.classList.toggle("center", el === endCard || el === checkCard || el === guideCard);
     el.hidden = false;
     var heading = el.querySelector("h2");
     if (heading) heading.focus({ preventScroll: true });
@@ -280,48 +285,114 @@
       return;
     }
     if (free) free.hidden = true;
-    var indexed = q.choices.map(function (text, i) { return { text: text, i: i }; });
-    var shown = setupMode ? indexed : shuffle(indexed);
-    shown.forEach(function (item) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "choice";
-      b.textContent = item.text;
-      b.dataset.index = String(item.i);
-      b.addEventListener("click", function () { answer(item.i, b); });
-      box.appendChild(b);
-    });
+    if (setupMode) {
+      q.choices.forEach(function (choice) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "choice";
+        b.textContent = choice.text;
+        b.addEventListener("click", function () { answerSetup(choice); });
+        box.appendChild(b);
+      });
+    } else {
+      var indexed = q.choices.map(function (text, i) { return { text: text, i: i }; });
+      shuffle(indexed).forEach(function (item) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "choice";
+        b.textContent = item.text;
+        b.dataset.index = String(item.i);
+        b.addEventListener("click", function () { answer(item.i, b); });
+        box.appendChild(b);
+      });
+    }
     updateHud();
     showCard(questionCard);
     var first = box.querySelector(".choice");
     if (first) first.focus();
   }
 
-  function recordSetupAnswer(q, text) {
-    var row = { id: q.id, label: q.label, q: q.q, answer: text };
+  function syncSetupQuestions() {
+    var tool = state.tool || setupTool || "";
+    questions = window.setupCatalog(tool, state.answers);
+    state.qIndex = state.answers.length;
+    if (state.qIndex > questions.length) state.qIndex = questions.length;
+  }
+
+  function storeSetup(done) {
+    if (!window.saveSetupCheck) return;
+    window.saveSetupCheck({
+      savedAt: new Date().toISOString(),
+      openedFrom: setupTool || "direct",
+      tool: state.tool || "",
+      done: !!done,
+      answers: state.answers
+    });
+  }
+
+  function commitSetup(q, choice, outcome, guideInfo) {
+    var row = window.makeSetupRow(state.tool, q, choice, outcome, guideInfo);
+    if (!choice && q.kind === "text") {
+      row.answer = outcome;
+      row.outcome = "note";
+      row.guide = "";
+    }
     var replaced = false;
-    for (var i = 0; i < state.answers.length; i++) {
+    var i;
+    for (i = 0; i < state.answers.length; i++) {
       if (state.answers[i].id === q.id) {
         state.answers[i] = row;
         replaced = true;
       }
     }
     if (!replaced) state.answers.push(row);
-    if (window.saveSetupCheck && window.setupCheckPayload) {
-      window.saveSetupCheck(window.setupCheckPayload(setupTool, state.answers, false));
-    }
+    syncSetupQuestions();
+    storeSetup(false);
   }
 
-  function answer(choiceIndex) {
+  function answerSetup(choice) {
     if (state.screen !== "question") return;
     var q = state.current;
     var buttons = document.querySelectorAll("#choices .choice");
     buttons.forEach(function (b) { b.disabled = true; });
-    if (setupMode) {
-      recordSetupAnswer(q, q.choices[choiceIndex]);
-      showWin();
-      return;
+    if (q.id === "platform") state.tool = choice.id;
+    if (choice.outcome === "trouble" || choice.outcome === "assist") {
+      var guide = window.setupGuideFor(state.tool, q, choice);
+      if (guide) {
+        state.pending = { q: q, choice: choice, guide: guide };
+        showGuide(guide);
+        return;
+      }
     }
+    commitSetup(q, choice, choice.outcome, null);
+    showWin();
+  }
+
+  function showGuide(guide) {
+    state.screen = "guide";
+    document.getElementById("guideHeading").textContent = guide.title;
+    document.getElementById("guideBody").textContent = guide.body;
+    var tryLink = document.getElementById("guideTry");
+    tryLink.href = guide.href;
+    tryLink.textContent = guide.mode === "assist" ? "Open that step" : "Try again";
+    document.getElementById("guideFixed").hidden = guide.mode === "assist";
+    document.getElementById("guideOwn").hidden = guide.mode !== "assist";
+    showCard(guideCard);
+  }
+
+  function finishGuide(outcome) {
+    if (state.screen !== "guide" || !state.pending) return;
+    var pending = state.pending;
+    state.pending = null;
+    commitSetup(pending.q, pending.choice, outcome, pending.guide);
+    showWin();
+  }
+
+  function answer(choiceIndex) {
+    if (state.screen !== "question" || setupMode) return;
+    var q = state.current;
+    var buttons = document.querySelectorAll("#choices .choice");
+    buttons.forEach(function (b) { b.disabled = true; });
     var ok = choiceIndex === q.correct;
     if (ok) {
       state.correctCount += 1;
@@ -337,7 +408,7 @@
     if (!value) value = "Nothing else";
     document.getElementById("freeTextSend").disabled = true;
     document.getElementById("freeTextSkip").disabled = true;
-    recordSetupAnswer(state.current, value);
+    commitSetup(state.current, null, value, null);
     showWin();
   }
 
@@ -370,6 +441,16 @@
     winLayer.hidden = true;
     stopCoins();
     hideCards();
+    if (setupMode) {
+      if (state.qIndex >= questions.length) openEnd();
+      else {
+        state.screen = "idle";
+        updateHud();
+        setSpinEnabled(true);
+        spinBtn.focus();
+      }
+      return;
+    }
     state.qIndex += 1;
     if (state.qIndex >= questions.length) {
       openEnd();
@@ -381,29 +462,83 @@
     spinBtn.focus();
   }
 
-  function openCheckEnd() {
-    state.screen = "end";
-    var payload = window.setupCheckPayload(setupTool, state.answers, true);
-    window.saveSetupCheck(payload);
-    var delivery = window.deliverSetupCheck(payload);
-    var list = document.getElementById("checkSummary");
-    list.innerHTML = "";
-    state.answers.forEach(function (row) {
+  function fillCheckList(ul, wrap, rows) {
+    ul.innerHTML = "";
+    wrap.hidden = rows.length === 0;
+    rows.forEach(function (row) {
       var li = document.createElement("li");
       var q = document.createElement("span");
       q.className = "check-q";
-      q.textContent = row.label || row.q;
+      q.textContent = row.stepTitle || row.label;
       var a = document.createElement("span");
       a.className = "check-a";
       a.textContent = row.answer;
       li.appendChild(q);
       li.appendChild(a);
-      list.appendChild(li);
+      if (row.guide) {
+        var g = document.createElement("span");
+        g.className = "check-mail-note";
+        g.textContent = row.guide;
+        li.appendChild(g);
+      }
+      ul.appendChild(li);
     });
+  }
+
+  function openCheckEnd() {
+    state.screen = "end";
+    var buckets = { unresolved: [], fixed: [], later: [], ok: [] };
+    var note = "";
+    state.answers.forEach(function (row) {
+      if (row.id === "platform" || row.outcome === "branch") return;
+      if (row.outcome === "note") { note = row.answer; return; }
+      if (row.outcome === "unresolved") buckets.unresolved.push(row);
+      else if (row.outcome === "fixed") buckets.fixed.push(row);
+      else if (row.outcome === "later") buckets.later.push(row);
+      else if (row.outcome === "ok" || row.outcome === "skipped") buckets.ok.push(row);
+    });
+    var next = window.setupNextAction(state.tool || setupTool || "claude", state.answers);
+    var payload = {
+      savedAt: new Date().toISOString(),
+      openedFrom: setupTool || "direct",
+      tool: state.tool || "",
+      done: true,
+      answers: state.answers,
+      unresolved: buckets.unresolved,
+      fixed: buckets.fixed,
+      later: buckets.later,
+      ok: buckets.ok,
+      note: note,
+      next: next
+    };
+    window.saveSetupCheck(payload);
+    var delivery = window.deliverSetupCheck(payload);
+    fillCheckList(document.getElementById("checkOpen"), document.getElementById("checkOpenWrap"), buckets.unresolved);
+    fillCheckList(document.getElementById("checkFixed"), document.getElementById("checkFixedWrap"), buckets.fixed);
+    fillCheckList(document.getElementById("checkLater"), document.getElementById("checkLaterWrap"), buckets.later);
+    fillCheckList(document.getElementById("checkOk"), document.getElementById("checkOkWrap"), buckets.ok);
+    var nextBox = document.getElementById("checkNext");
+    nextBox.hidden = false;
+    nextBox.innerHTML = "";
+    var k = document.createElement("p");
+    k.className = "check-q";
+    k.textContent = next.kind === "resume" ? "Start here" : "Next";
+    var body = document.createElement("p");
+    body.className = "check-a";
+    body.textContent = next.body;
+    nextBox.appendChild(k);
+    nextBox.appendChild(body);
+    if (next.href) {
+      var link = document.createElement("a");
+      link.className = "btn secondary";
+      link.href = next.href;
+      link.textContent = next.link;
+      nextBox.appendChild(link);
+    }
     document.getElementById("checkScore").textContent = pad4(state.points) + " pts";
     var send = document.getElementById("sendWard");
     send.href = delivery.mailto;
-    send.dataset.endpoint = delivery.endpoint || "";
+    send.textContent = "Open email draft";
     window.SlotAudio.end();
     showCard(checkCard);
   }
@@ -432,7 +567,7 @@
   }
 
   function resetGame() {
-    questions = setupMode ? window.SETUP_QUESTIONS.slice() : shuffle(window.SLOT_QUESTIONS.slice());
+    questions = setupMode ? window.setupCatalog(setupTool, []) : shuffle(window.SLOT_QUESTIONS.slice());
     state.screen = "idle";
     state.qIndex = 0;
     state.points = 0;
@@ -440,6 +575,9 @@
     state.correctCount = 0;
     state.current = null;
     state.answers = [];
+    state.tool = setupTool;
+    state.pending = null;
+    if (setupMode) syncSetupQuestions();
     var input = document.getElementById("freeTextInput");
     if (input) input.value = "";
     var sendNote = document.getElementById("freeTextSend");
@@ -551,6 +689,9 @@
     resetGame();
     spinBtn.focus();
   });
+  document.getElementById("guideStuck").addEventListener("click", function () { finishGuide("unresolved"); });
+  document.getElementById("guideFixed").addEventListener("click", function () { finishGuide("fixed"); });
+  document.getElementById("guideOwn").addEventListener("click", function () { finishGuide("ok"); });
 
   window.addEventListener("resize", function () { applyOffsets(true); });
 
@@ -593,7 +734,7 @@
     var tag = document.querySelector(".tagline");
     if (sub) sub.textContent = "Setup check";
     if (title) title.textContent = "How did setup go?";
-    if (tag) tag.textContent = "Spin once for each question. There are no wrong answers. Every answer earns points, then you can send the summary to Ward.";
+    if (tag) tag.textContent = "Spin once for each question. If a step did not work, the check shows that training step. Points only. These notes are from the training, not a live assistant.";
   }
 
   buildLeds();
@@ -613,16 +754,9 @@
     openQuestion();
   } else if (shot === "end") {
     if (setupMode) {
-      state.answers = questions.map(function (q) {
-        return {
-          id: q.id,
-          label: q.label,
-          q: q.q,
-          answer: q.kind === "text" ? "The sign-up email took a minute to find." : q.choices[0]
-        };
-      });
-      state.points = questions.length * POINTS_CORRECT;
-      state.displayPoints = state.points;
+      state.tool = setupTool || "claude";
+      state.answers = [];
+      syncSetupQuestions();
     } else {
       state.correctCount = 16;
       state.points = 1600;

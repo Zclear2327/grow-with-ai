@@ -28,6 +28,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { margin: 0; padding: 0; }
 html { height: 100%; }
 body {
@@ -499,6 +500,9 @@ body::before {
 }
 .check-a { display: block; font-size: 16px; line-height: 1.4; color: #f4fbff; }
 .check-mail-note { margin: 8px 0 12px; font-size: 14px; line-height: 1.4; color: var(--ink-dim); }
+.check-next { margin: 0 0 16px; padding: 12px; border: 1px solid rgba(170, 214, 226, .35); border-radius: 6px; }
+.check-next p { margin: 0 0 8px; }
+#guideCard .btn.secondary, #checkCard .btn.secondary { margin-top: 8px; }
 .choice {
   appearance: none;
   width: 100%;

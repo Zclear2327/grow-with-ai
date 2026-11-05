@@ -141,14 +141,41 @@
       <p class="disclaimer end-disclaimer">Just for fun — no real money.</p>
     </section>
 
+    <section class="card" id="guideCard" role="dialog" aria-labelledby="guideHeading" aria-modal="true" hidden>
+      <p class="q-meta" id="guideMeta">From the training steps</p>
+      <h2 id="guideHeading" tabindex="-1">Try this step</h2>
+      <p class="teach-body" id="guideBody"></p>
+      <p class="check-mail-note" id="guideSource">These words are from the training step. This is not a live assistant.</p>
+      <a class="btn" id="guideTry" href="../train/" target="_blank" rel="noopener">Try again</a>
+      <button type="button" class="btn secondary" id="guideStuck">Still need help</button>
+      <button type="button" class="btn secondary" id="guideFixed">Fixed it</button>
+      <button type="button" class="btn secondary" id="guideOwn" hidden>I can take it from here</button>
+    </section>
+
     <section class="card" id="checkCard" role="dialog" aria-labelledby="checkHeading" aria-modal="true" hidden>
       <p class="q-meta">Setup check</p>
-      <h2 id="checkHeading" tabindex="-1">Thanks. Here's what you told Ward.</h2>
+      <h2 id="checkHeading" tabindex="-1">Here's the setup check</h2>
       <p class="end-score" id="checkScore"></p>
-      <p class="end-note" id="checkNote">Every answer earned points. Nothing here was right or wrong.</p>
-      <a class="btn" id="sendWard" href="mailto:hello@wardconsulting.ai">Send to Ward</a>
-      <p class="check-mail-note">This opens an email to hello@wardconsulting.ai with your answers filled in. Send it from your mail app.</p>
-      <ul class="check-summary" id="checkSummary"></ul>
+      <p class="end-note" id="checkNote">Points only. The notes below are copied from the training steps. This is not a live assistant.</p>
+      <div id="checkNext" class="check-next" hidden></div>
+      <div id="checkOpenWrap" hidden>
+        <p class="check-q">Still need help</p>
+        <ul class="check-summary" id="checkOpen"></ul>
+      </div>
+      <div id="checkFixedWrap" hidden>
+        <p class="check-q">Fixed in this check</p>
+        <ul class="check-summary" id="checkFixed"></ul>
+      </div>
+      <div id="checkLaterWrap" hidden>
+        <p class="check-q">Not tried yet</p>
+        <ul class="check-summary" id="checkLater"></ul>
+      </div>
+      <div id="checkOkWrap" hidden>
+        <p class="check-q">Went fine</p>
+        <ul class="check-summary" id="checkOk"></ul>
+      </div>
+      <a class="btn" id="sendWard" href="mailto:hello@wardconsulting.ai">Open email draft</a>
+      <p class="check-mail-note">This opens a draft to hello@wardconsulting.ai in your mail app. Nothing is sent until you send it.</p>
       <button type="button" class="btn secondary" id="checkAgain">Run it again</button>
       <div class="end-links">
         <a class="btn secondary" href="../train/">Back to the Claude trainer</a>
