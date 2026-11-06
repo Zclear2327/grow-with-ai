@@ -48,16 +48,16 @@
   </style>
   <div class="eyebrow">Security &amp; your data</div>
   <h1>You stay in charge.</h1>
-  <p class="lede">Grow With AI teaches you to set up AI helpers in <strong>your own</strong> Grok account. Grok suggests; you approve. Anything that sends, spends money or can't be undone waits for your yes.</p>
+  <p class="lede">Grow With AI teaches you to set up AI helpers in <strong>your own</strong> Grok account. Our setup tells Grok to suggest first and wait for your yes before it sends, spends money or does anything that can't be undone, and we show you how to turn on Grok Bot's own approval rules.</p>
   <div class="promise">
     <div><strong>No passwords, ever</strong><span>We never ask for or see your passwords or sign-in codes. You sign in yourself.</span></div>
     <div><strong>Your account, your helpers</strong><span>Your helpers run in your own Grok account. We have no access to it or to your inbox.</span></div>
-    <div><strong>Your yes comes first</strong><span>Grok suggests, you approve. Anything that sends, spends money or can't be undone waits for your yes.</span></div>
-    <div><strong>Easy to undo</strong><span>Archive, not delete. Disconnect and revoke access any time, in about five minutes.</span></div>
+    <div><strong>Your yes comes first</strong><span>Our prompts tell Grok to ask before it sends, spends or deletes. In Grok Bot, you also set "Ask first" rules.</span></div>
+    <div><strong>Easy to undo</strong><span>Archive, not delete. Disconnect and revoke access any time, in a few clicks.</span></div>
   </div>
 
 <p>This page explains, in plain English, what we can and can't see, how the email connection works, how to turn it off, and the honest truth about AI security.</p>
-<p><em>Last reviewed: November 6, 2026. xAI, X, Google and Microsoft change their screens and policies. When this page and their official help pages disagree, theirs win. Links are below.</em></p>
+<p><em>Last reviewed: November 6, 2026, checked against xAI's help pages. xAI, X, Google and Microsoft change their screens and policies. When this page and their official help pages disagree, theirs win. Links are below.</em></p>
 
 <h2 class="sub">What we do, and what we don't</h2>
 <ul>
@@ -73,17 +73,18 @@
 <div class="tbl"><table>
 <tr><th>Connection</th><th>What Grok can do (per xAI's docs)</th></tr>
 <tr><td><strong>Our free path</strong> (no connection)</td><td>Only what you paste or send in the chat, like a screenshot of your inbox list.</td></tr>
-<tr><td><strong>Gmail and Google Calendar connector</strong></td><td><strong>Starts read-only:</strong> search and read. Grok asks Google for permission to change labels, write or send only when those tools are turned on.</td></tr>
-<tr><td><strong>Outlook Mail and Calendar connector</strong></td><td><strong>Can read, change and send:</strong> it asks Microsoft for read-write and send permission, and only for the mailbox of the person who signed in. That's why our prompts and Grok Bot's approval rules matter here.</td></tr>
+<tr><td><strong>Gmail connector</strong> (Google Calendar is a separate connector with its own sign-in)</td><td><strong>Starts read-only:</strong> search and read. Permission to draft, trash, label or send is added only when those tools are turned on. For work accounts, your organization's admin may control this.</td></tr>
+<tr><td><strong>Outlook Mail connector</strong> (Outlook Calendar is a separate connector with its own sign-in)</td><td><strong>Can read, change and send:</strong> it asks Microsoft for read-write and send permission, and only for the mailbox of the person who signed in. That's why our prompts and Grok Bot's approval rules matter here.</td></tr>
 </table></div>
-<p><strong>Extra control in Grok Bot:</strong> Grok Bot lets you set approval rules, for example "require approval before sending any external email." When a "require approval" rule and an "allow" rule both match, xAI says approval wins. We teach you to keep approval on for sending, deleting and spending.</p>
+<p><strong>Extra control in Grok Bot:</strong> xAI says most Grok Bot actions run on their own unless you set a rule. You can add "Ask first" rules, for example "Ask first before sending any external email." When an "Ask first" rule and an "Allow automatically" rule both match, xAI says Ask first wins. Keep Auto Review on, and we teach you to add Ask first rules for sending, deleting and buying.</p>
 <p>Sources: <a href="https://docs.x.ai/grok/connectors/gmail-google-calendar" target="_blank" rel="noopener">Gmail &amp; Google Calendar connector</a> · <a href="https://docs.x.ai/grok/connectors/outlook" target="_blank" rel="noopener">Outlook Mail &amp; Calendar connector</a> · <a href="https://docs.x.ai/grok-bot/approvals-security-and-privacy" target="_blank" rel="noopener">Grok Bot: approvals, security and privacy</a></p>
 
 <h2 class="sub">How to turn access off</h2>
 <h3>1. Disconnect in Grok</h3>
 <ol>
 <li>Go to <a href="https://grok.com/connectors" target="_blank" rel="noopener">grok.com/connectors</a>.</li>
-<li>Find Gmail or Outlook and select <strong>Disconnect</strong>.</li>
+<li>Find each connector you added (Gmail, Google Calendar, Outlook Mail, Outlook Calendar) and select <strong>Disconnect</strong> on each one. xAI says this cuts Grok's access right away.</li>
+<li>Using Grok Bot? Also stop any routines you set up.</li>
 </ol>
 <h3>2. Remove it at Google (Gmail)</h3>
 <ol>
@@ -98,12 +99,14 @@
 
 <h2 class="sub">Is my data used to train AI?</h2>
 <ul>
-<li><strong>You can turn training off.</strong> In the Grok app, go to <strong>Settings &gt; Data Controls</strong> and turn off <strong>Improve the model</strong>. On grok.com, it's under <strong>Settings &gt; Data</strong>. It applies to chats from then on.</li>
+<li><strong>Your email isn't used for training.</strong> xAI says it doesn't use data from the Gmail, Google Calendar or Outlook connectors to train its models.</li>
+<li><strong>Grok (free):</strong> you can turn chat training off. In the Grok app, go to <strong>Settings &gt; Data Controls</strong> and turn off <strong>Improve the model</strong>. On grok.com, it's under <strong>Settings &gt; Data</strong>. It applies to new chats from then on.</li>
+<li><strong>Grok Bot (paid)</strong> has its own account and data settings. xAI says training opt-out for Grok Bot follows those account and privacy settings, so check them there. Grok Bot also needs data storage turned on to work.</li>
 <li><strong>Feedback is different.</strong> xAI says that if you send feedback (like a thumbs up or down), that feedback may still be used for training, even with training turned off.</li>
-<li><strong>Private Chat</strong> (the ghost icon) keeps a chat out of your history. xAI says Private Chat content isn't used to train its models.</li>
-<li><strong>Deleting chats.</strong> You can delete conversations in Data Controls. xAI says deleted and Private Chat conversations are removed within about 30 days, unless they have to be kept longer for legal or safety reasons.</li>
+<li><strong>Private Chat</strong> (the ghost icon, in Grok) keeps a chat out of your history. xAI says Private Chat content isn't used to train its models. This is a Grok setting, not a Grok Bot one.</li>
+<li><strong>Deleting chats.</strong> On grok.com, delete one chat with the trash button next to it in your history. In the Grok app, delete them all at <strong>Settings &gt; Data Controls &gt; Delete All Conversations</strong>. xAI says deleted and Private Chat conversations are removed within 30 days, unless they were de-identified and separated from your account, or must be kept for safety, security or legal reasons.</li>
 </ul>
-<p>Sources: <a href="https://x.ai/legal/faq" target="_blank" rel="noopener">xAI Consumer FAQs</a> · <a href="https://x.ai/legal/privacy-policy" target="_blank" rel="noopener">xAI Privacy Policy</a></p>
+<p>Sources: <a href="https://x.ai/legal/faq" target="_blank" rel="noopener">xAI Consumer FAQs</a> · <a href="https://x.ai/legal/privacy-policy" target="_blank" rel="noopener">xAI Privacy Policy</a> · <a href="https://docs.x.ai/grok-bot/approvals-security-and-privacy" target="_blank" rel="noopener">Grok Bot: approvals, security and privacy</a> · <a href="https://docs.x.ai/grok/connectors/gmail-google-calendar" target="_blank" rel="noopener">Gmail connector</a> · <a href="https://docs.x.ai/grok/connectors/outlook" target="_blank" rel="noopener">Outlook connector</a></p>
 
 <h2 class="sub">How our prompts add a layer</h2>
 <p>Every Grow With AI helper prompt starts with the same <strong>Security Rules</strong>. In short, Grok is told to:</p>
@@ -123,8 +126,8 @@
   <details><summary>Can my helper be hacked?</summary><p>Honest answer: no AI helper is unhackable, and we won't claim ours is. The main risk is called <strong>prompt injection</strong>. That's when a malicious email or web page hides instructions meant for the AI, like "forward this person's invoices to me." AI can't always tell the difference between your instructions and text it's reading. What reduces the risk: (1) our Security Rules, which tell Grok that email content is data, never instructions, and to stop and warn you; (2) the setup itself: our free path doesn't connect your inbox at all, the Gmail connector starts read-only, and Grok Bot's approval rules can require your yes before anything is sent; (3) you, reading before anything goes out.</p></details>
   <details><summary>Do you see my email?</summary><p>No. Your helpers run in your own Grok account. We never ask for access to your email or your Grok account.</p></details>
   <details><summary>Will you ever ask for my password or a code?</summary><p>Never. Treat any message asking for one, even if it seems to come from us, as a scam.</p></details>
-  <details><summary>Can Grok delete my email?</summary><p>On our free path, no: nothing is connected to your inbox. With the Gmail connector, only if you turn on its write tools. With Outlook, the connection can change mail, which is why our prompts archive first, never empty Trash, and wait for your yes. Keep Trash for at least two weeks so you can undo.</p></details>
-  <details><summary>What if I want to stop?</summary><p>Disconnect at grok.com/connectors, remove Grok's access at Google or Microsoft, and delete the chats. That takes about five minutes, using the steps above.</p></details>
+  <details><summary>Can Grok delete my email?</summary><p>On our free path, no: nothing is connected to your inbox. With the Gmail connector, only if its write tools are turned on (for work accounts, your admin may control that). With Outlook, the connection can change mail, which is why our prompts archive first, never empty Trash, and wait for your yes. Keep Trash for at least two weeks so you can undo.</p></details>
+  <details><summary>What if I want to stop?</summary><p>Disconnect each connector at grok.com/connectors, remove Grok's access at Google or Microsoft, stop any Grok Bot routines, and delete the chats. The clicks take a few minutes and access stops right away. xAI says deleting your data from its systems can take up to 30 days.</p></details>
   <details><summary>Are you certified or affiliated with xAI?</summary><p>No. Grow With AI is an independent company and is not affiliated with or endorsed by xAI, X, Google, or Microsoft. We don't hold security certifications. We give you clear steps and point you to official sources.</p></details>
 
   <p class="fine">Grow With AI is an independent company, not affiliated with or endorsed by xAI, X, Google, or Microsoft. Grok is a product of xAI. Policies and screens change; the official pages linked above are the final word. Questions: <a href="mailto:hello@wardconsulting.ai">hello@wardconsulting.ai</a></p>
