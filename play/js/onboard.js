@@ -430,7 +430,7 @@
   function renderPlatform() {
     var box = document.getElementById("obPlatformChoices");
     box.innerHTML = "";
-    [["claude", "Claude"], ["grok", "Grok"]].forEach(function (pair) {
+    [["grok", "Grok"]].forEach(function (pair) {
       var b = document.createElement("button");
       b.type = "button";
       b.textContent = pair[1];
@@ -520,7 +520,7 @@
   });
   document.getElementById("obCheck").addEventListener("click", function () {
     if (state.platform !== "claude" && state.platform !== "grok") {
-      document.getElementById("obTask").textContent = "Choose Claude or Grok first. That only picks which training the check uses.";
+      document.getElementById("obTask").textContent = "Choose Grok first. That picks the training the check uses.";
       return;
     }
     save();
