@@ -44,12 +44,12 @@ window.SLOT_QUESTIONS = [
       "It is wrong more often than it is right, so you should not use it."
     ],
     correct: 2,
-    teach: "The trainer says Claude and Grok are useful but sometimes wrong. After an important answer, ask which parts it is least sure about, and read anything important yourself."
+    teach: "The trainer says Grok is useful but sometimes wrong. After an important answer, ask which parts it is least sure about, and read anything important yourself."
   },
   {
     id: "never-paste",
     topic: "safety",
-    q: "What should you never paste into Claude, Grok, or any chat tool?",
+    q: "What should you never paste into Grok, or any chat tool?",
     choices: [
       "A rough outline of an email you want help writing.",
       "A photo of a receipt with the prices blacked out.",
@@ -66,7 +66,7 @@ window.SLOT_QUESTIONS = [
     choices: [
       "Yes. The trainer is written for programmers.",
       "No. The steps are in plain English, and you can talk instead of type with the microphone on your phone keyboard.",
-      "Only if you pick Claude.",
+      "Only if you pay for a plan.",
       "You need to learn a special AI language first."
     ],
     correct: 1,
@@ -101,7 +101,7 @@ window.SLOT_QUESTIONS = [
   {
     id: "cant-see-business",
     topic: "trainer",
-    q: "Can Claude or Grok see your business on its own?",
+    q: "Can Grok see your business on its own?",
     choices: [
       "Yes. It looks up your company the moment you open the app.",
       "Yes, if you have the paid plan.",
@@ -122,7 +122,7 @@ window.SLOT_QUESTIONS = [
       "Type the word RESET in capital letters."
     ],
     correct: 1,
-    teach: "That tip is in both the Claude and Grok trainers. A fresh chat for a new topic keeps the assistant from mixing two jobs together."
+    teach: "That tip is in the Grok trainer. A fresh chat for a new topic keeps the assistant from mixing two jobs together."
   },
   {
     id: "read-first",
@@ -171,10 +171,10 @@ window.SLOT_QUESTIONS = [
       "Yes. Voice only works after you pay.",
       "Yes. The microphone is only for videos.",
       "No. You can talk instead of typing most messages with the microphone button on your phone keyboard.",
-      "Only Grok can hear you. Claude cannot."
+      "Only on a computer. Phones can't use the microphone."
     ],
     correct: 2,
-    teach: "Both trainers let you talk instead of type: on your phone keyboard, tap the microphone and say what you want. A few steps still ask you to paste or fill in a box."
+    teach: "The trainer lets you talk instead of type: on your phone keyboard, tap the microphone and say what you want. A few steps still ask you to paste or fill in a box."
   },
   {
     id: "free-agents",
@@ -195,17 +195,17 @@ window.SLOT_QUESTIONS = [
     q: "Whose AI account do you use with Grow With AI?",
     choices: [
       "A shared company login that everyone uses.",
-      "Your own free Grok or Claude account. Paid upgrades to those companies are optional.",
+      "Your own free Grok account. Paid upgrades to X are optional.",
       "You do not need an account of any kind.",
-      "Only a special Grow With AI password, not Grok or Claude."
+      "Only a special Grow With AI password, not Grok."
     ],
     correct: 1,
-    teach: "You pick Grok or Claude and use your own account with that company. Grow With AI’s setup is separate. Optional paid plans such as Grok Bot or Claude Pro are paid to those companies, not required to start."
+    teach: "You use your own Grok account. Grow With AI’s setup is separate. Optional paid plans such as Grok Bot are paid to X, not required to start."
   },
   {
     id: "free-plan",
     topic: "trainer",
-    q: "When does the trainer say you should upgrade your Grok or Claude plan?",
+    q: "When does the trainer say you should upgrade your Grok plan?",
     choices: [
       "On day one, or the free plan will not work.",
       "Only when you keep hitting a limit that costs you time. The training itself works on the free plan.",
@@ -257,14 +257,14 @@ window.SLOT_QUESTIONS = [
   {
     id: "two-paths",
     topic: "trainer",
-    q: "Grow With AI’s free step-by-step trainer has two paths. What are they?",
+    q: "Grow With AI’s free step-by-step trainer works two ways. What are they?",
     choices: [
       "Python and Java.",
-      "Claude and Grok. You pick the one you want to use.",
+      "Free Grok, or the paid Grok Bot app. The steps are the same.",
       "A paid path only, with no free option.",
       "A path for phones and a separate path that does not exist yet."
     ],
     correct: 1,
-    teach: "There is a Claude trainer at /train/ and a Grok trainer at /train/grok/. Each one walks you through the same kind of steps for that assistant, including voice, asking well, and staying safe."
+    teach: "The Grok trainer is at /train/grok/. On free Grok you follow the steps on grok.com or the Grok app. If you pay for Grok Bot, you do the same steps in the Grok Bot app."
   }
 ];
