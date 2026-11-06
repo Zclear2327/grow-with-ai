@@ -39,7 +39,8 @@ var EMAIL_OPTS = [
 /* Guided setup (Chris, Nov 5 2026: "Combine them"). A scripted, one-question-at-a-time conversation with Sam or
    Travis: Chris's 10 questions (n 1-10), then 4 short setup details (d 1-4) that keep the Grok/Claude and
    Grok Bot routing. Every question can be skipped; the summary lets people change any answer.
-   This is scripted guidance, not a live AI. The real trainer starts when they paste the prompt into Grok or Claude. */
+   This is scripted guidance, not a live AI. The copy box is the free email helper.
+   There is no verified training-agent share link, so that agent is not offered here. */
 var Q = {
   q6: { sec: 1, n: 1, type: "single", text: "First, who would you like as your guide: Sam or Travis?", help: "Both are AI trainer characters, not real people. You can switch any time.", options: [{ v: "Sam", label: "Sam" }, { v: "Travis", label: "Travis" }, { v: "Sam", label: "Either is fine", id: "either" }] },
   nm: { sec: 1, n: 2, type: "text", optional: true, text: "What should we call you?", help: "Optional. A first name or nickname is plenty.", ph: "For example: Dana" },
@@ -227,7 +228,7 @@ function welcome(h) {
   h.appendChild(el("h1", null, "Welcome to Ward Consulting AI."));
   h.appendChild(el("p", null, "First, Sam or Travis asks you 10 quick questions, one at a time, then 4 short setup details. It takes about 2 minutes, and you can skip or change any answer. Your answers pick the best AI for you (Grok or Claude) and brief your trainer, so you never get asked twice. Your first win takes about 10 minutes. The setup is free."));
   h.appendChild(el("p", { class: "help" }, "Available in English in the US and Canada, except Quebec for now (no French version yet)."));
-  h.appendChild(el("p", { class: "help" }, "This part is a scripted setup, not a live AI. Sam and Travis are AI trainer characters; the real conversation starts when you paste your trainer prompt into Grok or Claude. Never type passwords, codes, card numbers or customer details here. Your answers stay in this browser unless you choose to send them, and you can clear them any time."));
+  h.appendChild(el("p", { class: "help" }, "This part is a scripted setup, not a live AI. Sam and Travis are AI trainer characters. The copy box at the end is your free email helper, not a separate training agent. We don't have a verified share link to a training agent, so that agent is not available from this page. Never type passwords, codes, card numbers or customer details here. Your answers stay in this browser unless you choose to send them, and you can clear them any time."));
   navRow(h, next, true, "Begin");
 }
 
@@ -406,7 +407,7 @@ function reflect(h) {
 
 /* "About my business": goes at the top of the prompt people copy, so the trainer, the Workflow agent,
    dr eggbot and the CEO agent start from these answers and never re-ask. No customer names, passwords or money. */
-function ans(id) { // plain-words answer for the summary and the trainer prompt
+function ans(id) { // plain-words answer for the summary and the free email helper
   if (A[id + "_skipped"] && (A[id] == null || (A[id].length === 0))) return "skipped";
   var q = Q[id], v = A[id];
   if (v == null || v === "") return "not answered";
@@ -438,7 +439,7 @@ function summary(h) {
   var tr = track(), ft = firstTask();
   h.appendChild(el("p", { class: "voice" }, "Your summary"));
   h.appendChild(el("h1", null, (A.nm ? A.nm + ", here's" : "Here's") + " what you told " + trainer() + "."));
-  h.appendChild(el("p", { class: "help" }, "Tap Change to fix anything. These answers stay in this browser and go into your trainer prompt so " + trainer() + " doesn't ask again."));
+  h.appendChild(el("p", { class: "help" }, "Tap Change to fix anything. These answers stay in this browser and go into your free email helper so " + trainer() + " doesn't ask again."));
   var dl = el("ul", { class: "sumlist", role: "list" });
   SUMMARY_ROWS.forEach(function (r) {
     if (r[0] === "q4b" && A.q4a === "phone") return;
@@ -484,14 +485,14 @@ var STEPS = {
       ["Search “Grok”. Check it's the official app from xAI.", "Grok in the results"],
       ["Tap Get or Install. The app is free.", "the Grok app on your phone"],
       ["Open it and sign in or make a free account. You type your own password and codes.", "the chat box"],
-      ["Tap “Copy my email helper” below, paste it into the chat, and send.", "your trainer say “Hi, I'm here”"],
+      ["Tap “Copy my email helper” below, paste it into the chat, and send.", "your free email helper say “Hi, I'm here”"],
       ["Send a screenshot of your inbox list when it asks.", "your inbox sorted into groups"]
     ],
     computer: [
       ["Open grok.com in your browser.", "Grok's page", "https://grok.com"],
       ["Sign in or make a free account yourself.", "you're signed in"],
       ["Find the chat box.", "the chat box"],
-      ["Tap “Copy my email helper” below, paste it into the chat, and send.", "your trainer say “Hi, I'm here”"],
+      ["Tap “Copy my email helper” below, paste it into the chat, and send.", "your free email helper say “Hi, I'm here”"],
       ["Send a screenshot of your inbox list when it asks.", "your inbox sorted into groups"]
     ]
   },
@@ -503,7 +504,7 @@ var STEPS = {
       ["Sign up or sign in yourself; the code comes by email.", "“How can I help”"],
       ["Click Projects, then New project, and name it “Inbox”.", "your Inbox project"],
       ["Paste your email helper (copy it below) into “Set project instructions”.", "the instructions saved"],
-      ["Start a chat in the project.", "your trainer say “Hi, I'm here”"]
+      ["Start a chat in the project.", "your free email helper say “Hi, I'm here”"]
     ],
     windows: [
       ["Go to claude.com/download and click Windows.", "a file downloading", "https://claude.com/download"],
@@ -512,12 +513,12 @@ var STEPS = {
       ["Sign up or sign in yourself; the code comes by email.", "“How can I help”"],
       ["Click Projects, then New project, and name it “Inbox”.", "your Inbox project"],
       ["Paste your email helper (copy it below) into “Set project instructions”.", "the instructions saved"],
-      ["Start a chat in the project.", "your trainer say “Hi, I'm here”"]
+      ["Start a chat in the project.", "your free email helper say “Hi, I'm here”"]
     ],
     phone: [
       ["Open the App Store or Google Play and search “Claude” (by Anthropic).", "Claude by Anthropic"],
       ["Install it, open it, and sign in yourself.", "the chat box"],
-      ["Paste your email helper (copy it below) into a new chat and send. Projects and Claude in Chrome work best on a computer.", "your trainer say “Hi, I'm here”"]
+      ["Paste your email helper (copy it below) into a new chat and send. Projects and Claude in Chrome work best on a computer.", "your free email helper say “Hi, I'm here”"]
     ]
   }
 };
@@ -526,15 +527,15 @@ STEPS.grokbot = {
     ["Open the official Grok Bot download page and download the app for your Mac or Windows computer.", "the app downloading", "https://cursor.com/download/bot"],
     ["Open the app and sign in with your X account. You type your own password and codes.", "you're signed in"],
     ["If it asks for a plan, pick one that includes Grok Bot (X Premium, about $30 a month, paid to X). Skip this if you already have it.", "the Grok Bot home screen"],
-    ["Start a new chat. Tap “Copy my email helper” below, paste it in, and send.", "your trainer say “Hi, I'm here”"],
-    ["When your trainer asks, connect your Gmail or Outlook in the app and click Allow.", "your inbox sorted into groups"]
+    ["Start a new chat. Tap “Copy my email helper” below, paste it in, and send.", "your free email helper say “Hi, I'm here”"],
+    ["When your free email helper asks, connect your Gmail or Outlook in the app and click Allow.", "your inbox sorted into groups"]
   ],
   phone: [
     ["On your phone, open the official Grok Bot download page and get the app for iPhone or Android.", "the app installing", "https://cursor.com/download/bot"],
     ["Open the app and sign in with your X account. You type your own password and codes.", "you're signed in"],
     ["If it asks for a plan, pick one that includes Grok Bot (X Premium, about $30 a month, paid to X). Skip this if you already have it.", "the Grok Bot home screen"],
-    ["Start a new chat. Tap “Copy my email helper” below, paste it in, and send.", "your trainer say “Hi, I'm here”"],
-    ["When your trainer asks, connect your Gmail or Outlook in the app and tap Allow.", "your inbox sorted into groups"]
+    ["Start a new chat. Tap “Copy my email helper” below, paste it in, and send.", "your free email helper say “Hi, I'm here”"],
+    ["When your free email helper asks, connect your Gmail or Outlook in the app and tap Allow.", "your inbox sorted into groups"]
   ]
 };
 var COST = {
@@ -621,8 +622,8 @@ function result(h) {
   nextBox.appendChild(el("p", null, "Your first training task: step " + ft.n + ", " + ft.title + "."));
   nextBox.appendChild(el("a", { class: "linkbtn go", href: taskHref(tr, ft.n) }, "Open step " + ft.n + " of the " + (tr === "claude" ? "Claude" : "Grok") + " training"));
   h.appendChild(nextBox);
-  h.appendChild(el("h2", null, "Your trainer prompt (copy and paste)"));
-  h.appendChild(el("p", { class: "help" }, "This is a prompt you copy, not a link. We don't have a verified share link to our trainer yet, so pasting this is how " + name + " starts in " + (tk === "grokbot" ? "your Grok Bot app" : tr === "grok" ? "Grok" : "Claude") + ". Grok and Grok Bot are different apps; use the one your steps above are for."));
+  h.appendChild(el("h2", null, "Your free email helper (copy and paste)"));
+  h.appendChild(el("p", { class: "help" }, "This box is the free email helper, not the training agent. We don't have a verified share link to the training agent, so that agent is not available from this page. Grok and Grok Bot are different apps; use the one your steps above are for."));
   h.appendChild(tr === "grok" ? vid("first-win-grok", "Video: your first win, with JR (21 seconds)") : vid("first-win", "Video: your first win (23 seconds)"));
   h.appendChild(el("p", { class: "help" }, "Copy this and paste it into " + (tk === "grokbot" ? "a new chat in your Grok Bot app." : tr === "grok" ? "a new Grok chat." : "your Claude project instructions, or a new Claude chat.")));
   var AG = { id: "Email-Inbox", name: "Email & Inbox Agent" };
