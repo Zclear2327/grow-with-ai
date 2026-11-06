@@ -91,20 +91,24 @@ var OUTLOOK_HELP = ["Address taken? Add your town or a number.", "The puzzle won
    when they will pay for connections AND they run on real tools or already use AI a lot. */
 var CONNECT_TOOLS = ["google", "m365", "quickbooks", "square", "crm"];
 function usesTools() { return (A.s6 || []).some(function (v) { return CONNECT_TOOLS.indexOf(v) >= 0; }); }
+/* Chris, Nov 6: "set people up only on grok for now". Everyone gets the Grok track. The Claude branch
+   below stays in the code (unused) so it can come back with one change. */
+var GROK_ONLY = true;
 function baseTrack() {
+  if (GROK_ONLY) return "grok";
   if (!A.q4a || A.q4a === "phone") return "grok";
   if (A.s10 === "pay" && (usesTools() || A.q5b === "lot")) return "claude";
   return "grok";
 }
 function whyTrack(tr) {
-  if (A.switched) return "You chose this track yourself.";
+  if (A.switched && !GROK_ONLY) return "You chose this track yourself.";
   if (isBot(tr)) return "Why Grok Bot: you chose to pay so the AI can connect to your email, and Grok Bot connects to your inbox directly.";
   if (tr === "claude") return "Why Claude: you work on a computer, you're happy to pay for connections, and " + (usesTools() ? "you run the business on tools Claude can connect to." : "you already use AI a lot.");
   if (A.q4a === "phone") return "Why Grok: it's the simplest to start on a phone.";
-  if (A.s10 !== "pay") return "Why Grok: it's the simplest free start. You can switch to Claude any time.";
-  return "Why Grok: it's the simplest place to start. Switch to Claude if you want deeper connections to your tools.";
+  if (A.s10 !== "pay") return "Why Grok: it's the simplest free start, on your phone or your computer.";
+  return "Why Grok: it's the simplest place to start, and you can add Grok Bot later to connect your inbox.";
 }
-function track() { var b = baseTrack(); return A.switched ? (b === "grok" ? "claude" : "grok") : b; }
+function track() { var b = baseTrack(); if (GROK_ONLY) return b; return A.switched ? (b === "grok" ? "claude" : "grok") : b; }
 /* Chris, Nov 5: "Grok Bot for paid, free Grok for free". On the Grok track, people who said they will pay
    get the Grok Bot app; everyone else stays on free Grok. They can switch to free with one tap. */
 function isBot(tr) { return tr === "grok" && A.s10 === "pay" && !A.botOff; }
@@ -226,7 +230,7 @@ function welcome(h) {
   h.appendChild(vid("welcome", "Video: Chris Ward welcomes you (20 seconds)"));
   h.appendChild(el("p", { class: "voice" }, "Setup"));
   h.appendChild(el("h1", null, "Welcome to Ward Consulting AI."));
-  h.appendChild(el("p", null, "First, Sam or Travis asks you 10 quick questions, one at a time, then 4 short setup details. It takes about 2 minutes, and you can skip or change any answer. Your answers pick the best AI for you (Grok or Claude) and brief your trainer, so you never get asked twice. Your first win takes about 10 minutes. The setup is free."));
+  h.appendChild(el("p", null, "First, Sam or Travis asks you 10 quick questions, one at a time, then 4 short setup details. It takes about 2 minutes, and you can skip or change any answer. Your answers set up Grok for you and brief your trainer, so you never get asked twice. Your first win takes about 10 minutes. The setup is free."));
   h.appendChild(el("p", { class: "help" }, "Available in English in the US and Canada, except Quebec for now (no French version yet)."));
   h.appendChild(el("p", { class: "help" }, "This part is a scripted setup, not a live AI. Sam and Travis are AI trainer characters. The copy box at the end is your free email helper, not a separate training agent. We don't have a verified share link to a training agent, so that agent is not available from this page. Never type passwords, codes, card numbers or customer details here. Your answers stay in this browser unless you choose to send them, and you can clear them any time."));
   navRow(h, next, true, "Begin");
@@ -579,7 +583,7 @@ function result(h) {
   if (meta.finished !== tr) { meta.finished = tr; save(); }
   var sw = el("button", { class: "back", type: "button" }, "Prefer " + (tr === "grok" ? "Claude, the power path" : "Grok, the easy path") + "? Switch");
   sw.onclick = function () { A.switched = !A.switched; delete A.done; save(); render(); };
-  h.appendChild(sw);
+  if (!GROK_ONLY) h.appendChild(sw);
   if (tr === "grok" && A.s10 === "pay") {
     var bt = el("button", { class: "back", type: "button" }, A.botOff ? "Use Grok Bot (paid) instead" : "Start free with Grok instead");
     bt.onclick = function () { A.botOff = !A.botOff; delete A.done; save(); render(); };
@@ -588,7 +592,7 @@ function result(h) {
 
   var cost = el("div", { class: "note cost" });
   cost.appendChild(el("p", null, COST[tk]));
-  cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing or claude.com/pricing."));
+  cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing."));
   h.appendChild(cost);
 
 

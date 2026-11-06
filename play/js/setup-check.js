@@ -93,7 +93,6 @@ var SETUP_CATALOG = [
     label: "Training to check",
     q: "Which training should this check follow?",
     choices: [
-      choice("claude", "Claude", "ok"),
       choice("grok", "Grok", "ok")
     ]
   },
