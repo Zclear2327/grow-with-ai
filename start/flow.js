@@ -227,7 +227,7 @@ function welcome(h) {
   h.appendChild(el("h1", null, "Welcome to Ward Consulting AI."));
   h.appendChild(el("p", null, "First, Sam or Travis asks you 10 quick questions, one at a time, then 4 short setup details. It takes about 2 minutes, and you can skip or change any answer. Your answers pick the best AI for you (Grok or Claude) and brief your trainer, so you never get asked twice. Your first win takes about 10 minutes. The setup is free."));
   h.appendChild(el("p", { class: "help" }, "Available in English in the US and Canada, except Quebec for now (no French version yet)."));
-  h.appendChild(el("p", { class: "help" }, "This part is a scripted setup, not a live AI. Sam and Travis are AI trainer characters; the real conversation starts when you paste your trainer prompt into Grok or Claude. Never type passwords, codes, card numbers or customer details here. Your answers stay in this browser unless you choose to send them, and you can clear them any time."));
+  h.appendChild(el("p", { class: "help" }, "This part is a scripted setup, not a live AI. Sam and Travis are AI trainer characters; the real conversation starts when you paste your prompt into Grok or Claude. Never type passwords, codes, card numbers or customer details here. Your answers stay in this browser unless you choose to send them, and you can clear them any time."));
   navRow(h, next, true, "Begin");
 }
 
@@ -406,7 +406,7 @@ function reflect(h) {
 
 /* "About my business": goes at the top of the prompt people copy, so the trainer, the Workflow agent,
    dr eggbot and the CEO agent start from these answers and never re-ask. No customer names, passwords or money. */
-function ans(id) { // plain-words answer for the summary and the trainer prompt
+function ans(id) { // plain-words answer for the summary and the prompt people copy
   if (A[id + "_skipped"] && (A[id] == null || (A[id].length === 0))) return "skipped";
   var q = Q[id], v = A[id];
   if (v == null || v === "") return "not answered";
@@ -438,7 +438,7 @@ function summary(h) {
   var tr = track(), ft = firstTask();
   h.appendChild(el("p", { class: "voice" }, "Your summary"));
   h.appendChild(el("h1", null, (A.nm ? A.nm + ", here's" : "Here's") + " what you told " + trainer() + "."));
-  h.appendChild(el("p", { class: "help" }, "Tap Change to fix anything. These answers stay in this browser and go into your trainer prompt so " + trainer() + " doesn't ask again."));
+  h.appendChild(el("p", { class: "help" }, "Tap Change to fix anything. These answers stay in this browser and go into your prompt so " + trainer() + " doesn't ask again."));
   var dl = el("ul", { class: "sumlist", role: "list" });
   SUMMARY_ROWS.forEach(function (r) {
     if (r[0] === "q4b" && A.q4a === "phone") return;
@@ -621,7 +621,7 @@ function result(h) {
   nextBox.appendChild(el("p", null, "Your first training task: step " + ft.n + ", " + ft.title + "."));
   nextBox.appendChild(el("a", { class: "linkbtn go", href: taskHref(tr, ft.n) }, "Open step " + ft.n + " of the " + (tr === "claude" ? "Claude" : "Grok") + " training"));
   h.appendChild(nextBox);
-  h.appendChild(el("h2", null, "Your trainer prompt (copy and paste)"));
+  h.appendChild(el("h2", null, "Your free email helper prompt (copy and paste)"));
   h.appendChild(el("p", { class: "help" }, "This is a prompt you copy, not a link. We don't have a verified share link to our trainer yet, so pasting this is how " + name + " starts in " + (tk === "grokbot" ? "your Grok Bot app" : tr === "grok" ? "Grok" : "Claude") + ". Grok and Grok Bot are different apps; use the one your steps above are for."));
   h.appendChild(tr === "grok" ? vid("first-win-grok", "Video: your first win, with JR (21 seconds)") : vid("first-win", "Video: your first win (23 seconds)"));
   h.appendChild(el("p", { class: "help" }, "Copy this and paste it into " + (tk === "grokbot" ? "a new chat in your Grok Bot app." : tr === "grok" ? "a new Grok chat." : "your Claude project instructions, or a new Claude chat.")));
