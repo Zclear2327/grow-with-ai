@@ -17,8 +17,8 @@
  * on day one.
  *
  * CHECKOUT: paste each package's ThriveCart checkout link here (Starter $29.99/month, Pro $99.99/month,
- * Elite $249/month; Free has no checkout). A 4th checkout is coming: the Grok team seat add-on
- * ($35 per seat per month, Pro and Elite only); it has no key below yet. Until ALL THREE are filled in the packages page shows the
+ * Elite $249/month; Free has no checkout). The 4th key, seat, is the Grok team seat checkout
+ * ($35 per seat per month, 1-5 seats, Pro and Elite members only; the ThriveCart bump would not save on 2026-11-09). Until ALL THREE are filled in the packages page shows the
  * waitlist and nothing can be bought. Once they are, every element marked
  * class="wl-only" hides, every element marked class="live-only" shows, and each [data-checkout]
  * button points at its checkout link with the visitor's remembered code put where ThriveCart reads it.
@@ -29,7 +29,7 @@
  */
 (function () {
   var APPLY_URL = "";
-  var CHECKOUT = { starter: "https://wardconsultingai.thrivecart.com/grow-with-ai-starter/", pro: "https://wardconsultingai.thrivecart.com/grow-with-ai-pro/", elite: "https://wardconsultingai.thrivecart.com/grow-with-ai-elite/" };
+  var CHECKOUT = { starter: "https://wardconsultingai.thrivecart.com/grow-with-ai-starter/", pro: "https://wardconsultingai.thrivecart.com/grow-with-ai-pro/", elite: "https://wardconsultingai.thrivecart.com/grow-with-ai-elite/", seat: "https://wardconsultingai.thrivecart.com/grok-team-seat/" };
   var KEY = "wc_ref", DAYS = 90;
 
   function clean(v) { return (v || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 40); }
