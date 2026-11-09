@@ -29,7 +29,7 @@
  */
 (function () {
   var APPLY_URL = "";
-  var CHECKOUT = { starter: "", pro: "", elite: "" };
+  var CHECKOUT = { starter: "https://wardconsultingai.thrivecart.com/grow-with-ai-starter/", pro: "https://wardconsultingai.thrivecart.com/grow-with-ai-pro/", elite: "https://wardconsultingai.thrivecart.com/grow-with-ai-elite/" };
   var KEY = "wc_ref", DAYS = 90;
 
   function clean(v) { return (v || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 40); }
