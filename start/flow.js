@@ -59,6 +59,7 @@ var Q = {
   s9: { sec: 2, d: 3, type: "multi", all: true, text: "What should AI never do without asking you first?", help: "All are ticked to start. Untick only what you're happy for it to do on its own.", options: [{ v: "send", label: "Send emails or texts" }, { v: "spend", label: "Spend money" }, { v: "prices", label: "Change prices" }, { v: "contact", label: "Contact customers" }, { v: "delete", label: "Delete anything" }, { v: "site", label: "Change my website or settings" }, { v: "connect", label: "Connect my accounts" }] },
   s10: { sec: 2, d: 4, type: "single", text: "How do you want to start?", options: [{ v: "free", label: "Free, no new costs" }, { v: "pay", label: "I'll pay about $20 to $30 a month so the AI can connect to my email and calendar" }, { v: "unsure", label: "Not sure yet" }] }
 };
+var OTHER_MAX = 200; /* longest "Something else" answer kept */
 var SURVEY_TOTAL = 10, DETAIL_TOTAL = 4;
 function labelOf(id, v) { var o = (Q[id].options || []).filter(function (x) { return x.v === v; })[0]; return o ? o.label : v; }
 function labelsOf(id) { return (A[id] || []).map(function (v) { return labelOf(id, v); }); }
@@ -315,15 +316,19 @@ function ask(h, s) {
     });
     h.appendChild(ul);
     var showOther = function () {
-      if (otherBox) { otherBox.querySelector("input").focus(); return; }
+      if (otherBox) { otherBox.querySelector("textarea").focus(); return; }
       otherBox = el("div", { class: "otherbox" });
       var lab = el("label", { class: "fl", for: s.id + "-other" }, "In a few words:");
-      var inp = el("input", { id: s.id + "-other", type: "text", maxlength: "60", autocomplete: "off", placeholder: q.ph || "" });
+      /* A short multi-line box: room to see the whole answer on a phone, and a counter so nothing is cut off unseen. */
+      var inp = el("textarea", { id: s.id + "-other", rows: "3", maxlength: String(OTHER_MAX), autocomplete: "off", placeholder: q.ph || "", "aria-describedby": s.id + "-other-count" });
       inp.value = A[s.id + "_text"] || "";
-      otherBox.appendChild(lab); otherBox.appendChild(inp); h.appendChild(otherBox);
-      var ob = navRow(otherBox, function () { var v = inp.value.trim().slice(0, 60); if (!v) return; A[s.id + "_text"] = v; save(); thanks(ack(), next); }, !!inp.value.trim());
-      inp.addEventListener("input", function () { ob.disabled = !inp.value.trim(); });
-      inp.addEventListener("keydown", function (e) { if (e.key === "Enter") ob.click(); });
+      var cnt = el("p", { class: "help count", id: s.id + "-other-count", "aria-live": "polite" });
+      otherBox.appendChild(lab); otherBox.appendChild(inp); otherBox.appendChild(cnt); h.appendChild(otherBox);
+      var ob = navRow(otherBox, function () { var v = inp.value.replace(/\s+/g, " ").trim().slice(0, OTHER_MAX); if (!v) return; A[s.id + "_text"] = v; save(); thanks(ack(), next); }, !!inp.value.trim());
+      var grow = function () { inp.style.height = "auto"; inp.style.height = inp.scrollHeight + 2 + "px"; var left = OTHER_MAX - inp.value.length; cnt.textContent = left <= 40 ? left + " characters left" : ""; };
+      inp.addEventListener("input", function () { ob.disabled = !inp.value.trim(); grow(); });
+      inp.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ob.click(); } });
+      grow();
       inp.focus();
     };
     if (q.other && A[s.id] === q.other) showOther();
