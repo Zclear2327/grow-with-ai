@@ -94,6 +94,10 @@ function usesTools() { return (A.s6 || []).some(function (v) { return CONNECT_TO
 /* Chris, Nov 6: "set people up only on grok for now". Everyone gets the Grok track. The Claude branch
    below stays in the code (unused) so it can come back with one change. */
 var GROK_ONLY = true;
+// TEAM_SEAT: people get a seat on the Ward Consulting AI Grok Business team instead of their own Grok account
+// (Chris, 2026-11-09, "Do it anyway" after being told xAI's Enterprise Terms limit seats to people working on our behalf).
+// Set to false to go back to "use your own Grok account".
+var TEAM_SEAT = true;
 function baseTrack() {
   if (GROK_ONLY) return "grok";
   if (!A.q4a || A.q4a === "phone") return "grok";
@@ -526,6 +530,54 @@ var STEPS = {
     ]
   }
 };
+// Team seat: replaces the "make your own account" steps (TEAM_SEAT above).
+var SEAT_STEPS = {
+  phone: [
+    ["Ask for your team seat in the box above. We send the invite by hand, usually within 1 business day.", "“Request sent” in the box above"],
+    ["Open the invite email from xAI on your phone and tap the button to join the Ward Consulting AI team.", "a page saying you joined the team"],
+    ["Open the App Store (iPhone) or Google Play (Android), search “Grok”, check it's the official app from xAI, and install it. It's free.", "the Grok app on your phone"],
+    ["Open the app and sign in with the same email the invite went to. You type your own codes.", "the chat box, with the team's name in your account"],
+    ["Tap “Copy my email helper” below, paste it into the chat, and send.", "your free email helper say “Hi, I'm here”"],
+    ["Send a screenshot of your inbox list when it asks.", "your inbox sorted into groups"]
+  ],
+  computer: [
+    ["Ask for your team seat in the box above. We send the invite by hand, usually within 1 business day.", "“Request sent” in the box above"],
+    ["Open the invite email from xAI and click the button to join the Ward Consulting AI team.", "a page saying you joined the team"],
+    ["Open grok.com and sign in with the same email the invite went to. You type your own codes.", "the chat box, with the team's name in your account", "https://grok.com"],
+    ["Tap “Copy my email helper” below, paste it into the chat, and send.", "your free email helper say “Hi, I'm here”"],
+    ["Send a screenshot of your inbox list when it asks.", "your inbox sorted into groups"]
+  ]
+};
+if (TEAM_SEAT) STEPS.grok = SEAT_STEPS;
+
+function seatBox(h) { // the seat request: one email, sent to us so we can invite it from the xAI console
+  var box = el("div", { class: "note cost" });
+  var bh = el("p"); bh.appendChild(el("strong", null, "Step 1: get your seat on our Grok team")); box.appendChild(bh);
+  box.appendChild(el("p", { class: "help", style: "margin:0 0 10px" }, "Type the email you want to use with Grok. We send an invite to it from xAI. Use your work email if you have one."));
+  var f = el("form", { novalidate: "novalidate" });
+  var l = el("label", { class: "fl", for: "seatem" }, "Email for your Grok seat"); var em = el("input", { id: "seatem", type: "email", autocomplete: "email", required: "required" });
+  if (A.seatEmail) em.value = A.seatEmail;
+  var cons = el("label", { class: "opt", style: "margin-top:12px" }); var cb = el("input", { type: "checkbox", id: "seatok" });
+  var cl = el("span", { class: "lab" }, "Add me to the Ward Consulting AI Grok team. I understand Ward Consulting AI runs the team and can remove my seat. ");
+  cl.appendChild(el("a", { href: "../security/#team-seat" }, "How the team seat works"));
+  cons.appendChild(cb); cons.appendChild(cl);
+  var send = el("button", { class: "go", type: "submit", style: "margin-top:14px" }, A.seatSent ? "Send it again" : "Request my seat");
+  var msg = el("p", { class: "help", role: "status", "aria-live": "polite" }, A.seatSent ? "Request sent for " + A.seatEmail + ". Watch for an email from xAI." : "");
+  [l, em, cons, send, msg].forEach(function (n) { f.appendChild(n); }); box.appendChild(f);
+  f.onsubmit = function (ev) {
+    ev.preventDefault(); var v = (em.value || "").trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg.textContent = "That email doesn't look right. Check it and try again."; em.focus(); return; }
+    if (!cb.checked) { msg.textContent = "Tick the box so we can add you to the team."; cb.focus(); return; }
+    send.disabled = true; msg.textContent = "Sending…";
+    // not a marketing sign-up: the box covers the team seat only, so it stays off Mailchimp
+    var lead = { email: v, firstname: A.nm || "", list: "grok-team-seat", consent: false, noMarketing: true, extra: { seat_ok: "yes", trainer: trainer(), device: A.q4a || "" }, subject: "Grok team seat request (" + v + ")" };
+    window.GWAILead.send(lead)
+      .then(function () { A.seatEmail = v; A.seatSent = true; save(); send.disabled = false; msg.textContent = "Request sent for " + v + ". Watch for an email from xAI, usually within 1 business day. Then tap “I did it” on step 1 below."; })
+      .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Try again in a minute, or: "; msg.appendChild(window.GWAILead.fallbackLink(lead)); });
+  };
+  h.appendChild(box);
+}
+
 STEPS.grokbot = {
   computer: [
     ["Open the official Grok Bot download page and download the app for your Mac or Windows computer.", "the app downloading", "https://cursor.com/download/bot"],
@@ -544,7 +596,7 @@ STEPS.grokbot = {
 };
 var COST = {
   grokbot: "Our setup is free. Grok Bot is paid: it needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it). It connects to your inbox directly, so there are no screenshots to send. Rather start free? Tap \u201cStart free with Grok instead\u201d.",
-  grok: "Our setup is free, and Grok has a free plan. Start at grok.com or in the free Grok app: send a screenshot of your inbox and get your first sorted list. Optional upgrade: Grok Bot can connect to your inbox directly. It needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it).",
+  grok: TEAM_SEAT ? "Our setup is free, and so is your Grok seat for now: we add you to the Ward Consulting AI Grok team, so you don't need your own Grok plan. Send a screenshot of your inbox and get your first sorted list. Optional upgrade: Grok Bot can connect to your inbox directly. It needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it)." : "Our setup is free, and Grok has a free plan. Start at grok.com or in the free Grok app: send a screenshot of your inbox and get your first sorted list. Optional upgrade: Grok Bot can connect to your inbox directly. It needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it).",
   claude: "Our setup is free, and Claude has a free plan. On Free, you can send a screenshot of your inbox, or connect Gmail or a Microsoft 365 work account (your admin may need to approve Microsoft 365 once). For Claude in Chrome, which can do the clicks you approve, you need Claude Pro, about $20 a month ($17 billed yearly), paid to Anthropic. Optional."
 };
 var UPGRADE = {
@@ -594,7 +646,7 @@ function result(h) {
   cost.appendChild(el("p", null, COST[tk]));
   cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing."));
   h.appendChild(cost);
-
+  if (TEAM_SEAT && tk === "grok") seatBox(h);
 
   var list = STEPS[tk][cur], done = A.done || 0;
   var ol = el("ol", { class: "isteps" });
@@ -612,6 +664,7 @@ function result(h) {
   });
   h.appendChild(ol);
   if (tk === "grok" && cur === "computer") h.appendChild(el("p", { class: "help" }, "Grok doesn't need a desktop app; it runs in your browser at grok.com."));
+  if (TEAM_SEAT && tk === "grok") h.appendChild(el("p", { class: "help" }, "No invite after 1 business day? Check spam for an email from xAI, then email hello@wardconsulting.ai with the address you used."));
   if (done >= list.length) h.appendChild(el("p", { class: "flash small", role: "status" }, "Nice work. Your free email helper is set up."));
 
   var up = el("details", { class: "stuck" });

@@ -195,12 +195,12 @@ window.SLOT_QUESTIONS = [
     q: "Whose AI account do you use with Grow With AI?",
     choices: [
       "A shared company login that everyone uses.",
-      "Your own free Grok account. Paid upgrades to X are optional.",
+      "A seat on the Ward Consulting AI Grok team, signed in with your own email. Paid upgrades to X are optional.",
       "You do not need an account of any kind.",
       "Only a special Grow With AI password, not Grok."
     ],
     correct: 1,
-    teach: "You use your own Grok account. Grow With AI’s setup is separate. Optional paid plans such as Grok Bot are paid to X, not required to start."
+    teach: "We add you to our Grok team, and you sign in with your own email. Never share your sign-in. Optional paid plans such as Grok Bot are paid to X, not required to start."
   },
   {
     id: "free-plan",
@@ -260,11 +260,11 @@ window.SLOT_QUESTIONS = [
     q: "Grow With AI’s free step-by-step trainer works two ways. What are they?",
     choices: [
       "Python and Java.",
-      "Free Grok, or the paid Grok Bot app. The steps are the same.",
+      "Your Grok team seat, or the paid Grok Bot app. The steps are the same.",
       "A paid path only, with no free option.",
       "A path for phones and a separate path that does not exist yet."
     ],
     correct: 1,
-    teach: "The Grok trainer is at /train/grok/. On free Grok you follow the steps on grok.com or the Grok app. If you pay for Grok Bot, you do the same steps in the Grok Bot app."
+    teach: "The Grok trainer is at /train/grok/. On your team seat you follow the steps on grok.com or the Grok app. If you pay for Grok Bot, you do the same steps in the Grok Bot app."
   }
 ];
