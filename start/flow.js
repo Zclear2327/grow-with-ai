@@ -54,7 +54,7 @@ var Q = {
   q4b: { sec: 1, n: 9, type: "single", text: "Which web browser do you use?", options: [{ v: "chrome", label: "Chrome" }, { v: "edge", label: "Edge" }, { v: "safari", label: "Safari" }, { v: "other", label: "Other / not sure" }] },
   talk: { sec: 1, n: 9, type: "single", text: "Would you rather type or talk to it?", options: [{ v: "type", label: "Type" }, { v: "speak", label: "Talk out loud" }, { v: "both", label: "Both" }] },
   win: { sec: 1, n: 10, type: "single", text: "What would a useful first result look like?", other: "other", ph: "In a few words", options: [{ v: "inbox", label: "My inbox sorted" }, { v: "reply", label: "A customer reply drafted" }, { v: "week", label: "My week planned" }, { v: "quote", label: "A quote or invoice drafted" }, { v: "post", label: "A social post drafted" }, { v: "other", label: "Something else" }] },
-  q3: { sec: 2, d: 1, type: "single", text: "Where does your work email live?", help: "Not sure? Check the address you send email from. Ending in @gmail.com means Gmail.", options: EMAIL_OPTS },
+  q3: { sec: 2, d: 1, type: "single", other: "other", ph: "For example: Yahoo, iCloud or my company's own email", text: "Where does your work email live?", help: "Not sure? Check the address you send email from. Ending in @gmail.com means Gmail.", options: EMAIL_OPTS },
   s6: { sec: 2, d: 2, type: "multi", text: "What do you run the business on?", help: "Pick all that apply.", options: [{ v: "google", label: "Google (Gmail, Calendar, Sheets)" }, { v: "m365", label: "Microsoft 365" }, { v: "quickbooks", label: "QuickBooks" }, { v: "square", label: "Square or Shopify" }, { v: "crm", label: "A customer list app (CRM)" }, { v: "paper", label: "Paper or a whiteboard" }] },
   s9: { sec: 2, d: 3, type: "multi", all: true, text: "What should AI never do without asking you first?", help: "All are ticked to start. Untick only what you're happy for it to do on its own.", options: [{ v: "send", label: "Send emails or texts" }, { v: "spend", label: "Spend money" }, { v: "prices", label: "Change prices" }, { v: "contact", label: "Contact customers" }, { v: "delete", label: "Delete anything" }, { v: "site", label: "Change my website or settings" }, { v: "connect", label: "Connect my accounts" }] },
   s10: { sec: 2, d: 4, type: "single", text: "How do you want to start?", options: [{ v: "free", label: "Free, no new costs" }, { v: "pay", label: "I'll pay about $20 to $30 a month so the AI can connect to my email and calendar" }, { v: "unsure", label: "Not sure yet" }] }
@@ -402,6 +402,7 @@ function handoff(h) {
 }
 
 var EMAIL_NAME = { gmail: "Gmail", m365: "Microsoft 365 work email", outlookcom: "Outlook.com", other: "your email" };
+function emailName() { return (A.q3 === "other" && A.q3_text) || EMAIL_NAME[emailType()] || "your email"; }
 var DEVICE_NAME = { mac: "a Mac", windows: "a Windows computer", phone: "your phone" };
 function lower1(s) { s = (s || "").replace(/[.!\s]+$/, ""); return s.charAt(0).toLowerCase() + s.slice(1); }
 function short(s, n) { s = s || ""; return s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : s; }
@@ -413,7 +414,7 @@ function reflect(h) {
   var wk = labelsOf("s4").map(lower1);
   h.appendChild(el("h1", null, "So you run " + short(bizLabel(), 60) + (sizeLabel() ? ", " + sizeLabel() : "") + ". " +
     (wk.length ? joinAnd(wk).charAt(0).toUpperCase() + joinAnd(wk).slice(1) + " take" + (wk.length > 1 ? "" : "s") + " up too much of your week. " : "") +
-    "You're on " + (EMAIL_NAME[emailType()] || "your email") + " and " + (DEVICE_NAME[A.q4a] || "your computer") + ". Got it."));
+    "You're on " + emailName() + " and " + (DEVICE_NAME[A.q4a] || "your computer") + ". Got it."));
   h.appendChild(el("p", null, "Here's the simplest way to get your inbox sorted."));
   navRow(h, next, true, "Show me");
 }
