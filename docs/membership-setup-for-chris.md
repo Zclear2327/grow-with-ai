@@ -15,9 +15,15 @@ in ThriveCart, which no agent can sign in to. The site side is ready and waits f
 2. Put the four paid agents in it: Pro and Elite get all 4; Starter gets the 1 the buyer picks.
 3. Link each product to its member area, with access removed on cancel and on a failed payment.
 4. Elite: set it up for up to 20 seats (team or quantity), so each person gets their own login.
-5. Copy the member-area login address and send it to Spider-Man; it goes into `MEMBER_LOGIN_URL`.
-6. Set the refund policy to match `/refund/` (7 days on the first payment).
-7. Test with a real card: buy, log in, refund, cancel, and check access ends.
+   These are Grow With AI member logins, not Grok team seats.
+5. Prices (Chris, 2026-11-09): Starter $29.99/month, Pro $99.99/month, Elite $249/month.
+6. Create a "Grok team seat" add-on product at $35/month, quantity = number of seats (one seat per person).
+   Offer it only to Pro and Elite buyers (a bump or upsell on those two checkouts), not on Starter or Free.
+   We send each seat's xAI invite by hand, usually within 1 business day, and remove the seat when the plan
+   ends or the add-on is cancelled. Terms: `/terms/#team-seat`.
+7. Copy the member-area login address and send it to Spider-Man; it goes into `MEMBER_LOGIN_URL`.
+8. Set the refund policy to match `/refund/` (7 days on the first payment; seat charges follow the same terms).
+9. Test with a real card: buy, log in, refund, cancel, and check access ends.
 
 ## Weekly sign-up cap (item H)
 `start/capacity.js` has one setting: `mode: "open"` runs the setup flow; `mode: "waitlist"` shows the

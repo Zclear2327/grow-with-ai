@@ -16,8 +16,9 @@
  * empty, every "Apply" button opens an email to hello@wardconsulting.ai instead, so the page works
  * on day one.
  *
- * CHECKOUT: paste each package's ThriveCart checkout link here (Starter $29.99/month, Pro $49/month,
- * Elite $149/month; Free has no checkout). Until ALL THREE are filled in the packages page shows the
+ * CHECKOUT: paste each package's ThriveCart checkout link here (Starter $29.99/month, Pro $99.99/month,
+ * Elite $249/month; Free has no checkout). A 4th checkout is coming: the Grok team seat add-on
+ * ($35 per seat per month, Pro and Elite only); it has no key below yet. Until ALL THREE are filled in the packages page shows the
  * waitlist and nothing can be bought. Once they are, every element marked
  * class="wl-only" hides, every element marked class="live-only" shows, and each [data-checkout]
  * button points at its checkout link with the visitor's remembered code put where ThriveCart reads it.
