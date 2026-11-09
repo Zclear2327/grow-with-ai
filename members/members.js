@@ -3,6 +3,9 @@
    where each person has their own login and access ends on cancel or a failed payment (v6, item B).
    The old shared unlock codes are RETIRED: no code entry on this page any more. */
 var MEMBER_LOGIN_URL = ""; // TODO Chris: ThriveCart Learn login URL
+// Agent server (Zclear2327/ward-agent-server). Paste its address here once it's live, e.g. "https://agents.wardconsulting.ai".
+// While empty, nothing about the connector shows on this page.
+var CONNECTOR_BASE = "";
 (function () {
 "use strict";
 var KEY = "gwai-members-v1";
@@ -98,8 +101,28 @@ function bindChoices() {
   });
 }
 
+function connectPanel(host) {
+  var url = CONNECTOR_BASE.replace(/\/+$/, "") + "/mcp";
+  var box = el("div", { class: "connect" });
+  box.appendChild(el("p", null, "Connect your agents to the AI app you already use. Add this one address as a custom connector, then sign in with your email. Paid agents follow your plan, and the free ones always work."));
+  var lab = el("label", { for: "connurl" }, "Connector address");
+  var inp = el("input", { id: "connurl", readonly: "readonly", value: url });
+  inp.addEventListener("focus", function () { inp.select(); });
+  var copy = el("button", { type: "button", class: "btn" }, "Copy address");
+  var msg = el("span", { class: "msg", role: "status", "aria-live": "polite" }, "");
+  copy.onclick = function () {
+    var done = function () { msg.textContent = "Copied."; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { inp.focus(); inp.select(); msg.textContent = "Press Ctrl+C (or Cmd+C) to copy."; });
+    else { inp.focus(); inp.select(); msg.textContent = "Press Ctrl+C (or Cmd+C) to copy."; }
+  };
+  [lab, inp, copy, msg].forEach(function (n) { box.appendChild(n); });
+  box.appendChild(el("a", { class: "btn primary", href: CONNECTOR_BASE.replace(/\/+$/, "") + "/connect", target: "_blank", rel: "noopener" }, "Step-by-step: connect your AI app"));
+  host.appendChild(box);
+}
+
 function loginPanel() {
   var host = document.getElementById("login"); if (!host) return; host.innerHTML = "";
+  if (CONNECTOR_BASE) { connectPanel(host); return; }
   if (MEMBER_LOGIN_URL) host.appendChild(el("a", { class: "btn primary", href: MEMBER_LOGIN_URL }, "Log in to your member area"));
   else host.appendChild(el("p", { class: "msg" }, "Member area opens at launch. Bought already? Check your welcome email."));
 }
