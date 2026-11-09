@@ -609,6 +609,22 @@ function deviceKey(tr, dev) {
   return dev || "windows";
 }
 
+// Counts a finished setup once per browser: a GoatCounter event (when on) and a short note to the form inbox.
+// No email, name or answers are sent; only the track, device, trainer and site.
+function logFinish(tr, site) {
+  if (meta.finishLogged) return;
+  meta.finishLogged = Date.now(); save();
+  if (window.wcCount) window.wcCount("setup-finished");
+  try {
+    var b = new FormData();
+    b.append("list", "setup-finished"); b.append("track", tr); b.append("device", A.q4a || ""); b.append("trainer", trainer());
+    b.append("site", site); b.append("page_url", location.href);
+    b.append("_subject", "Setup finished (" + site + ", " + tr + ", " + (A.q4a || "device not given") + ")");
+    b.append("_template", "table"); b.append("_honey", "");
+    fetch(CFG.form_endpoint, { method: "POST", body: b, headers: { Accept: "application/json" } }).catch(function () {});
+  } catch (e) {}
+}
+
 function result(h) {
   var tr = track(), name = trainer(), dev = A.viewDevice || A.q4a || "windows";
   // device tabs and the video come first; the steps and details sit under the video (Chris, Nov 5)
@@ -633,6 +649,7 @@ function result(h) {
   h.appendChild(el("h1", null, "Let's get your inbox sorted."));
   h.appendChild(el("p", { class: "help why" }, whyTrack(tr)));
   if (meta.finished !== tr) { meta.finished = tr; save(); }
+  logFinish(tr, "growwithai");
   var sw = el("button", { class: "back", type: "button" }, "Prefer " + (tr === "grok" ? "Claude, the power path" : "Grok, the easy path") + "? Switch");
   sw.onclick = function () { A.switched = !A.switched; delete A.done; save(); render(); };
   if (!GROK_ONLY) h.appendChild(sw);
