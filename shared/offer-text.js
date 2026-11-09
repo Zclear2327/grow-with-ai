@@ -10,7 +10,7 @@ var OFFER_TEXT = {
     V2: "Founding purchases follow our standard policy: a full refund if you ask within 7 days of your first payment."
   },
   "renewal": {
-    R1: "After your included Pro months, Pro renews at $49/month unless you cancel. We'll email you 30 days before. Cancel anytime by emailing hello@wardconsulting.ai or from the billing link in your receipt email; it takes effect at the end of the paid period.",
+    R1: "After your included Pro months, Pro renews at $99.99/month unless you cancel. We'll email you 30 days before. Cancel anytime by emailing hello@wardconsulting.ai or from the billing link in your receipt email; it takes effect at the end of the paid period.",
     R2: "Pro ends after your included months. Nothing renews unless you choose to."
   }
 };

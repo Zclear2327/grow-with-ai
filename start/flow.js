@@ -95,10 +95,10 @@ function usesTools() { return (A.s6 || []).some(function (v) { return CONNECT_TO
 /* Chris, Nov 6: "set people up only on grok for now". Everyone gets the Grok track. The Claude branch
    below stays in the code (unused) so it can come back with one change. */
 var GROK_ONLY = true;
-// TEAM_SEAT: people get a seat on the Ward Consulting AI Grok Business team instead of their own Grok account
-// (Chris, 2026-11-09, "Do it anyway" after being told xAI's Enterprise Terms limit seats to people working on our behalf).
-// Set to false to go back to "use your own Grok account".
-var TEAM_SEAT = true;
+// TEAM_SEAT: when true, free setup users get a seat on the Ward Consulting AI Grok Business team instead of their own Grok account.
+// Chris, 2026-11-09: Grok team seats are now a $35/seat add-on for Pro ($99.99) and Elite only; free setup users use
+// their own free Grok account. So this stays false. Set to true only to bring back the seat request box on this page.
+var TEAM_SEAT = false;
 function baseTrack() {
   if (GROK_ONLY) return "grok";
   if (!A.q4a || A.q4a === "phone") return "grok";
@@ -602,7 +602,7 @@ STEPS.grokbot = {
 };
 var COST = {
   grokbot: "Our setup is free. Grok Bot is paid: it needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it). It connects to your inbox directly, so there are no screenshots to send. Rather start free? Tap \u201cStart free with Grok instead\u201d.",
-  grok: TEAM_SEAT ? "Our setup is free, and so is your Grok seat for now: we add you to the Ward Consulting AI Grok team, so you don't need your own Grok plan. Send a screenshot of your inbox and get your first sorted list. Optional upgrade: Grok Bot can connect to your inbox directly. It needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it)." : "Our setup is free, and Grok has a free plan. Start at grok.com or in the free Grok app: send a screenshot of your inbox and get your first sorted list. Optional upgrade: Grok Bot can connect to your inbox directly. It needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it).",
+  grok: TEAM_SEAT ? "Our setup is free. Your seat on the Ward Consulting AI Grok team is a $35 a month add-on for Pro and Elite members. Send a screenshot of your inbox and get your first sorted list. Optional upgrade: Grok Bot can connect to your inbox directly. It needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it)." : "Our setup is free, and Grok has a free plan. Start at grok.com or in the free Grok app: send a screenshot of your inbox and get your first sorted list. Optional upgrade: Grok Bot can connect to your inbox directly. It needs X Premium, about $30 a month, paid to X (the $8 Plus plan doesn't include it).",
   claude: "Our setup is free, and Claude has a free plan. On Free, you can send a screenshot of your inbox, or connect Gmail or a Microsoft 365 work account (your admin may need to approve Microsoft 365 once). For Claude in Chrome, which can do the clicks you approve, you need Claude Pro, about $20 a month ($17 billed yearly), paid to Anthropic. Optional."
 };
 var UPGRADE = {
@@ -668,6 +668,7 @@ function result(h) {
   var cost = el("div", { class: "note cost" });
   cost.appendChild(el("p", null, COST[tk]));
   cost.appendChild(el("p", { class: "help", style: "margin:0" }, "Prices as of October 2026. Check x.ai/pricing."));
+  if (tk === "grok") { var sp = el("p", { class: "help", style: "margin:0" }, "Pro and Elite members can add a seat on our Grok team for $35 a month. "); sp.appendChild(el("a", { href: "../packages/" }, "See plans")); cost.appendChild(sp); }
   h.appendChild(cost);
   if (TEAM_SEAT && tk === "grok") seatBox(h);
 

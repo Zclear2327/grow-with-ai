@@ -87,7 +87,7 @@ function render() {
   });
   var how = document.getElementById("how"); how.innerHTML = "";
   (state.tool === "grok"
-    ? ["Tap “Copy this agent”.", "Open Grok, signed in to your team seat, and start a new chat (grok.com or the free Grok app), or Grok Bot (optional, desktop app from cursor.com/download/bot or the Grok Bot phone app).", "Paste and send. Your trainer says “Hi, I'm here.”", "Use one chat per agent so they don't get mixed up."]
+    ? ["Tap “Copy this agent”.", "Open Grok, signed in to your Grok account (or your team seat), and start a new chat (grok.com or the free Grok app), or Grok Bot (optional, desktop app from cursor.com/download/bot or the Grok Bot phone app).", "Paste and send. Your trainer says “Hi, I'm here.”", "Use one chat per agent so they don't get mixed up."]
     : ["Tap “Copy this agent”.", "On a computer: in Claude, click Projects, then New project, name it after the agent, and paste into “Set project instructions”. On a phone: paste into a new chat.", "Start a chat in that project and say hello. Your trainer says “Hi, I'm here.”", "One project per agent keeps them separate."]
   ).forEach(function (t) { how.appendChild(el("li", null, t)); });
 }
