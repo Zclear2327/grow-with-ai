@@ -52,6 +52,17 @@
 .check li{font-size:18px;padding:8px 0;border-bottom:1px solid var(--rule)}
 .check li::before{content:"\2713  ";color:var(--good);font-weight:700}
 .preview{background:var(--panel);border:1px solid var(--brass);padding:10px 14px;font-size:15px;margin:0 0 18px}
+/* ship "mission" moments between parts of the training */
+.mission{border:0;padding:0;width:min(760px,calc(100vw - 24px));max-height:calc(100svh - 24px);background:#070B10;color:#F2F5F3;border-radius:6px;overflow:auto}
+.mission::backdrop{background:rgba(4,8,14,.82)}
+.mission video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.mission .m-body{padding:20px 22px 22px}
+.mission .m-tag{font:700 13px/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:#E6C27A;margin:0 0 6px}
+.mission h2{font-family:var(--display);font-weight:700;font-size:clamp(22px,4.5vw,28px);line-height:1.2;margin:0 0 8px}
+.mission p{margin:0 0 16px;font-size:17px;color:#C9D4CF}
+.mission .m-cap{font-size:13px;color:#93A19A;margin:12px 0 0}
+.mission .btn{width:100%;min-height:52px;font-size:18px;background:#9FE3D0;color:#06100C;border:0;border-radius:2px;font-weight:700;cursor:pointer}
+.mission .btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
 </style>
 <link rel="stylesheet" href="../../shared/legal.css">
 <link rel="stylesheet" href="../../shared/console.css">
@@ -103,6 +114,17 @@
     </section>
   </main>
 </div>
+
+<dialog class="mission" id="mission" aria-labelledby="mTitle">
+  <video id="mVideo" playsinline controls preload="none"></video>
+  <div class="m-body">
+    <p class="m-tag" id="mTag"></p>
+    <h2 id="mTitle"></h2>
+    <p id="mText"></p>
+    <button type="button" class="btn" id="mGo">Continue</button>
+    <p class="m-cap">AI-generated dramatization. Our ship, Grow With AI.</p>
+  </div>
+</dialog>
 
 <script src="../../shared/blanks.js"></script>
 <script>
@@ -290,7 +312,35 @@
     if (focus) { $("title").focus(); window.scrollTo(0, 0); }
   }
 
-  $("next").addEventListener("click", function () { i = i >= STEPS.length ? 0 : i + 1; save(i); render(true); });
+  // Ship "mission" moments: finishing step 8, step 15 and the last step plays one short ship clip, once per visitor.
+  var MISSIONS = {
+    8: { id: "1", tag: "Mission stage 1 complete", title: "Setup is done. The first booster drops away.", text: "Grok is on your computer and your phone. Next, you teach it to work for you.", mp4: "../../media/train-grok/mission-1-boosters.mp4", poster: "../../media/train-grok/mission-1-boosters-poster.jpg" },
+    15: { id: "2", tag: "Mission stage 2 complete", title: "Your agent is on board. Ready for hyper speed.", text: "Grok knows about you and your business now. Next, you put it to work this week.", mp4: "../../media/train-grok/mission-2-hyperspeed.mp4", poster: "../../media/train-grok/mission-2-hyperspeed-poster.jpg" },
+    20: { id: "3", tag: "Mission complete", title: "You made the jump. You choose where it goes next.", text: "You set up Grok and used it on real work. That's the whole training.", mp4: "../../media/train-grok/mission-3-arrival.mp4", poster: "../../media/train-grok/mission-3-arrival-poster.jpg" }
+  };
+  var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function seen(id) { try { return localStorage.getItem("gwa_mission_" + id) === "1"; } catch (e) { return false; } }
+  function markSeen(id) { try { localStorage.setItem("gwa_mission_" + id, "1"); } catch (e) {} }
+  function mission(stepDone, after) {
+    var m = MISSIONS[stepDone], d = $("mission");
+    if (!m || seen(m.id) || !d || typeof d.showModal !== "function") { after(); return; }
+    markSeen(m.id);
+    var v = $("mVideo");
+    $("mTag").textContent = m.tag; $("mTitle").textContent = m.title; $("mText").textContent = m.text;
+    v.poster = m.poster; v.src = m.mp4; v.setAttribute("aria-label", "Ship film: " + m.title);
+    var close = function () { v.pause(); d.close(); };
+    $("mGo").onclick = close;
+    d.addEventListener("close", function once() { d.removeEventListener("close", once); v.pause(); v.removeAttribute("src"); v.load(); after(); });
+    d.showModal(); $("mGo").focus();
+    if (window.wcCount) window.wcCount("mission-" + m.id);
+    if (!still) { v.muted = false; v.play().catch(function () { v.muted = true; v.play().catch(function () {}); }); }
+  }
+
+  $("next").addEventListener("click", function () {
+    var done = i + 1; // 1-based number of the step just finished
+    var go = function () { i = i >= STEPS.length ? 0 : i + 1; save(i); render(true); };
+    if (i < STEPS.length) { mission(done, go); } else { go(); }
+  });
   $("skip").addEventListener("click", function () { i = Math.min(i + 1, STEPS.length); save(i); render(true); });
   $("back").addEventListener("click", function () { i = Math.max(i - 1, 0); save(i); render(true); });
   render(false);
