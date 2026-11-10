@@ -756,19 +756,20 @@ function copy(txt, pre, btn) {
 }
 
 function capture(h, tr) {
-  h.appendChild(el("h2", null, "Want the steps by email and a check-in in a week?"));
+  h.appendChild(el("h2", null, "Want someone from our team to check in with you?"));
+  h.appendChild(el("p", { class: "help" }, "Your steps are already on this page. Leave your email and a person from Ward Consulting AI will email you to see how it's going. It isn't an automatic email."));
   var f = el("form", { novalidate: "novalidate" });
   var l1 = el("label", { class: "fl", for: "fn" }, "First name (optional)"); var fn = el("input", { id: "fn", type: "text", maxlength: "40", autocomplete: "given-name" });
   var l2 = el("label", { class: "fl", for: "em", style: "margin-top:12px" }, "Your email"); var em = el("input", { id: "em", type: "email", autocomplete: "email", required: "required" });
   var emNote = el("p", { class: "help", id: "em-note" }, "We use your email only to send your setup and updates. Unsubscribe anytime. "); emNote.appendChild(el("a", { href: "../privacy/" }, "Privacy")); em.setAttribute("aria-describedby", "em-note");
   var hp = el("input", { type: "text", name: "_honey", tabindex: "-1", "aria-hidden": "true", autocomplete: "off", style: "position:absolute;left:-9999px;width:1px;height:1px;opacity:0" });
   var cons = el("label", { class: "opt", style: "margin-top:12px" }); var cb = el("input", { type: "checkbox", id: "cons" });
-  cons.appendChild(cb); var cl = el("span", { class: "lab" }, window.GWAILead ? GWAILead.consentText + " " : "Email me the steps and one check-in a week from now. "); cl.appendChild(el("a", { href: "../privacy/" }, "Privacy")); cons.appendChild(cl);
+  cons.appendChild(cb); var cl = el("span", { class: "lab" }, window.GWAILead ? GWAILead.consentText + " " : "Yes, Ward Consulting AI may email me about my setup. "); cl.appendChild(el("a", { href: "../privacy/" }, "Privacy")); cons.appendChild(cl);
   var msg = el("p", { class: "help", role: "status", "aria-live": "polite" }, "");
-  var send = el("button", { class: "go", type: "submit", style: "margin-top:18px" }, "Send me the steps");
+  var send = el("button", { class: "go", type: "submit", style: "margin-top:18px" }, "Ask for a check-in");
   [l1, fn, l2, em, emNote, hp, cons, send, msg].forEach(function (n) { f.appendChild(n); });
   h.appendChild(f);
-  h.appendChild(el("p", { class: "help" }, "We'll send: your first name, email, track, trainer, device, email type and the 2 things that take your week. Nothing else. We don't sell or share your address."));
+  h.appendChild(el("p", { class: "help" }, "You're sending us: your first name, email, track, trainer, device, email type and the 2 things that take your week. Nothing else. We don't sell or share your address."));
   f.onsubmit = function (ev) {
     ev.preventDefault();
     var v = (em.value || "").trim();
@@ -780,7 +781,7 @@ function capture(h, tr) {
     var intake = "track: " + trackKey(tr) + "; trainer: " + trainer() + "; device: " + (A.q4a || "") + "; email type: " + (emailType() || "") + "; time sinks: " + labelsOf("s4").join(", ");
     var lead = { email: v, firstname: (fn.value || "").trim().slice(0, 40), list: "free-setup", gwai_intake: intake, consent: cb.checked, subject: "Free setup: " + tr + " (" + v + ")" };
     window.GWAILead.send(lead)
-      .then(function (j) { msg.textContent = j && j.unconfirmed ? "We sent it but couldn't confirm it arrived. If you don't hear from us in 1 business day, email hello@wardconsulting.ai. Your steps are on this page now." : "Received. Ward Consulting AI has your request. Your steps are on this page now, so you can start right away."; })
+      .then(function (j) { msg.textContent = j && j.unconfirmed ? "We sent it but couldn't confirm it arrived. If you don't hear from us in 1 business day, email hello@wardconsulting.ai. Your steps are on this page now." : "Received. Someone from Ward Consulting AI will email you. Your steps are on this page now, so you can start right away."; })
       .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Your answers are still here. Try again in a minute, or: "; msg.appendChild(window.GWAILead.fallbackLink(lead)); });
   };
 }
