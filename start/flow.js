@@ -299,13 +299,13 @@ function ask(h, s) {
     var otherBox = null;
     q.options.forEach(function (o) {
       var li = el("li");
-      var b = el("button", { class: "opt", type: "button", "aria-pressed": String(A[s.id] === o.v && (o.id ? A[s.id + "_either"] : !A[s.id + "_either"])) });
+      var b = el("button", { class: "opt", type: "button", "aria-pressed": String(o.id ? !!A[s.id + "_either"] : (A[s.id] === o.v && !A[s.id + "_either"])) });
       b.appendChild(el("span", { class: "tick", "aria-hidden": "true" }, "\u2713"));
       b.appendChild(el("span", { class: "lab" }, o.label));
       b.onclick = function () {
         var prevEmail = A.q3;
         A[s.id] = o.v; delete A[s.id + "_skipped"];
-        if (s.id === "q6") A.q6_either = !!o.id;
+        if (s.id === "q6") { A.q6_either = !!o.id; if (o.id) A.q6 = Math.random() < 0.5 ? "Sam" : "Travis"; } // "Either" = a fair coin, not always Sam
         if (s.id === "q3" && prevEmail !== o.v) { delete A.neKind; delete A.newEmail; }
         if (s.id === "q4a" && o.v === "phone") delete A.q4b;
         save();
