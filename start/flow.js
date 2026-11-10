@@ -24,7 +24,8 @@ document.getElementById("theme").onclick = function () {
 paintTheme();
 
 /* ---------- storage ---------- */
-function save() { try { localStorage.setItem(KEY, JSON.stringify({ A: A, step: step, meta: meta })); } catch (e) {} }
+var saveFailed = false; /* set when this browser refuses to store answers (private mode, full storage); shown on screen, never hidden */
+function save() { try { localStorage.setItem(KEY, JSON.stringify({ A: A, step: step, meta: meta })); saveFailed = false; } catch (e) { saveFailed = true; } }
 function restore() { try { var r = JSON.parse(localStorage.getItem(KEY) || "null"); if (r && r.A) { A = r.A; step = r.step || 0; meta = r.meta || meta; } } catch (e) {} }
 function clearAll() { try { localStorage.removeItem(KEY); } catch (e) {} A = {}; step = 0; meta = { backs: {}, hes: 0, reached: {} }; }
 
@@ -653,6 +654,8 @@ function result(h) {
   else if (tr === "grok") h.appendChild(el("p", { class: "help" }, "Video coming soon."));
   h.appendChild(el("p", { class: "who" }, "Your trainer: " + name + " · Your track: " + (tk === "grokbot" ? "Grok Bot (paid)" : tr === "grok" ? "Grok, the easy path" : "Claude, the power path")));
   h.appendChild(el("h1", null, "Let's get your inbox sorted."));
+  if (saveFailed) h.appendChild(el("p", { class: "note", role: "status" }, "We couldn't save your answers in this browser. Keep this page open while you finish. Your helper prompt and next step below still work."));
+  var jump = el("p", { class: "help" }); jump.appendChild(el("a", { href: "#helper" }, "Skip to your helper prompt")); h.appendChild(jump);
   h.appendChild(el("p", { class: "help why" }, whyTrack(tr)));
   if (meta.finished !== tr) { meta.finished = tr; save(); }
   logFinish(tr, "growwithai");
@@ -703,7 +706,7 @@ function result(h) {
   nextBox.appendChild(el("p", null, "Your first training task: step " + ft.n + ", " + ft.title + "."));
   nextBox.appendChild(el("a", { class: "linkbtn go", href: taskHref(tr, ft.n) }, "Open step " + ft.n + " of the " + (tr === "claude" ? "Claude" : "Grok") + " training"));
   h.appendChild(nextBox);
-  h.appendChild(el("h2", null, "Your free email helper (copy and paste)"));
+  h.appendChild(el("h2", { id: "helper" }, "Your free email helper (copy and paste)"));
   h.appendChild(el("p", { class: "help" }, "This box is the free email helper, not the training agent. We don't have a verified share link to the training agent, so that agent is not available from this page. Grok and Grok Bot are different apps; use the one your steps above are for."));
   h.appendChild(tr === "grok" ? vid("first-win-grok", "Video: your first win, with JR (21 seconds)") : vid("first-win", "Video: your first win (23 seconds)"));
   h.appendChild(el("p", { class: "help" }, "Copy this and paste it into " + (tk === "grokbot" ? "a new chat in your Grok Bot app." : tr === "grok" ? "a new Grok chat." : "your Claude project instructions, or a new Claude chat.")));
@@ -753,30 +756,32 @@ function copy(txt, pre, btn) {
 }
 
 function capture(h, tr) {
-  h.appendChild(el("h2", null, "Want the steps by email and a check-in in a week?"));
+  h.appendChild(el("h2", null, "Want someone from our team to check in with you?"));
+  h.appendChild(el("p", { class: "help" }, "Your steps are already on this page. Leave your email and a person from Ward Consulting AI will email you to see how it's going. It isn't an automatic email."));
   var f = el("form", { novalidate: "novalidate" });
   var l1 = el("label", { class: "fl", for: "fn" }, "First name (optional)"); var fn = el("input", { id: "fn", type: "text", maxlength: "40", autocomplete: "given-name" });
   var l2 = el("label", { class: "fl", for: "em", style: "margin-top:12px" }, "Your email"); var em = el("input", { id: "em", type: "email", autocomplete: "email", required: "required" });
   var emNote = el("p", { class: "help", id: "em-note" }, "We use your email only to send your setup and updates. Unsubscribe anytime. "); emNote.appendChild(el("a", { href: "../privacy/" }, "Privacy")); em.setAttribute("aria-describedby", "em-note");
   var hp = el("input", { type: "text", name: "_honey", tabindex: "-1", "aria-hidden": "true", autocomplete: "off", style: "position:absolute;left:-9999px;width:1px;height:1px;opacity:0" });
   var cons = el("label", { class: "opt", style: "margin-top:12px" }); var cb = el("input", { type: "checkbox", id: "cons" });
-  cons.appendChild(cb); var cl = el("span", { class: "lab" }, window.GWAILead ? GWAILead.consentText + " " : "Email me the steps and one check-in a week from now. "); cl.appendChild(el("a", { href: "../privacy/" }, "Privacy")); cons.appendChild(cl);
+  cons.appendChild(cb); var cl = el("span", { class: "lab" }, window.GWAILead ? GWAILead.consentText + " " : "Yes, Ward Consulting AI may email me about my setup. "); cl.appendChild(el("a", { href: "../privacy/" }, "Privacy")); cons.appendChild(cl);
   var msg = el("p", { class: "help", role: "status", "aria-live": "polite" }, "");
-  var send = el("button", { class: "go", type: "submit", style: "margin-top:18px" }, "Send me the steps");
+  var send = el("button", { class: "go", type: "submit", style: "margin-top:18px" }, "Ask for a check-in");
   [l1, fn, l2, em, emNote, hp, cons, send, msg].forEach(function (n) { f.appendChild(n); });
   h.appendChild(f);
-  h.appendChild(el("p", { class: "help" }, "We'll send: your first name, email, track, trainer, device, email type and the 2 things that take your week. Nothing else. We don't sell or share your address."));
+  h.appendChild(el("p", { class: "help" }, "You're sending us: your first name, email, track, trainer, device, email type and the 2 things that take your week. Nothing else. We don't sell or share your address."));
   f.onsubmit = function (ev) {
     ev.preventDefault();
     var v = (em.value || "").trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg.textContent = "That email doesn't look right. Check it and try again."; em.focus(); return; }
     if (!cb.checked) { msg.textContent = "Tick the box so we're allowed to email you."; cb.focus(); return; }
-    if (hp.value || (Date.now() - START) / 1000 < CFG.min_seconds_before_send) { msg.textContent = "Sent."; return; }
+    if (hp.value) { msg.textContent = "Not sent."; return; } // bots fill the hidden field
+    if ((Date.now() - START) / 1000 < CFG.min_seconds_before_send) { msg.textContent = "Not sent yet. Wait a few seconds and press the button again."; return; }
     send.disabled = true; msg.textContent = "Sending…";
     var intake = "track: " + trackKey(tr) + "; trainer: " + trainer() + "; device: " + (A.q4a || "") + "; email type: " + (emailType() || "") + "; time sinks: " + labelsOf("s4").join(", ");
     var lead = { email: v, firstname: (fn.value || "").trim().slice(0, 40), list: "free-setup", gwai_intake: intake, consent: cb.checked, subject: "Free setup: " + tr + " (" + v + ")" };
     window.GWAILead.send(lead)
-      .then(function () { msg.textContent = "Sent. Check your inbox for the steps."; })
+      .then(function (j) { msg.textContent = j && j.unconfirmed ? "We sent it but couldn't confirm it arrived. If you don't hear from us in 1 business day, email hello@wardconsulting.ai. Your steps are on this page now." : "Received. Someone from Ward Consulting AI will email you. Your steps are on this page now, so you can start right away."; })
       .catch(function (e) { send.disabled = false; msg.textContent = "That didn't go through (" + e.message + "). Your answers are still here. Try again in a minute, or: "; msg.appendChild(window.GWAILead.fallbackLink(lead)); });
   };
 }

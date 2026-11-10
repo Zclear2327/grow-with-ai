@@ -33,7 +33,8 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
       setTimeout(function () { if (!done) { delete window[cb]; no(new Error("mailchimp timed out")); } }, 10000);
     });
   }
-  /* send({ email, firstname, list, interest, gwai_intake, consent, subject }) -> Promise (resolves when the inbox has it) */
+  /* send({ email, firstname, list, interest, gwai_intake, consent, subject }) -> Promise. Resolves when the form service accepts it
+     (that is not proof the email reached the inbox); resolves { unconfirmed: true } when the reply could not be read. */
   function send(d) {
     var at = attrib(), f = { email: d.email, firstname: d.firstname || "", list: d.list || "", interest: d.interest || "",
       gwai_intake: d.gwai_intake || "", consent_casl: d.consent ? "true" : "false", consent_timestamp: d.consent ? new Date().toISOString() : "",
@@ -47,13 +48,14 @@ var MC_ACTION = ""; // TODO Chris: paste the Mailchimp embedded-form action URL
     b.append("mailchimp", MC_ACTION ? "added" : "not set up yet");
     b.append("_subject", d.subject || ("Lead: " + (d.list || "site") + " (" + d.email + ")"));
     b.append("_template", "table"); b.append("_honey", "");
-    // One automatic retry after 3 seconds: the form service sometimes drops a request ("Failed to fetch").
+    // No automatic retry: a request can arrive even when the reply is lost, so a retry could send it twice.
+    // The page keeps the button disabled while sending and lets the visitor try again by hand.
     function post() {
       return fetch(INBOX, { method: "POST", body: b, headers: { Accept: "application/json" } })
-        .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json().catch(function () { return {}; }); })
+        .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json().catch(function () { return { unconfirmed: true }; }); })
         .then(function (j) { if (j && (j.success === false || j.success === "false")) throw new Error(j.message || "not accepted"); return j; });
     }
-    var inbox = post().catch(function () { return new Promise(function (ok) { setTimeout(ok, 3000); }).then(post); });
+    var inbox = post();
     if (!MC_ACTION || !d.consent || d.noMarketing) return inbox; // noMarketing: e.g. Quebec, kept off the marketing list
     // Mailchimp is a second copy: a failure there is logged, never shown as a lost lead
     return Promise.all([inbox, mailchimp(d.email, d.firstname).catch(function (e) { console.warn(e.message); return null; })]).then(function (r) { return r[0]; });
