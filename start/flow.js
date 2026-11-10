@@ -1,6 +1,7 @@
 /* Grow With AI free setup flow.
    One question per screen. A formal setup voice asks; then the trainer (Sam or Travis) takes over.
-   Answers stay in this browser (localStorage) until the visitor chooses to send them.
+   Answers are kept in this browser (localStorage); when the questions are done they are sent to us once
+   (sendAnswers: never the name or email). Name and email are sent only if the visitor chooses to.
    Never asks for passwords, codes, card, bank or ID details. */
 (function () {
 "use strict";
@@ -454,7 +455,7 @@ function summary(h) {
   var tr = track(), ft = firstTask();
   h.appendChild(el("p", { class: "voice" }, "Your summary"));
   h.appendChild(el("h1", null, (A.nm ? A.nm + ", here's" : "Here's") + " what you told " + trainer() + "."));
-  h.appendChild(el("p", { class: "help" }, "Tap Change to fix anything. These answers stay in this browser and go into your free email helper so " + trainer() + " doesn't ask again."));
+  h.appendChild(el("p", { class: "help" }, "Tap Change to fix anything. These answers go into your free email helper so " + trainer() + " doesn't ask again, and come to us when you continue (never your name or email)."));
   var dl = el("ul", { class: "sumlist", role: "list" });
   SUMMARY_ROWS.forEach(function (r) {
     if (r[0] === "q4b" && A.q4a === "phone") return;
@@ -632,7 +633,28 @@ function logFinish(tr, site) {
   } catch (e) {}
 }
 
+// The setup answers come to us once, when the questions are done (Chris, Nov 10: "add the setup answers email
+// to grow with ai too"). Never the person's name ("What should we call you?") or email address.
+function sendAnswers() {
+  if (meta.answersSent) return;
+  meta.answersSent = Date.now(); save();
+  try {
+    var b = new FormData();
+    b.append("list", "setup-answers"); b.append("site", "growwithai");
+    [["work", "s1"], ["first_goal", "goal"], ["tasks_first", "s4"], ["ai_experience", "q5b"], ["answer_length", "len"], ["learning_style", "learn"],
+     ["device", "q4a"], ["browser", "q4b"], ["type_or_talk", "talk"], ["useful_first_result", "win"], ["email_type", "q3"],
+     ["runs_business_on", "s6"], ["never_without_asking", "s9"], ["how_to_start", "s10"]].forEach(function (f) {
+      if (Q[f[1]]) b.append(f[0], String(ans(f[1])).slice(0, 240));
+    });
+    b.append("trainer", trainer()); b.append("trainer_how", A.q6_either ? "either (random)" : "picked"); b.append("page_url", location.href);
+    b.append("_subject", "Setup answers (growwithai): " + String(ans("s1")).slice(0, 60));
+    b.append("_template", "table"); b.append("_honey", "");
+    fetch(CFG.form_endpoint, { method: "POST", body: b, headers: { Accept: "application/json" } }).catch(function () {});
+  } catch (e) {}
+}
+
 function result(h) {
+  sendAnswers();
   var tr = track(), name = trainer(), dev = A.viewDevice || A.q4a || "windows";
   // device tabs and the video come first; the steps and details sit under the video (Chris, Nov 5)
   var keys = tr === "grok" ? [["phone", "Phone"], ["computer", "Mac or Windows"]] : [["mac", "Mac"], ["windows", "Windows"], ["phone", "Phone"]];
