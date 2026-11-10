@@ -30,7 +30,8 @@
       var req = f.querySelectorAll("[required]:not(.consent)");
       for (var i = 0; i < req.length; i++) { if (!String(req[i].value || "").trim()) { msg.textContent = "Please fill in: " + (req[i].getAttribute("data-label") || req[i].name) + "."; req[i].focus(); return; } }
       if (cb && !cb.checked) { msg.textContent = "Tick the box so we are allowed to email you."; cb.focus(); return; }
-      if ((hp && hp.value) || (Date.now() - START) / 1000 < 4) { msg.textContent = f.getAttribute("data-thanks") || "Thanks, we have it."; return; }
+      if (hp && hp.value) { msg.textContent = "Not sent."; return; } // bots fill the hidden field
+      if ((Date.now() - START) / 1000 < 4) { msg.textContent = "Not sent yet. Wait a few seconds and press the button again."; return; }
       var qc = isQuebec(f), extra = {}, list = f.getAttribute("data-lead");
       f.querySelectorAll("[name]").forEach(function (el) {
         if (el.name === "_honey" || el.type === "email" || el.classList.contains("consent")) return;
