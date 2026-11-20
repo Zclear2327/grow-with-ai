@@ -29,7 +29,11 @@
  */
 (function () {
   var APPLY_URL = "";
-  var CHECKOUT = { starter: "https://wardconsultingai.thrivecart.com/grow-with-ai-starter/", pro: "https://wardconsultingai.thrivecart.com/grow-with-ai-pro/", elite: "https://wardconsultingai.thrivecart.com/grow-with-ai-elite/", seat: "https://wardconsultingai.thrivecart.com/grok-team-seat/" };
+  // PAUSED 2026-11-20 (Chris: "Free tier only on 11-23"): paid checkout reopens only after the Grok connector test and
+  // one refunded test order pass. Undo = put these back: starter https://wardconsultingai.thrivecart.com/grow-with-ai-starter/
+  // pro https://wardconsultingai.thrivecart.com/grow-with-ai-pro/  elite https://wardconsultingai.thrivecart.com/grow-with-ai-elite/
+  // seat https://wardconsultingai.thrivecart.com/grok-team-seat/
+  var CHECKOUT = { starter: "", pro: "", elite: "", seat: "" };
   var KEY = "wc_ref", DAYS = 90;
 
   function clean(v) { return (v || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 40); }
