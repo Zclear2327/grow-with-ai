@@ -16,7 +16,7 @@
  * empty, every "Apply" button opens an email to hello@wardconsulting.ai instead, so the page works
  * on day one.
  *
- * CHECKOUT: paste each package's ThriveCart checkout link here (Starter $29.99/month, Pro $99.99/month,
+ * CHECKOUT: paste each package's ThriveCart checkout link here (Starter $99/month, Pro $99.99/month,
  * Elite $249/month; Free has no checkout). The 4th key, seat, is the Grok team seat checkout
  * ($35 per seat per month, 1-5 seats, Pro and Elite members only; the ThriveCart bump would not save on 2026-11-09). Until ALL THREE are filled in the packages page shows the
  * waitlist and nothing can be bought. Once they are, every element marked
