@@ -159,8 +159,8 @@ section{padding-block:72px;border-top:1px solid var(--rule)}
 @media (max-width:1000px){.courses{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:520px){.courses{grid-template-columns:1fr}}
 /* about */
-.photos{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:16px;margin-top:40px;align-items:start}
-.ph{margin:0}
+.photos{display:flex;flex-wrap:wrap;gap:16px;margin-top:40px;align-items:flex-start}
+.ph{margin:0;flex:0 1 280px}
 .biz{list-style:none;margin:32px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--ink)}
 .biz a{display:block;padding:16px 18px 16px 0;border-bottom:1px solid var(--rule);text-decoration:none;color:var(--ink);min-height:44px}
 .biz b{display:block;font-family:var(--display);font-size:20px;font-weight:600;color:var(--accent)}
@@ -169,8 +169,6 @@ section{padding-block:72px;border-top:1px solid var(--rule)}
 @media (max-width:640px){.biz{grid-template-columns:1fr}}
 .ph img{display:block;width:100%;height:auto;border-radius:4px;background:var(--av-bg)}
 .ph figcaption{font-size:15px;color:var(--muted);margin-top:10px}
-@media (max-width:900px){.photos{grid-template-columns:1fr 1fr 1fr}.ph-wide{grid-column:1/-1}}
-@media (max-width:480px){.photos{grid-template-columns:1fr}}
 /* roster */
 .roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0;margin-top:36px;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
 .agent{padding:14px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--panel)}
@@ -555,32 +553,14 @@ footer{padding-block:28px 40px;border-top:1px solid var(--rule);font-size:13px;c
       <li><a href="https://goodlifegemz.com/" rel="noopener"><b>GoodLife Gemz</b><span>Crystal shop in North Ogden</span></a></li>
     </ul>
     <div class="photos">
-      <figure class="ph ph-wide">
-        <img src="images/chris-harbor-sunset.jpg" width="1400" height="1050" loading="lazy" alt="Chris Ward and family in sun hats on a harbor wall at sunset.">
-      </figure>
-      <figure class="ph">
-        <img src="images/ward-family-snow.jpg" width="731" height="1024" loading="lazy" alt="Chris Ward with his family, standing in the snow among pine trees.">
-      </figure>
       <figure class="ph">
         <img src="images/chris-walmart-open-call.jpg" width="1050" height="1400" loading="lazy" alt="Chris Ward holding an &quot;I got a deal&quot; card in front of the Walmart Open Call backdrop.">
         <figcaption>At Walmart Open Call, holding the &ldquo;I got a deal&rdquo; card.</figcaption>
       </figure>
-      <figure class="ph">
-        <img src="images/chris-garden.jpg" width="1050" height="1400" loading="lazy" alt="Chris Ward and family standing together in a garden under green trees.">
-      </figure>
     </div>
     <div class="photos" aria-label="Photos of JR White">
-      <figure class="ph ph-wide">
-        <img src="images/jr-family-beach.jpg" width="1400" height="1050" loading="lazy" alt="JR with his family in a group selfie on a beach at sunset.">
-      </figure>
       <figure class="ph">
         <img src="images/jr-headshot-navy-shirt.jpg" width="952" height="1000" loading="lazy" alt="JR in a navy button-up shirt, smiling.">
-      </figure>
-      <figure class="ph">
-        <img src="images/jr-family-lobby.jpg" width="906" height="1400" loading="lazy" alt="JR holding his son beside his wife in a hotel lobby with palms and woven lamps.">
-      </figure>
-      <figure class="ph">
-        <img src="images/jr-family-restaurant.jpg" width="1400" height="1050" loading="lazy" alt="JR smiling with his wife and young son at a restaurant booth.">
       </figure>
     </div>
   </section>
