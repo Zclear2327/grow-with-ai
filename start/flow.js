@@ -617,12 +617,34 @@ function deviceKey(tr, dev) {
   return dev || "windows";
 }
 
-// Counts a finished setup once per browser: a GoatCounter event (when on) and a short note to the form inbox.
-// No email, name or answers are sent; only the track, device, trainer and site.
+// Anonymous product event: which helper (Sam or Travis), which page, and when.
+// Never a name, email, answer, or the helper text. A down events server must not break the page.
+function logAnon(eventName, helper) {
+  try {
+    fetch("https://agents.wardconsulting.ai/events", {
+      method: "POST",
+      keepalive: true,
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        site: "grow",
+        event: eventName,
+        helper: helper,
+        page: location.pathname,
+        timestamp: new Date().toISOString()
+      })
+    }).catch(function () {});
+  } catch (e) {}
+}
+
+// Counts a finished setup once per browser: GoatCounter events (when on) and a short note to the form inbox.
+// The form note has the track, device, trainer and site. It never has an email, a name or answers.
 function logFinish(tr, site) {
   if (meta.finishLogged) return;
   meta.finishLogged = Date.now(); save();
   if (window.wcCount) window.wcCount("setup-finished"); else (window.__wcq = window.__wcq || []).push("setup-finished"); // counter loads after this script
+  var fin = "finished-" + trainer().toLowerCase(); if (window.wcCount) window.wcCount(fin); else window.__wcq.push(fin); // Sam vs Travis: who gets people to the end
+  logAnon("questionnaire_finished", trainer()); // trainer name only
   try {
     var b = new FormData();
     b.append("list", "setup-finished"); b.append("track", tr); b.append("device", A.q4a || ""); b.append("trainer", trainer());
@@ -771,7 +793,11 @@ function result(h) {
 }
 
 function copy(txt, pre, btn) {
-  var ok = function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy my email helper"; }, 2000); };
+  var ok = function () {
+    btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy my email helper"; }, 2000);
+    if (window.wcCount) window.wcCount("helper-copied"); else (window.__wcq = window.__wcq || []).push("helper-copied");
+    logAnon("helper_copied", trainer()); // trainer name only; not the copied text
+  };
   var fallback = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r);
     try { if (document.execCommand("copy")) { ok(); return; } } catch (e) {} btn.textContent = "Selected: press Ctrl+C (Cmd+C on a Mac)"; };
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, fallback); else fallback();
